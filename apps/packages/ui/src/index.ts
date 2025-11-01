@@ -15,6 +15,7 @@ export { Progress } from "./Progress";
 export { Alert, AlertTitle, AlertDescription } from "./Alert";
 export { Toast, ToastProvider, useToast } from "./Toast";
 export { cn } from "./lib/utils";
+export * from "./hooks";
 export type { SelectOption } from "./Select";
 export type { SidebarItem } from "./Sidebar";
 export type { UserMenuOption } from "./UserMenu";
