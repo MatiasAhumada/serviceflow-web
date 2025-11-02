@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 };
 
 import { AuthProvider, AppProvider } from "@/contexts";
-import { ToastProvider } from "@serviceflow/ui";
+import { ToastProvider } from "@/components/ui";
 import { SessionProvider } from "next-auth/react";
 
 export default function RootLayout({

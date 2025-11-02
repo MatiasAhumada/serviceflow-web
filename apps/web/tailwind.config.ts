@@ -5,40 +5,39 @@ const config: Config = {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    "../packages/ui/src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "var(--primary)",
+          DEFAULT: "#2563EB",
           foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "var(--secondary)",
+          DEFAULT: "#10B981",
           foreground: "#FFFFFF",
         },
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        background: "#F8FAFC",
+        foreground: "#111827",
         muted: {
-          DEFAULT: "var(--muted)",
-          foreground: "var(--muted)",
+          DEFAULT: "#64748B",
+          foreground: "#64748B",
         },
         accent: {
-          DEFAULT: "var(--accent)",
+          DEFAULT: "#F59E0B",
           foreground: "#FFFFFF",
         },
         destructive: {
-          DEFAULT: "var(--destructive)",
+          DEFAULT: "#EF4444",
           foreground: "#FFFFFF",
         },
         success: {
-          DEFAULT: "var(--success)",
+          DEFAULT: "#22C55E",
           foreground: "#FFFFFF",
         },
-        border: "var(--border)",
-        input: "var(--border)",
-        ring: "var(--primary)",
+        border: "#E2E8F0",
+        input: "#E2E8F0",
+        ring: "#2563EB",
       },
     },
   },

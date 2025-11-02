@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, use, useOptimistic, useTransition } from "react";
-import { useLocalStorage } from "@serviceflow/ui";
+import { useLocalStorage } from "@/components/ui";
 
 interface User {
   id: string;

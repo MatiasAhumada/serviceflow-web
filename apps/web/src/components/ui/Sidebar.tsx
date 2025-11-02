@@ -1,6 +1,7 @@
 import * as React from "react";
+import Image from "next/image";
 import { cn } from "./lib/utils";
-
+import logoSide from "../../../public/assets/logo-side.png";
 export interface SidebarItem {
   id: string;
   label: string;
@@ -42,8 +43,7 @@ export function Sidebar({
       {/* Sidebar */}
       <div
         className={cn(
-          "fixed left-0 top-0 z-50 h-full bg-white border-r-2 border-[#E2E8F0] transition-all duration-300 ease-in-out shadow-xl",
-          "dark:bg-[#1E293B] dark:border-[#334155]",
+          "fixed left-0 top-0 z-50 h-full bg-background border-r-2 border-border transition-all duration-300 ease-in-out shadow-xl",
           "lg:relative lg:translate-x-0 lg:shadow-none",
           isOpen ? "translate-x-0" : "-translate-x-full",
           isOpen ? "w-72" : "lg:w-20",
@@ -53,20 +53,20 @@ export function Sidebar({
         {/* Toggle Button */}
         <button
           onClick={onToggle}
-          className="absolute -right-4 top-8 z-10 bg-[#2563EB] border-2 border-white rounded-full p-2 shadow-lg hover:bg-[#1d4ed8] transition-all duration-200"
+          className="absolute -right-4 top-8 z-10 bg-primary border-2 border-background rounded-full p-2 shadow-lg hover:bg-primary/90 transition-all duration-200"
         >
-          <span className="block w-4 h-4 text-xs text-center text-white font-bold">
+          <span className="block w-4 h-4 text-xs text-center text-primary-foreground font-bold">
             {isOpen ? "◀" : "▶"}
           </span>
         </button>
 
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="p-4 border-b border-[#E2E8F0] dark:border-[#334155]">
+          <div className="p-4 border-b border-border">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-white to-[#F8FAFC] rounded-xl flex items-center justify-center shadow-lg border border-[#E2E8F0]/50 p-2">
+              <div className="w-12 h-12 bg-gradient-to-br from-background to-muted/20 rounded-xl flex items-center justify-center shadow-lg border border-border/50 p-2">
                 <Image 
-                  src="/assets/logo-side.png" 
+                  src={logoSide} 
                   alt="ServiceFlow" 
                   width={40}
                   height={40}
@@ -75,10 +75,10 @@ export function Sidebar({
               </div>
               {isOpen && (
                 <div className="flex flex-col">
-                  <h1 className="text-lg font-bold text-[#111827] dark:text-[#F8FAFC] leading-tight">
-                    Service<span className="text-[#2563EB]">Flow</span>
+                  <h1 className="text-lg font-bold text-foreground leading-tight">
+                    Service<span className="text-primary">Flow</span>
                   </h1>
-                  <p className="text-xs text-[#64748B] font-medium">Panel de Control</p>
+                  <p className="text-xs text-muted font-medium">Panel de Control</p>
                 </div>
               )}
             </div>
@@ -102,10 +102,9 @@ export function Sidebar({
                   disabled={item.disabled}
                   className={cn(
                     "w-full flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
-                    "hover:bg-[#2563EB]/10 hover:text-[#2563EB] focus:bg-[#2563EB]/10 focus:outline-none",
-                    "disabled:opacity-50 disabled:cursor-not-allowed text-[#64748B]",
-                    "dark:text-[#94A3B8] dark:hover:bg-[#2563EB]/20 dark:hover:text-[#2563EB]",
-                    item.active && "bg-[#2563EB] text-white hover:bg-[#1d4ed8] shadow-md",
+                    "hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:outline-none",
+                    "disabled:opacity-50 disabled:cursor-not-allowed text-muted",
+                    item.active && "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md",
                     !isOpen && "lg:justify-center lg:px-3"
                   )}
                 >
@@ -119,7 +118,7 @@ export function Sidebar({
                     <>
                       <span className="flex-1 text-left">{item.label}</span>
                       {item.badge && (
-                        <span className="bg-[#10B981] text-white text-xs px-2.5 py-1 rounded-full font-semibold shadow-sm">
+                        <span className="bg-secondary text-secondary-foreground text-xs px-2.5 py-1 rounded-full font-semibold shadow-sm">
                           {item.badge}
                         </span>
                       )}

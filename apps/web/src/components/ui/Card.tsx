@@ -9,12 +9,11 @@ export function Card({ className, variant = "default", ...props }: CardProps) {
   return (
     <div
       className={cn(
-        "rounded-xl bg-white text-[#111827] font-sans transition-all duration-200",
-        "dark:bg-[#1E293B] dark:text-[#F8FAFC]",
+        "rounded-xl bg-background text-foreground font-sans transition-all duration-200",
         {
-          "border-2 border-[#E2E8F0] dark:border-[#334155]": variant === "outlined",
-          "shadow-lg shadow-[#2563EB]/5 border border-[#E2E8F0]/50": variant === "elevated",
-          "border border-[#E2E8F0] shadow-sm hover:shadow-md hover:shadow-[#2563EB]/5 dark:border-[#334155]": variant === "default"
+          "border-2 border-border": variant === "outlined",
+          "shadow-lg shadow-primary/5 border border-border/50": variant === "elevated",
+          "border border-border shadow-sm hover:shadow-md hover:shadow-primary/5": variant === "default"
         },
         className
       )}

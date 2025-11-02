@@ -4,9 +4,8 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Button, Input, Card, CardHeader, CardTitle, CardContent } from "@serviceflow/ui";
-import { useToast } from "@serviceflow/ui";
-
+import { Button, Input, Card, CardHeader, CardTitle, CardContent, useToast } from "@/components/ui";
+import logoLogin from "../../../public/assets/logo-principal.png";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -56,7 +55,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md shadow-2xl border-0" variant="elevated">
         <CardHeader className="text-center pb-2">
           <div className="flex justify-center mb-6">
-            <Image src="/assets/logo-side.png" alt="ServiceFlow Logo" width={200} height={80} className="h-20 w-auto drop-shadow-lg" priority />
+            <Image src={logoLogin} alt="ServiceFlow Logo" width={200} height={80} className="h-20 w-auto drop-shadow-lg" priority />
           </div>
           <CardTitle className="text-2xl font-bold text-[#111827] dark:text-[#F8FAFC]">Bienvenido de vuelta</CardTitle>
           <p className="text-[#64748B] text-base mt-2">Inicia sesión en tu cuenta</p>
