@@ -42,31 +42,50 @@ export function Sidebar({
       {/* Sidebar */}
       <div
         className={cn(
-          "fixed left-0 top-0 z-50 h-full bg-background border-r border-border transition-transform duration-300 ease-in-out",
-          "lg:relative lg:translate-x-0",
+          "fixed left-0 top-0 z-50 h-full bg-white border-r-2 border-[#E2E8F0] transition-all duration-300 ease-in-out shadow-xl",
+          "dark:bg-[#1E293B] dark:border-[#334155]",
+          "lg:relative lg:translate-x-0 lg:shadow-none",
           isOpen ? "translate-x-0" : "-translate-x-full",
-          isOpen ? "w-64" : "lg:w-16",
+          isOpen ? "w-72" : "lg:w-20",
           className
         )}
       >
         {/* Toggle Button */}
         <button
           onClick={onToggle}
-          className="absolute -right-3 top-6 z-10 bg-background border border-border rounded-full p-1 shadow-md hover:bg-muted"
+          className="absolute -right-4 top-8 z-10 bg-[#2563EB] border-2 border-white rounded-full p-2 shadow-lg hover:bg-[#1d4ed8] transition-all duration-200"
         >
-          <span className="block w-4 h-4 text-xs text-center font-sans">
+          <span className="block w-4 h-4 text-xs text-center text-white font-bold">
             {isOpen ? "◀" : "▶"}
           </span>
         </button>
 
         <div className="flex flex-col h-full">
           {/* Header */}
-          {header && (
-            <div className={cn(
-              "p-4 border-b border-border",
-              !isOpen && "lg:px-2"
-            )}>
-              {isOpen ? header : null}
+          <div className="p-4 border-b border-[#E2E8F0] dark:border-[#334155]">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-white to-[#F8FAFC] rounded-xl flex items-center justify-center shadow-lg border border-[#E2E8F0]/50 p-2">
+                <Image 
+                  src="/assets/logo-side.png" 
+                  alt="ServiceFlow" 
+                  width={40}
+                  height={40}
+                  className="w-full h-full object-contain drop-shadow-sm"
+                />
+              </div>
+              {isOpen && (
+                <div className="flex flex-col">
+                  <h1 className="text-lg font-bold text-[#111827] dark:text-[#F8FAFC] leading-tight">
+                    Service<span className="text-[#2563EB]">Flow</span>
+                  </h1>
+                  <p className="text-xs text-[#64748B] font-medium">Panel de Control</p>
+                </div>
+              )}
+            </div>
+          </div>
+          {header && isOpen && (
+            <div className="px-4 py-2">
+              {header}
             </div>
           )}
 
@@ -82,11 +101,12 @@ export function Sidebar({
                   onClick={item.onClick}
                   disabled={item.disabled}
                   className={cn(
-                    "w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-sans transition-colors",
-                    "hover:bg-muted focus:bg-muted focus:outline-none",
-                    "disabled:opacity-50 disabled:cursor-not-allowed",
-                    item.active && "bg-primary text-primary-foreground hover:bg-primary/90",
-                    !isOpen && "lg:justify-center lg:px-2"
+                    "w-full flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
+                    "hover:bg-[#2563EB]/10 hover:text-[#2563EB] focus:bg-[#2563EB]/10 focus:outline-none",
+                    "disabled:opacity-50 disabled:cursor-not-allowed text-[#64748B]",
+                    "dark:text-[#94A3B8] dark:hover:bg-[#2563EB]/20 dark:hover:text-[#2563EB]",
+                    item.active && "bg-[#2563EB] text-white hover:bg-[#1d4ed8] shadow-md",
+                    !isOpen && "lg:justify-center lg:px-3"
                   )}
                 >
                   {item.icon && (
@@ -99,7 +119,7 @@ export function Sidebar({
                     <>
                       <span className="flex-1 text-left">{item.label}</span>
                       {item.badge && (
-                        <span className="bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded-full">
+                        <span className="bg-[#10B981] text-white text-xs px-2.5 py-1 rounded-full font-semibold shadow-sm">
                           {item.badge}
                         </span>
                       )}

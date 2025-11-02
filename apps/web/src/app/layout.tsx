@@ -19,6 +19,7 @@ export const metadata: Metadata = {
 
 import { AuthProvider, AppProvider } from "@/contexts";
 import { ToastProvider } from "@serviceflow/ui";
+import { SessionProvider } from "next-auth/react";
 
 export default function RootLayout({
   children,
@@ -30,13 +31,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ToastProvider>
-          <AppProvider>
-            <AuthProvider>
-              {children}
-            </AuthProvider>
-          </AppProvider>
-        </ToastProvider>
+        <SessionProvider>
+          <ToastProvider>
+            <AppProvider>
+              <AuthProvider>
+                {children}
+              </AuthProvider>
+            </AppProvider>
+          </ToastProvider>
+        </SessionProvider>
       </body>
     </html>
   );

@@ -9,10 +9,10 @@ export function Button({ variant = "default", className, ...props }: ButtonProps
   return (
     <button
       className={cn(
-        "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 shadow-sm",
         {
-          "bg-primary text-white hover:bg-primary/90 h-10 px-4 py-2": variant === "default",
-          "border border-border bg-background hover:bg-secondary/10 hover:text-secondary h-10 px-4 py-2": variant === "outline"
+          "bg-[#2563EB] text-white hover:bg-[#1d4ed8] hover:shadow-md focus-visible:ring-[#2563EB] h-11 px-6 py-2.5": variant === "default",
+          "border-2 border-[#2563EB] bg-transparent text-[#2563EB] hover:bg-[#2563EB] hover:text-white hover:shadow-md focus-visible:ring-[#2563EB] h-11 px-6 py-2.5": variant === "outline"
         },
         className
       )}
