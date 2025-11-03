@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, use, useOptimistic, useTransition } from "react";
+import React, { createContext, use, useOptimistic, useTransition } from "react";
 import { useLocalStorage } from "@/components/ui";
 
 interface AppSettings {
@@ -32,6 +32,13 @@ const defaultSettings: AppSettings = {
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [storedSettings, setStoredSettings] = useLocalStorage<AppSettings>("appSettings", defaultSettings);
   const [isPending, startTransition] = useTransition();
+  
+  // Apply theme on mount
+  React.useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.documentElement.classList.toggle("dark", storedSettings.theme === "dark");
+    }
+  }, [storedSettings.theme]);
   
   const [optimisticState, setOptimisticState] = useOptimistic(
     { ...storedSettings, isLoading: false },

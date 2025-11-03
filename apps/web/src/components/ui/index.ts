@@ -10,6 +10,7 @@ export { Sidebar } from "./Sidebar";
 export { UserMenu } from "./UserMenu";
 export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./Card";
 export { Badge } from "./Badge";
+export { Icon } from "./Icon";
 export { Tabs, TabsList, TabsTrigger, TabsContent } from "./Tabs";
 export { Progress } from "./Progress";
 export { Alert, AlertTitle, AlertDescription } from "./Alert";

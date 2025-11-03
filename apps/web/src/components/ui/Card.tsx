@@ -1,22 +1,30 @@
 import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./lib/utils";
 
-interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: "default" | "outlined" | "elevated";
-}
+const cardVariants = cva(
+  "rounded-xl bg-background text-foreground font-sans transition-all duration-200",
+  {
+    variants: {
+      variant: {
+        default: "border border-border shadow-sm hover:shadow-md hover:shadow-black/5",
+        outlined: "border-2 border-border",
+        elevated: "shadow-lg shadow-black/5 border border-border/50",
+        stats: "border border-border shadow-sm hover:shadow-lg hover:shadow-black/10 transition-all duration-300"
+      }
+    },
+    defaultVariants: {
+      variant: "default"
+    }
+  }
+);
 
-export function Card({ className, variant = "default", ...props }: CardProps) {
+interface CardProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof cardVariants> {}
+
+export function Card({ className, variant, ...props }: CardProps) {
   return (
     <div
-      className={cn(
-        "rounded-xl bg-background text-foreground font-sans transition-all duration-200",
-        {
-          "border-2 border-border": variant === "outlined",
-          "shadow-lg shadow-primary/5 border border-border/50": variant === "elevated",
-          "border border-border shadow-sm hover:shadow-md hover:shadow-primary/5": variant === "default"
-        },
-        className
-      )}
+      className={cn(cardVariants({ variant, className }))}
       {...props}
     />
   );
@@ -50,7 +58,7 @@ export function CardDescription({ className, ...props }: React.HTMLAttributes<HT
 }
 
 export function CardContent({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("p-6 pt-0", className)} {...props} />;
+  return <div className={cn("p-6", className)} {...props} />;
 }
 
 export function CardFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
