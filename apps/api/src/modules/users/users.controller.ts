@@ -37,7 +37,7 @@ export class UsersController {
   @ApiParam({ name: 'id', description: 'User ID' })
   @ApiResponse({ status: 200, description: 'User updated successfully' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  update(@Param('id') id: string, @Body() userData: Partial<User>): Promise<User> {
+  update(@Param('id') id: string, @Body() userData: Partial<User>): Promise<User | null> {
     return this.usersService.update(id, userData);
   }
 

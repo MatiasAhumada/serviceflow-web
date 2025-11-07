@@ -27,7 +27,7 @@ export class PlansService {
     return this.plansRepository.save(plan);
   }
 
-  async update(id: string, planData: Partial<Plan>): Promise<Plan> {
+  async update(id: string, planData: Partial<Plan>): Promise<Plan | null> {
     await this.plansRepository.update(id, planData);
     return this.findOne(id);
   }

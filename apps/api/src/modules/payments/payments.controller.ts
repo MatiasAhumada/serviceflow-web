@@ -28,7 +28,7 @@ export class PaymentsController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update payment' })
-  update(@Param('id') id: string, @Body() paymentData: Partial<Payment>): Promise<Payment> {
+  update(@Param('id') id: string, @Body() paymentData: Partial<Payment>): Promise<Payment | null> {
     return this.paymentsService.update(id, paymentData);
   }
 

@@ -28,7 +28,7 @@ export class CashRegistersController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update cash register' })
-  update(@Param('id') id: string, @Body() cashRegisterData: Partial<CashRegister>): Promise<CashRegister> {
+  update(@Param('id') id: string, @Body() cashRegisterData: Partial<CashRegister>): Promise<CashRegister | null> {
     return this.cashRegistersService.update(id, cashRegisterData);
   }
 

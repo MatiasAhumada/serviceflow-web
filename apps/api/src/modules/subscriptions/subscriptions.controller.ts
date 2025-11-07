@@ -28,7 +28,7 @@ export class SubscriptionsController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update subscription' })
-  update(@Param('id') id: string, @Body() subscriptionData: Partial<Subscription>): Promise<Subscription> {
+  update(@Param('id') id: string, @Body() subscriptionData: Partial<Subscription>): Promise<Subscription | null> {
     return this.subscriptionsService.update(id, subscriptionData);
   }
 

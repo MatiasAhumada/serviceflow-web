@@ -35,7 +35,7 @@ export class ProductsService {
     return this.productsRepository.save(product);
   }
 
-  async update(id: string, productData: Partial<Product>): Promise<Product> {
+  async update(id: string, productData: Partial<Product>): Promise<Product | null> {
     await this.productsRepository.update(id, productData);
     return this.findOne(id);
   }

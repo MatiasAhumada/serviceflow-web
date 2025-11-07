@@ -28,7 +28,7 @@ export class RolesController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update role' })
-  update(@Param('id') id: string, @Body() roleData: Partial<Role>): Promise<Role> {
+  update(@Param('id') id: string, @Body() roleData: Partial<Role>): Promise<Role | null> {
     return this.rolesService.update(id, roleData);
   }
 

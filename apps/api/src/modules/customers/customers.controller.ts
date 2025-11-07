@@ -28,7 +28,7 @@ export class CustomersController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update customer' })
-  update(@Param('id') id: string, @Body() customerData: Partial<Customer>): Promise<Customer> {
+  update(@Param('id') id: string, @Body() customerData: Partial<Customer>): Promise<Customer | null> {
     return this.customersService.update(id, customerData);
   }
 

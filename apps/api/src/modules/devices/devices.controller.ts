@@ -28,7 +28,7 @@ export class DevicesController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update device' })
-  update(@Param('id') id: string, @Body() deviceData: Partial<Device>): Promise<Device> {
+  update(@Param('id') id: string, @Body() deviceData: Partial<Device>): Promise<Device | null> {
     return this.devicesService.update(id, deviceData);
   }
 

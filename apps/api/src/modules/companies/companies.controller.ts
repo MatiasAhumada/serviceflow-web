@@ -28,7 +28,7 @@ export class CompaniesController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update company' })
-  update(@Param('id') id: string, @Body() companyData: Partial<Company>): Promise<Company> {
+  update(@Param('id') id: string, @Body() companyData: Partial<Company>): Promise<Company | null> {
     return this.companiesService.update(id, companyData);
   }
 

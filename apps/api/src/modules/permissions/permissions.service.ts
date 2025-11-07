@@ -27,7 +27,7 @@ export class PermissionsService {
     return this.permissionsRepository.save(permission);
   }
 
-  async update(id: string, permissionData: Partial<Permission>): Promise<Permission> {
+  async update(id: string, permissionData: Partial<Permission>): Promise<Permission | null> {
     await this.permissionsRepository.update(id, permissionData);
     return this.findOne(id);
   }

@@ -26,7 +26,7 @@ export class PaymentsService {
     return this.paymentsRepository.save(payment);
   }
 
-  async update(id: string, paymentData: Partial<Payment>): Promise<Payment> {
+  async update(id: string, paymentData: Partial<Payment>): Promise<Payment | null> {
     await this.paymentsRepository.update(id, paymentData);
     return this.findOne(id);
   }

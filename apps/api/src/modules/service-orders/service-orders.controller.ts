@@ -28,7 +28,7 @@ export class ServiceOrdersController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update service order' })
-  update(@Param('id') id: string, @Body() serviceOrderData: Partial<ServiceOrder>): Promise<ServiceOrder> {
+  update(@Param('id') id: string, @Body() serviceOrderData: Partial<ServiceOrder>): Promise<ServiceOrder | null> {
     return this.serviceOrdersService.update(id, serviceOrderData);
   }
 

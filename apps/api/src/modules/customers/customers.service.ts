@@ -35,7 +35,7 @@ export class CustomersService {
     return this.customersRepository.save(customer);
   }
 
-  async update(id: string, customerData: Partial<Customer>): Promise<Customer> {
+  async update(id: string, customerData: Partial<Customer>): Promise<Customer | null> {
     await this.customersRepository.update(id, customerData);
     return this.findOne(id);
   }

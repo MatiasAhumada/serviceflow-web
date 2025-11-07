@@ -28,7 +28,7 @@ export class SalesController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update sale' })
-  update(@Param('id') id: string, @Body() saleData: Partial<Sale>): Promise<Sale> {
+  update(@Param('id') id: string, @Body() saleData: Partial<Sale>): Promise<Sale | null> {
     return this.salesService.update(id, saleData);
   }
 

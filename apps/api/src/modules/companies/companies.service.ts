@@ -28,7 +28,7 @@ export class CompaniesService {
     return this.companiesRepository.save(company);
   }
 
-  async update(id: string, companyData: Partial<Company>): Promise<Company> {
+  async update(id: string, companyData: Partial<Company>): Promise<Company | null> {
     await this.companiesRepository.update(id, companyData);
     return this.findOne(id);
   }

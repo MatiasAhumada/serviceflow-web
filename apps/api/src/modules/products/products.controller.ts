@@ -37,7 +37,7 @@ export class ProductsController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update product' })
   @Permissions('manage_products')
-  update(@Param('id') id: string, @Body() productData: Partial<Product>): Promise<Product> {
+  update(@Param('id') id: string, @Body() productData: Partial<Product>): Promise<Product | null> {
     return this.productsService.update(id, productData);
   }
 

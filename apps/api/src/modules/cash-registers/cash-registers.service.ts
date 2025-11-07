@@ -28,7 +28,7 @@ export class CashRegistersService {
     return this.cashRegistersRepository.save(cashRegister);
   }
 
-  async update(id: string, cashRegisterData: Partial<CashRegister>): Promise<CashRegister> {
+  async update(id: string, cashRegisterData: Partial<CashRegister>): Promise<CashRegister | null> {
     await this.cashRegistersRepository.update(id, cashRegisterData);
     return this.findOne(id);
   }

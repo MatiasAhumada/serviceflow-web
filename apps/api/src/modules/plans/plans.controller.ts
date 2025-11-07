@@ -28,7 +28,7 @@ export class PlansController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update plan' })
-  update(@Param('id') id: string, @Body() planData: Partial<Plan>): Promise<Plan> {
+  update(@Param('id') id: string, @Body() planData: Partial<Plan>): Promise<Plan | null> {
     return this.plansService.update(id, planData);
   }
 

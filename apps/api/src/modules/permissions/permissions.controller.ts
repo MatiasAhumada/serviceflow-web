@@ -28,7 +28,7 @@ export class PermissionsController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update permission' })
-  update(@Param('id') id: string, @Body() permissionData: Partial<Permission>): Promise<Permission> {
+  update(@Param('id') id: string, @Body() permissionData: Partial<Permission>): Promise<Permission | null> {
     return this.permissionsService.update(id, permissionData);
   }
 

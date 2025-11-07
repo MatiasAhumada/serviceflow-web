@@ -33,7 +33,7 @@ export class RolesService {
     return this.rolesRepository.save(role);
   }
 
-  async update(id: string, roleData: Partial<Role>): Promise<Role> {
+  async update(id: string, roleData: Partial<Role>): Promise<Role | null> {
     await this.rolesRepository.update(id, roleData);
     return this.findOne(id);
   }

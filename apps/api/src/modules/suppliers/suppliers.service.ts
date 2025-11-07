@@ -26,7 +26,7 @@ export class SuppliersService {
     return this.suppliersRepository.save(supplier);
   }
 
-  async update(id: string, supplierData: Partial<Supplier>): Promise<Supplier> {
+  async update(id: string, supplierData: Partial<Supplier>): Promise<Supplier | null> {
     await this.suppliersRepository.update(id, supplierData);
     return this.findOne(id);
   }

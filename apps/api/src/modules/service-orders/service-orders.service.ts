@@ -35,7 +35,7 @@ export class ServiceOrdersService {
     return this.serviceOrdersRepository.save(serviceOrder);
   }
 
-  async update(id: string, serviceOrderData: Partial<ServiceOrder>): Promise<ServiceOrder> {
+  async update(id: string, serviceOrderData: Partial<ServiceOrder>): Promise<ServiceOrder | null> {
     await this.serviceOrdersRepository.update(id, serviceOrderData);
     return this.findOne(id);
   }

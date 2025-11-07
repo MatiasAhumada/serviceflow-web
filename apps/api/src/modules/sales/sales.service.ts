@@ -35,7 +35,7 @@ export class SalesService {
     return this.salesRepository.save(sale);
   }
 
-  async update(id: string, saleData: Partial<Sale>): Promise<Sale> {
+  async update(id: string, saleData: Partial<Sale>): Promise<Sale | null> {
     await this.salesRepository.update(id, saleData);
     return this.findOne(id);
   }

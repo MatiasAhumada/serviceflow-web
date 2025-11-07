@@ -26,7 +26,7 @@ export class DevicesService {
     return this.devicesRepository.save(device);
   }
 
-  async update(id: string, deviceData: Partial<Device>): Promise<Device> {
+  async update(id: string, deviceData: Partial<Device>): Promise<Device | null> {
     await this.devicesRepository.update(id, deviceData);
     return this.findOne(id);
   }

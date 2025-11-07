@@ -28,7 +28,7 @@ export class WarrantiesController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update warranty' })
-  update(@Param('id') id: string, @Body() warrantyData: Partial<Warranty>): Promise<Warranty> {
+  update(@Param('id') id: string, @Body() warrantyData: Partial<Warranty>): Promise<Warranty | null> {
     return this.warrantiesService.update(id, warrantyData);
   }
 

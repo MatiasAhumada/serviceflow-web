@@ -28,7 +28,7 @@ export class SuppliersController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update supplier' })
-  update(@Param('id') id: string, @Body() supplierData: Partial<Supplier>): Promise<Supplier> {
+  update(@Param('id') id: string, @Body() supplierData: Partial<Supplier>): Promise<Supplier | null> {
     return this.suppliersService.update(id, supplierData);
   }
 
