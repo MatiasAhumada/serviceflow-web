@@ -18,26 +18,71 @@ async function bootstrap() {
 
 Este sistema permite administrar tanto la parte de servicios técnicos (reparaciones, diagnósticos, presupuestos, órdenes de trabajo) como la parte comercial (ventas de accesorios, dispositivos, insumos, etc.).
 
-Ofrece herramientas para:
+## 🔐 Autenticación
 
-- Gestionar clientes, productos y servicios técnicos.
-- Crear y monitorear órdenes de reparación.
-- Controlar inventario y movimientos de stock.
-- Registrar ventas, facturación y recibos.
-- Administrar caja diaria, ingresos y egresos.
-- Emitir comprobantes, reportes y estadísticas.
-- Unificar toda la operación del negocio desde un solo lugar.
+La API utiliza **JWT (JSON Web Tokens)** para autenticación. Para acceder a rutas protegidas:
 
-Ideal para talleres técnicos, locales de reparación, o negocios que combinan venta y servicio.
+1. Hacer login en \`/auth/login\` con email y password
+2. Copiar el \`access_token\` de la respuesta
+3. Click en el botón **Authorize** (🔒) arriba
+4. Ingresar: \`Bearer {access_token}\`
+5. Click en **Authorize**
 
-  
-  <b>Desarrollado por Matías Ahumada</b><br>
-  <a href="https://www.linkedin.com/in/matias-ahumada-dev/" target="_blank">LinkedIn</a> |
-  <a href="https://github.com/MatiasAhumada" target="_blank">GitHub</a><br>
-  Teléfono: +54 9 381 352-8658
+## 📋 Módulos Disponibles
+
+### Core System
+- **Authentication** - Login, registro y gestión de tokens JWT
+- **Users** - Gestión de usuarios del sistema
+- **Companies** - Administración de empresas
+- **Roles & Permissions** - Control de acceso basado en roles
+- **Plans & Subscriptions** - Planes de suscripción y pagos
+
+### Business Logic
+- **Customers & Suppliers** - Gestión de clientes y proveedores
+- **Products & Inventory** - Catálogo de productos e inventario
+- **Sales & Cash Register** - Ventas y caja registradora
+- **Technical Services** - Órdenes de servicio, dispositivos y garantías
+
+## 🎯 Características
+
+- ✅ Multi-tenant (soporte para múltiples empresas)
+- ✅ Role-Based Access Control (RBAC)
+- ✅ Tres tipos de usuarios: Vendor, Technician, Company
+- ✅ Sistema de suscripciones con asientos adicionales
+- ✅ Gestión completa de ventas y servicios técnicos
+- ✅ Control de inventario y stock
+- ✅ Caja registradora con apertura/cierre
+- ✅ Garantías y seguimiento de dispositivos
+
+---
+
+<b>Desarrollado por Matías Ahumada</b><br>
+<a href="https://www.linkedin.com/in/matias-ahumada-dev/" target="_blank">LinkedIn</a> |
+<a href="https://github.com/MatiasAhumada" target="_blank">GitHub</a><br>
+Teléfono: +54 9 381 352-8658
   `,
     )
     .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JWT-auth',
+    )
+    .addTag('Authentication', 'Endpoints de autenticación y registro')
+    .addTag('Users', 'Gestión de usuarios del sistema')
+    .addTag('Companies', 'Administración de empresas')
+    .addTag('Roles & Permissions', 'Control de acceso y permisos')
+    .addTag('Plans & Subscriptions', 'Planes, suscripciones y pagos')
+    .addTag('Customers & Suppliers', 'Gestión de clientes y proveedores')
+    .addTag('Products & Inventory', 'Catálogo de productos e inventario')
+    .addTag('Sales & Cash Register', 'Ventas y caja registradora')
+    .addTag('Technical Services', 'Órdenes de servicio, dispositivos y garantías')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

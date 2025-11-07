@@ -1,0 +1,46 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Product } from '../../entities';
+
+@Injectable()
+export class ProductsService {
+  constructor(
+    @InjectRepository(Product)
+    private productsRepository: Repository<Product>,
+  ) {}
+
+  async findAll(): Promise<Product[]> {
+    return this.productsRepository.find({
+      relations: ['company', 'user', 'suppliers'],
+    });
+  }
+
+  async findOne(id: string): Promise<Product | null> {
+    return this.productsRepository.findOne({
+      where: { id },
+      relations: ['company', 'user', 'suppliers', 'saleItems'],
+    });
+  }
+
+  async findByCompany(companyId: string): Promise<Product[]> {
+    return this.productsRepository.find({
+      where: { companyId },
+      relations: ['suppliers'],
+    });
+  }
+
+  async create(productData: Partial<Product>): Promise<Product> {
+    const product = this.productsRepository.create(productData);
+    return this.productsRepository.save(product);
+  }
+
+  async update(id: string, productData: Partial<Product>): Promise<Product> {
+    await this.productsRepository.update(id, productData);
+    return this.findOne(id);
+  }
+
+  async remove(id: string): Promise<void> {
+    await this.productsRepository.delete(id);
+  }
+}

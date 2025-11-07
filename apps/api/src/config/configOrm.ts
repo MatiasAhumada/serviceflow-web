@@ -1,6 +1,7 @@
 import { config as dotenvConfig } from 'dotenv';
 import { registerAs } from '@nestjs/config';
 import { DataSource, DataSourceOptions } from 'typeorm';
+import * as entities from '../entities';
 
 dotenvConfig({ path: '.env' });
 
@@ -15,7 +16,7 @@ const db_config = {
   synchronize: false,
   dropSchema: false,
   logging: false,
-  entities: [],
+  entities: Object.values(entities),
   migrationsRun: true,
   migrations: ['dist/migrations/*.{js,ts}'],
 };
