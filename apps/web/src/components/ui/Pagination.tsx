@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "./lib/utils";
+import { cn } from "@/lib/utils";
 import { Button } from "./Button";
 
 interface PaginationProps {
@@ -53,14 +53,14 @@ export function Pagination({
   return (
     <div className={cn("flex items-center justify-between", className)}>
       <div className="flex items-center gap-4">
-        <span className="text-sm text-muted">
+        <span className="text-sm text-muted-foreground">
           Mostrando {startItem} a {endItem} de {totalItems} elementos
         </span>
         {onItemsPerPageChange && (
           <select
             value={itemsPerPage}
             onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
-            className="px-3 py-1 border border-border rounded-md text-sm bg-background"
+            className="px-3 py-1 border border-input rounded-md text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
           >
             <option value={10}>10 por página</option>
             <option value={25}>25 por página</option>
@@ -83,7 +83,7 @@ export function Pagination({
         {getVisiblePages().map((page, index) => (
           <React.Fragment key={index}>
             {page === "..." ? (
-              <span className="px-3 py-1 text-muted">...</span>
+              <span className="px-3 py-1 text-muted-foreground">...</span>
             ) : (
               <Button
                 variant={currentPage === page ? "default" : "outline"}

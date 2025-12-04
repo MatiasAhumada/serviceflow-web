@@ -2,6 +2,7 @@
 
 import { createContext, use, useOptimistic, useTransition } from "react";
 import { useLocalStorage } from "@/components/ui";
+import { ClientHandler } from "@/lib/client-handler";
 
 interface User {
   id: string;
@@ -67,11 +68,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const userData = await response.json();
         setStoredUser(userData);
         setOptimisticState({ type: "LOGIN_SUCCESS", payload: userData });
+        ClientHandler.success("Sesión iniciada correctamente");
       } catch (error) {
-        setOptimisticState({ 
-          type: "LOGIN_ERROR", 
-          payload: error instanceof Error ? error.message : "Error de login" 
-        });
+        const errorMsg = error instanceof Error ? error.message : "Error de login";
+        setOptimisticState({ type: "LOGIN_ERROR", payload: errorMsg });
+        ClientHandler.error(errorMsg);
       }
     });
   };
@@ -80,11 +81,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     startTransition(async () => {
       try {
         await fetch("/api/auth/logout", { method: "POST" });
-      } catch (error) {
-        console.warn("Error during logout:", error);
-      } finally {
         setStoredUser(null);
         setOptimisticState({ type: "LOGOUT" });
+        ClientHandler.success("Sesión cerrada correctamente");
+      } catch (error) {
+        console.warn("Error during logout:", error);
+        setStoredUser(null);
+        setOptimisticState({ type: "LOGOUT" });
+        ClientHandler.warning("Sesión cerrada localmente");
       }
     });
   };
@@ -105,9 +109,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
         
         setStoredUser(updatedUser);
+        ClientHandler.success("Usuario actualizado correctamente");
       } catch (error) {
-        // Revert optimistic update on error
         setOptimisticState({ type: "UPDATE_USER", payload: optimisticState.user });
+        ClientHandler.error("Error al actualizar usuario");
       }
     });
   };

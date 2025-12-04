@@ -1,27 +1,26 @@
-import * as React from "react";
-import { cn } from "./lib/utils";
+"use client"
 
-interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
-  required?: boolean;
-}
+import * as React from "react"
+import * as LabelPrimitive from "@radix-ui/react-label"
+import { cva, type VariantProps } from "class-variance-authority"
 
-export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
-  ({ className, children, required, ...props }, ref) => {
-    return (
-      <label
-        ref={ref}
-        className={cn(
-          "text-sm font-medium leading-none text-foreground font-sans",
-          "peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-          className
-        )}
-        {...props}
-      >
-        {children}
-        {required && <span className="text-destructive ml-1">*</span>}
-      </label>
-    );
-  }
-);
+import { cn } from "@/lib/utils"
 
-Label.displayName = "Label";
+const labelVariants = cva(
+  "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+)
+
+const Label = React.forwardRef<
+  React.ElementRef<typeof LabelPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> &
+    VariantProps<typeof labelVariants>
+>(({ className, ...props }, ref) => (
+  <LabelPrimitive.Root
+    ref={ref}
+    className={cn(labelVariants(), className)}
+    {...props}
+  />
+))
+Label.displayName = LabelPrimitive.Root.displayName
+
+export { Label }

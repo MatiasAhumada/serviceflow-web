@@ -1,47 +1,22 @@
-import * as React from "react";
-import { cn } from "./lib/utils";
+import * as React from "react"
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
-  error?: string;
-  helperText?: string;
-}
+import { cn } from "@/lib/utils"
 
-export const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, label, error, helperText, id, ...props }, ref) => {
-    const inputId = id || React.useId();
-
+const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
+  ({ className, type, ...props }, ref) => {
     return (
-      <div className="space-y-2">
-        {label && (
-          <label
-            htmlFor={inputId}
-            className="text-sm font-medium text-foreground font-sans"
-          >
-            {label}
-          </label>
+      <input
+        type={type}
+        className={cn(
+          "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+          className
         )}
-        <input
-          id={inputId}
-          ref={ref}
-          className={cn(
-            "flex h-12 w-full rounded-lg border-2 border-border bg-background px-4 py-3 text-sm font-medium text-foreground transition-all duration-200",
-            "placeholder:text-muted focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10",
-            "hover:border-primary/50 disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-muted/20",
-            error && "border-destructive focus:border-destructive focus:ring-destructive/10",
-            className
-          )}
-          {...props}
-        />
-        {error && (
-          <p className="text-sm text-destructive font-sans">{error}</p>
-        )}
-        {helperText && !error && (
-          <p className="text-sm text-muted font-sans">{helperText}</p>
-        )}
-      </div>
-    );
+        ref={ref}
+        {...props}
+      />
+    )
   }
-);
+)
+Input.displayName = "Input"
 
-Input.displayName = "Input";
+export { Input }

@@ -2,6 +2,7 @@
 
 import React, { createContext, use, useOptimistic, useTransition } from "react";
 import { useLocalStorage } from "@/components/ui";
+import { ClientHandler } from "@/lib/client-handler";
 
 interface AppSettings {
   theme: "light" | "dark";
@@ -77,10 +78,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setOptimisticState({ type: "TOGGLE_THEME" });
       setStoredSettings({ ...optimisticState, theme: newTheme });
       
-      // Apply theme to document immediately
       if (typeof document !== "undefined") {
         document.documentElement.classList.toggle("dark", newTheme === "dark");
       }
+      ClientHandler.success(`Tema ${newTheme === "dark" ? "oscuro" : "claro"} activado`);
     });
   };
 

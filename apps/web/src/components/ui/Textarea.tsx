@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "./lib/utils";
+import { cn } from "@/lib/utils";
 
 interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
@@ -16,7 +16,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         {label && (
           <label
             htmlFor={textareaId}
-            className="text-sm font-medium text-foreground font-sans"
+            className="text-sm font-medium text-foreground"
           >
             {label}
           </label>
@@ -25,8 +25,8 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={textareaId}
           ref={ref}
           className={cn(
-            "flex min-h-[80px] w-full rounded-md border border-border bg-background px-3 py-2 text-sm font-sans",
-            "placeholder:text-muted focus-visible:outline-none focus-visible:ring-2",
+            "flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm",
+            "placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2",
             "focus-visible:ring-primary focus-visible:ring-offset-2 resize-vertical",
             "disabled:cursor-not-allowed disabled:opacity-50",
             error && "border-destructive focus-visible:ring-destructive",
@@ -35,10 +35,10 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           {...props}
         />
         {error && (
-          <p className="text-sm text-destructive font-sans">{error}</p>
+          <p className="text-sm text-destructive">{error}</p>
         )}
         {helperText && !error && (
-          <p className="text-sm text-muted font-sans">{helperText}</p>
+          <p className="text-sm text-muted-foreground">{helperText}</p>
         )}
       </div>
     );

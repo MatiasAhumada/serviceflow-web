@@ -1,18 +1,18 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "./lib/utils";
+import { cn } from "@/lib/utils";
 
 const iconVariants = cva(
   "flex items-center justify-center rounded-lg transition-colors",
   {
     variants: {
       variant: {
-        primary: "bg-primary/10 text-primary",
-        secondary: "bg-[#10B981]/10 text-[#10B981]",
-        success: "bg-[#22C55E]/10 text-[#22C55E]",
-        destructive: "bg-[#EF4444]/10 text-[#EF4444]",
-        accent: "bg-[#F59E0B]/10 text-[#F59E0B]",
-        muted: "bg-muted/10 text-muted"
+        primary: "bg-primary/10 text-primary dark:bg-primary/20",
+        secondary: "bg-green-500/10 text-green-600 dark:bg-green-500/20 dark:text-green-400",
+        success: "bg-green-500/10 text-green-600 dark:bg-green-500/20 dark:text-green-400",
+        destructive: "bg-destructive/10 text-destructive dark:bg-destructive/20",
+        accent: "bg-yellow-500/10 text-yellow-600 dark:bg-yellow-500/20 dark:text-yellow-400",
+        muted: "bg-muted/50 text-muted-foreground"
       },
       size: {
         sm: "w-8 h-8",

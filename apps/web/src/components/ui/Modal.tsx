@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "./lib/utils";
+import { cn } from "@/lib/utils";
 import { Button } from "./Button";
 
 interface ModalProps {
@@ -38,7 +38,7 @@ export function Modal({
       )}>
         <div className="p-6">
           <h2 className="text-lg font-semibold text-foreground mb-4">{title}</h2>
-          <div className="text-muted mb-6">{children}</div>
+          <div className="text-muted-foreground mb-6">{children}</div>
           <div className="flex gap-3 justify-end">
             <Button
               variant="outline"

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "./lib/utils";
+import { cn } from "@/lib/utils";
 
 export interface SidebarItem {
   id: string;
@@ -82,10 +82,10 @@ export function Sidebar({ items, isOpen, onToggle, header, footer, className, us
               </div>
               {isOpen && (
                 <div className="h-4 mb-5">
-                  <h1 className="text-lg font-bold text-[#111827] dark:text-white">
+                  <h1 className="text-lg font-bold text-foreground">
                     Service<span className="text-[#2563EB]">Flow</span>
                   </h1>
-                  <p className="text-xs text-[#64748B] font-medium">Panel de Control</p>
+                  <p className="text-xs text-muted-foreground font-medium">Panel de Control</p>
                 </div>
               )}
             </div>
@@ -107,20 +107,20 @@ export function Sidebar({ items, isOpen, onToggle, header, footer, className, us
                     "hover:bg-muted/10 focus:outline-none",
                     "disabled:opacity-50 disabled:cursor-not-allowed",
                     item.active
-                      ? "bg-[#2563EB] text-white shadow-md"
-                      : "text-[#64748B] dark:text-[#64748B] hover:text-[#10B981] hover:bg-[#10B981]/20",
+                      ? "bg-gradient-to-r from-[#10B981] to-[#2563EB] text-white shadow-lg"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent",
                     !isOpen && "lg:justify-center lg:px-2"
                   )}
                 >
                   {item.icon && (
-                    <span className={cn("flex-shrink-0 w-5 h-5", item.active ? "text-primary-foreground" : "text-muted")}>{item.icon}</span>
+                    <span className={cn("flex-shrink-0 w-5 h-5")}>{item.icon}</span>
                   )}
 
                   {isOpen && (
                     <>
                       <span className="flex-1 text-left">{item.label}</span>
                       {item.badge && (
-                        <span className="bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20 text-xs px-2 py-1 rounded-full font-semibold">
+                        <span className="bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20 text-xs px-2 py-1 rounded-full font-semibold">
                           {item.badge}
                         </span>
                       )}
@@ -140,7 +140,7 @@ export function Sidebar({ items, isOpen, onToggle, header, footer, className, us
                 <div ref={userMenuRef} className="relative">
                   <button
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                    className="w-10 h-10 rounded-full bg-[#2563EB] text-white flex items-center justify-center text-sm font-medium hover:bg-[#2563EB]/90 transition-colors overflow-hidden"
+                    className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium hover:bg-primary/90 transition-colors overflow-hidden"
                   >
                     {user?.avatar ? (
                       <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
@@ -159,7 +159,7 @@ export function Sidebar({ items, isOpen, onToggle, header, footer, className, us
                             setIsUserMenuOpen(false);
                           }}
                           className={cn(
-                            "w-full flex items-center gap-3 px-3 py-2 text-sm font-sans hover:bg-muted transition-colors text-left",
+                            "w-full flex items-center gap-3 px-3 py-2 text-sm hover:bg-accent transition-colors text-left",
                             option.variant === "destructive" && "text-destructive hover:bg-destructive/10"
                           )}
                         >
@@ -185,7 +185,7 @@ export function Sidebar({ items, isOpen, onToggle, header, footer, className, us
             onClick={onToggle}
             className="absolute -right-3 top-6 bg-background border-2 border-border rounded-full p-1.5 shadow-lg hover:shadow-xl transition-all duration-200 lg:block hidden"
           >
-            <svg className="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
@@ -197,7 +197,7 @@ export function Sidebar({ items, isOpen, onToggle, header, footer, className, us
             onClick={onToggle}
             className="absolute -right-5 top-6 bg-background border-2 border-border rounded-full p-1.5 shadow-lg hover:shadow-xl transition-all duration-200 lg:block hidden"
           >
-            <svg className="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { cn } from "./lib/utils";
+import { cn } from "@/lib/utils";
 
 export interface ToastData {
   id: string;
@@ -27,18 +27,18 @@ export function Toast({ id, title, description, variant = "default", duration = 
   return (
     <div
       className={cn(
-        "relative w-full max-w-sm p-4 rounded-lg border shadow-lg font-sans animate-in slide-in-from-top-2",
+        "relative w-full max-w-sm p-4 rounded-lg border shadow-lg animate-in slide-in-from-top-2",
         {
           "bg-background text-foreground border-border": variant === "default",
-          "bg-success/10 text-success border-success/20": variant === "success",
-          "bg-destructive/10 text-destructive border-destructive/20": variant === "destructive",
-          "bg-accent/10 text-accent border-accent/20": variant === "warning"
+          "bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 border-green-500/20": variant === "success",
+          "bg-destructive/10 dark:bg-destructive/20 text-destructive border-destructive/20": variant === "destructive",
+          "bg-yellow-50 dark:bg-yellow-950/30 text-yellow-600 dark:text-yellow-400 border-yellow-500/20": variant === "warning"
         }
       )}
     >
       <button
         onClick={() => onRemove(id)}
-        className="absolute right-2 top-2 text-muted hover:text-foreground"
+        className="absolute right-2 top-2 text-muted-foreground hover:text-foreground transition-colors"
       >
         ✕
       </button>

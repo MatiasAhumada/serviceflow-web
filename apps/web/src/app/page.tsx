@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useApp } from "@/contexts";
 import { Button, Sidebar, UserMenu, Card, CardHeader, CardTitle, CardContent, Badge, Icon } from "@/components/ui";
 import { useSession, signOut } from "next-auth/react";
+import { ClientHandler } from "@/lib/client-handler";
 import type { SidebarItem, UserMenuOption } from "@/components/ui";
 
 export default function Home() {
@@ -66,7 +67,7 @@ export default function Home() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
         </svg>
       ),
-      onClick: () => console.log("Profile"),
+      onClick: () => ClientHandler.info("Perfil de usuario"),
     },
     {
       id: "settings",
@@ -77,7 +78,7 @@ export default function Home() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
       ),
-      onClick: () => console.log("Settings"),
+      onClick: () => ClientHandler.info("Configuración del sistema"),
     },
     {
       id: "theme",
@@ -101,7 +102,10 @@ export default function Home() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
         </svg>
       ),
-      onClick: () => signOut(),
+      onClick: async () => {
+        await signOut();
+        ClientHandler.success("Sesión cerrada correctamente");
+      },
       variant: "destructive",
     },
   ];
@@ -167,7 +171,7 @@ export default function Home() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted">Órdenes Activas</p>
+                    <p className="text-sm font-medium text-muted-foreground">Órdenes Activas</p>
                     <p className="text-2xl font-bold text-foreground">24</p>
                   </div>
                   <Icon variant="primary" size="lg">
@@ -178,7 +182,7 @@ export default function Home() {
                 </div>
                 <div className="mt-4 flex items-center">
                   <Badge variant="success" size="sm">+12%</Badge>
-                  <span className="text-muted text-sm ml-2">vs mes anterior</span>
+                  <span className="text-muted-foreground text-sm ml-2">vs mes anterior</span>
                 </div>
               </CardContent>
             </Card>
@@ -187,7 +191,7 @@ export default function Home() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted">Completadas</p>
+                    <p className="text-sm font-medium text-muted-foreground">Completadas</p>
                     <p className="text-2xl font-bold text-foreground">156</p>
                   </div>
                   <Icon variant="secondary" size="lg">
@@ -198,7 +202,7 @@ export default function Home() {
                 </div>
                 <div className="mt-4 flex items-center">
                   <Badge variant="success" size="sm">+8%</Badge>
-                  <span className="text-muted text-sm ml-2">vs mes anterior</span>
+                  <span className="text-muted-foreground text-sm ml-2">vs mes anterior</span>
                 </div>
               </CardContent>
             </Card>
@@ -207,7 +211,7 @@ export default function Home() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted">Ingresos</p>
+                    <p className="text-sm font-medium text-muted-foreground">Ingresos</p>
                     <p className="text-2xl font-bold text-foreground">$45,230</p>
                   </div>
                   <Icon variant="accent" size="lg">
@@ -218,7 +222,7 @@ export default function Home() {
                 </div>
                 <div className="mt-4 flex items-center">
                   <Badge variant="accent" size="sm">+23%</Badge>
-                  <span className="text-muted text-sm ml-2">vs mes anterior</span>
+                  <span className="text-muted-foreground text-sm ml-2">vs mes anterior</span>
                 </div>
               </CardContent>
             </Card>
@@ -227,7 +231,7 @@ export default function Home() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted">Clientes</p>
+                    <p className="text-sm font-medium text-muted-foreground">Clientes</p>
                     <p className="text-2xl font-bold text-foreground">89</p>
                   </div>
                   <Icon variant="destructive" size="lg">
@@ -238,7 +242,7 @@ export default function Home() {
                 </div>
                 <div className="mt-4 flex items-center">
                   <Badge variant="success" size="sm">+5%</Badge>
-                  <span className="text-muted text-sm ml-2">vs mes anterior</span>
+                  <span className="text-muted-foreground text-sm ml-2">vs mes anterior</span>
                 </div>
               </CardContent>
             </Card>
@@ -259,7 +263,7 @@ export default function Home() {
                   </Icon>
                   <div className="flex-1">
                     <p className="text-sm font-medium text-foreground">Orden #1234 completada</p>
-                    <p className="text-xs text-muted">Reparación de laptop - Cliente: Juan Pérez</p>
+                    <p className="text-xs text-muted-foreground">Reparación de laptop - Cliente: Juan Pérez</p>
                   </div>
                   <Badge variant="outline" size="sm">Hace 2 min</Badge>
                 </div>
@@ -271,7 +275,7 @@ export default function Home() {
                   </Icon>
                   <div className="flex-1">
                     <p className="text-sm font-medium text-foreground">Nueva orden creada #1235</p>
-                    <p className="text-xs text-muted">Servicio de mantenimiento - Cliente: María García</p>
+                    <p className="text-xs text-muted-foreground">Servicio de mantenimiento - Cliente: María García</p>
                   </div>
                   <Badge variant="outline" size="sm">Hace 15 min</Badge>
                 </div>
@@ -283,7 +287,7 @@ export default function Home() {
                   </Icon>
                   <div className="flex-1">
                     <p className="text-sm font-medium text-foreground">Orden #1233 en progreso</p>
-                    <p className="text-xs text-muted">Instalación de software - Cliente: Carlos López</p>
+                    <p className="text-xs text-muted-foreground">Instalación de software - Cliente: Carlos López</p>
                   </div>
                   <Badge variant="outline" size="sm">Hace 1 hora</Badge>
                 </div>
