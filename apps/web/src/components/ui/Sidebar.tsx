@@ -1,4 +1,8 @@
+"use client";
+
 import * as React from "react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 export interface SidebarItem {
@@ -34,6 +38,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({ items, isOpen, onToggle, header, footer, className, user, userMenuOptions }: SidebarProps) {
+  const pathname = usePathname();
   const [isUserMenuOpen, setIsUserMenuOpen] = React.useState(false);
   const userMenuRef = React.useRef<HTMLDivElement>(null);
 
@@ -52,6 +57,23 @@ export function Sidebar({ items, isOpen, onToggle, header, footer, className, us
       {/* Overlay for mobile */}
       {isOpen && <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={onToggle} />}
 
+      {/* Toggle Button - Only visible on mobile */}
+      <button
+        onClick={onToggle}
+        className={cn(
+          "fixed z-[60] bg-gradient-to-r from-[#10B981] to-[#2563EB] text-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 lg:hidden",
+          isOpen ? "left-[232px] top-6" : "left-4 top-6"
+        )}
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          {isOpen ? (
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          ) : (
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          )}
+        </svg>
+      </button>
+
       {/* Sidebar */}
       <div
         className={cn(
@@ -64,7 +86,10 @@ export function Sidebar({ items, isOpen, onToggle, header, footer, className, us
         <div className="flex flex-col h-full">
           {/* Header with Logo */}
           <div className={cn("border-b border-border", isOpen ? "p-4 sm:p-6" : "p-4 flex justify-center")}>
-            <div className={cn("flex items-center", isOpen ? "gap-3" : "justify-center")}>
+            <button
+              onClick={onToggle}
+              className={cn("flex items-center hover:opacity-80 transition-opacity", isOpen ? "gap-3" : "justify-center")}
+            >
               <div
                 className={cn(
                   "bg-gradient-to-br from-[#10B981] to-[#2563EB] rounded-lg flex items-center justify-center shadow-lg",
@@ -88,25 +113,26 @@ export function Sidebar({ items, isOpen, onToggle, header, footer, className, us
                   <p className="text-xs text-muted-foreground font-medium">Panel de Control</p>
                 </div>
               )}
-            </div>
+            </button>
           </div>
 
           {/* Navigation Items */}
           <nav className="flex-1 p-4 space-y-2">
             {items.map((item) => {
-              const ItemComponent = item.href ? "a" : "button";
+              const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href || "");
+              const ItemComponent = item.href ? Link : "button";
 
               return (
                 <ItemComponent
                   key={item.id}
-                  href={item.href}
+                  href={item.href || "#"}
                   onClick={item.onClick}
                   disabled={item.disabled}
                   className={cn(
                     "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
                     "hover:bg-muted/10 focus:outline-none",
                     "disabled:opacity-50 disabled:cursor-not-allowed",
-                    item.active
+                    isActive
                       ? "bg-gradient-to-r from-[#10B981] to-[#2563EB] text-white shadow-lg"
                       : "text-muted-foreground hover:text-foreground hover:bg-accent",
                     !isOpen && "lg:justify-center lg:px-2"
@@ -178,30 +204,6 @@ export function Sidebar({ items, isOpen, onToggle, header, footer, className, us
             </div>
           )}
         </div>
-
-        {/* Toggle Button */}
-        {isOpen && (
-          <button
-            onClick={onToggle}
-            className="absolute -right-3 top-6 bg-background border-2 border-border rounded-full p-1.5 shadow-lg hover:shadow-xl transition-all duration-200 lg:block hidden"
-          >
-            <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-        )}
-
-        {/* Collapsed Toggle Button */}
-        {!isOpen && (
-          <button
-            onClick={onToggle}
-            className="absolute -right-5 top-6 bg-background border-2 border-border rounded-full p-1.5 shadow-lg hover:shadow-xl transition-all duration-200 lg:block hidden"
-          >
-            <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        )}
       </div>
     </>
   );
