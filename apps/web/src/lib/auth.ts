@@ -4,13 +4,44 @@ export const mockBackend = {
     // Simular delay de red
     await new Promise(resolve => setTimeout(resolve, 500));
     
-    // Usuario demo
-    if (email === "admin@serviceflow.com" && password === "123456") {
+    // Usuarios demo por plan
+    if (email === "vendedor@serviceflow.com" && password === "123456") {
       return {
         id: "1",
+        name: "Vendedor Demo",
+        email: "vendedor@serviceflow.com",
+        plan: "vendedor",
+        permissions: ["read", "write"]
+      };
+    }
+    
+    if (email === "taller@serviceflow.com" && password === "123456") {
+      return {
+        id: "2",
+        name: "Taller Demo",
+        email: "taller@serviceflow.com",
+        plan: "taller",
+        permissions: ["read", "write"]
+      };
+    }
+    
+    if (email === "comercio@serviceflow.com" && password === "123456") {
+      return {
+        id: "3",
+        name: "Comercio Demo",
+        email: "comercio@serviceflow.com",
+        plan: "comercio",
+        permissions: ["read", "write", "admin"]
+      };
+    }
+    
+    // Usuario admin por defecto
+    if (email === "admin@serviceflow.com" && password === "123456") {
+      return {
+        id: "4",
         name: "Admin ServiceFlow",
         email: "admin@serviceflow.com",
-        plan: "premium",
+        plan: "comercio",
         permissions: ["read", "write", "admin"]
       };
     }
@@ -43,8 +74,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         try {
-          // Usar mock backend directamente
-          const user = await mockBackend.login(credentials.email, credentials.password);
+          const user = await mockBackend.login(credentials.email as string, credentials.password as string);
           return user;
         } catch (error) {
           console.error("Auth error:", error);

@@ -59,16 +59,29 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="admin@serviceflow.com" required />
-            <Input label="Contraseña" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="123456" required />
+            <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="usuario@serviceflow.com" required />
+            <Input label="Contraseña" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••" required />
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
             </Button>
           </form>
-          <div className="mt-6 p-4 bg-[#2563EB]/5 rounded-lg border border-[#2563EB]/20">
-            <p className="text-sm font-semibold text-[#2563EB] mb-2">👤 Usuario demo:</p>
-            <p className="text-sm text-[#64748B]">Email: admin@serviceflow.com</p>
-            <p className="text-sm text-[#64748B]">Contraseña: 123456</p>
+          <div className="mt-6 space-y-3">
+            <p className="text-sm font-semibold text-foreground">👤 Usuarios demo:</p>
+            
+            <div className="p-3 bg-green-500/5 rounded-lg border border-green-500/20">
+              <p className="text-xs font-semibold text-green-600 dark:text-green-400 mb-1">Plan Vendedor</p>
+              <p className="text-xs text-muted-foreground">vendedor@serviceflow.com / 123456</p>
+            </div>
+            
+            <div className="p-3 bg-blue-500/5 rounded-lg border border-blue-500/20">
+              <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-1">Plan Taller</p>
+              <p className="text-xs text-muted-foreground">taller@serviceflow.com / 123456</p>
+            </div>
+            
+            <div className="p-3 bg-purple-500/5 rounded-lg border border-purple-500/20">
+              <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 mb-1">Plan Comercio</p>
+              <p className="text-xs text-muted-foreground">comercio@serviceflow.com / 123456</p>
+            </div>
           </div>
         </CardContent>
       </Card>

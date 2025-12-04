@@ -1,8 +1,8 @@
 // Plan Types
 export const PLAN_TYPE = {
-  VENDOR: "vendor",
-  TECHNICIAN: "technician",
-  COMPANY: "company",
+  VENDEDOR: "vendedor",
+  TALLER: "taller",
+  COMERCIO: "comercio",
 } as const;
 
 // User Status
@@ -63,9 +63,15 @@ export const SUBSCRIBER_TYPE = {
 
 // Labels
 export const PLAN_TYPE_LABELS = {
-  [PLAN_TYPE.VENDOR]: "Vendedor",
-  [PLAN_TYPE.TECHNICIAN]: "Técnico",
-  [PLAN_TYPE.COMPANY]: "Empresa",
+  [PLAN_TYPE.VENDEDOR]: "Plan Vendedor",
+  [PLAN_TYPE.TALLER]: "Plan Taller",
+  [PLAN_TYPE.COMERCIO]: "Plan Comercio",
+} as const;
+
+export const PLAN_TYPE_DESCRIPTIONS = {
+  [PLAN_TYPE.VENDEDOR]: "Gestión completa de ventas, productos y stock de electrónica",
+  [PLAN_TYPE.TALLER]: "Gestión de reparaciones, órdenes de trabajo y repuestos",
+  [PLAN_TYPE.COMERCIO]: "Solución completa: ventas + servicio técnico",
 } as const;
 
 export const USER_STATUS_LABELS = {
