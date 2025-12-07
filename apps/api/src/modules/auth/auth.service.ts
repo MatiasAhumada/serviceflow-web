@@ -27,12 +27,14 @@ export class AuthService {
   async login(email: string, password: string) {
     const user = await this.validateUser(email, password);
 
+    await this.usersService.updateLastLogin(user.id);
+
     const payload = {
       sub: user.id,
       email: user.email,
-      planType: user.planType,
-      companyId: user.companyId,
-      roleId: user.roleId,
+      userType: user.userType.code,
+      companyId: user.company?.id,
+      roleId: user.role?.id,
     };
 
     return {
@@ -41,9 +43,9 @@ export class AuthService {
         id: user.id,
         email: user.email,
         name: user.name,
-        planType: user.planType,
-        companyId: user.companyId,
-        roleId: user.roleId,
+        userType: user.userType,
+        company: user.company,
+        role: user.role,
       },
     };
   }
@@ -52,22 +54,25 @@ export class AuthService {
     email: string;
     password: string;
     name: string;
-    planType: string;
+    userTypeCode: string;
     companyId?: string;
   }) {
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     
     const user = await this.usersService.create({
-      ...userData,
+      email: userData.email,
+      name: userData.name,
       passwordHash: hashedPassword,
+      userTypeCode: userData.userTypeCode,
+      companyId: userData.companyId,
     });
 
     const payload = {
       sub: user.id,
       email: user.email,
-      planType: user.planType,
-      companyId: user.companyId,
-      roleId: user.roleId,
+      userType: user.userType.code,
+      companyId: user.company?.id,
+      roleId: user.role?.id,
     };
 
     return {
@@ -76,9 +81,9 @@ export class AuthService {
         id: user.id,
         email: user.email,
         name: user.name,
-        planType: user.planType,
-        companyId: user.companyId,
-        roleId: user.roleId,
+        userType: user.userType,
+        company: user.company,
+        role: user.role,
       },
     };
   }

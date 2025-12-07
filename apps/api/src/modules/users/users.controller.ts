@@ -24,13 +24,11 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
-  @Post()
-  @ApiOperation({ summary: 'Create user', description: 'Create a new user' })
-  @ApiResponse({ status: 201, description: 'User created successfully' })
-  @ApiResponse({ status: 400, description: 'Invalid data' })
-  create(@Body() userData: Partial<User>): Promise<User> {
-    return this.usersService.create(userData);
-  }
+  // Endpoint deshabilitado - usar /auth/register
+  // @Post()
+  // create(@Body() userData: any): Promise<User> {
+  //   return this.usersService.create(userData);
+  // }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update user', description: 'Update user information' })

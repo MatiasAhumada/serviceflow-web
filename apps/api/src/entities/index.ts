@@ -2,6 +2,7 @@ export { BaseEntity } from './base.entity';
 export { SystemAdmin } from './system-admin.entity';
 export { Plan } from './plan.entity';
 export { Company } from './company.entity';
+export { UserType } from './user-type.entity';
 export { User } from './user.entity';
 export { Role } from './role.entity';
 export { Permission } from './permission.entity';

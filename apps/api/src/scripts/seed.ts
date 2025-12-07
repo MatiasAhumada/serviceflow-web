@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../app.module';
 import { DataSource } from 'typeorm';
 import { seedInitialData } from '../seeds/001-initial-data';
+import { seedUserTypes } from '../seeds/002-user-types';
+import { seedDemoUsers } from '../seeds/003-demo-users';
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
@@ -9,6 +11,8 @@ async function bootstrap() {
 
   try {
     console.log('🌱 Starting database seeding...');
+    await seedUserTypes(dataSource);
+    await seedDemoUsers(dataSource);
     await seedInitialData(dataSource);
     console.log('✅ Database seeding completed!');
   } catch (error) {

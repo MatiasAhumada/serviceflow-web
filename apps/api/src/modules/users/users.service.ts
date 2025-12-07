@@ -26,12 +26,37 @@ export class UsersService {
   async findByEmail(email: string): Promise<User | null> {
     return this.usersRepository.findOne({
       where: { email },
-      relations: ['company', 'role', 'subscription'],
+      relations: ['company', 'role', 'subscription', 'userType'],
     });
   }
 
-  async create(userData: Partial<User>): Promise<User> {
-    const user = this.usersRepository.create(userData);
+  async updateLastLogin(id: string): Promise<void> {
+    await this.usersRepository.update(id, { lastLogin: new Date() });
+  }
+
+  async create(userData: {
+    email: string;
+    name: string;
+    passwordHash: string;
+    userTypeCode: string;
+    companyId?: string;
+  }): Promise<User> {
+    const userType = await this.usersRepository.manager.findOne('UserType', {
+      where: { code: userData.userTypeCode },
+    });
+
+    if (!userType) {
+      throw new Error('Invalid user type');
+    }
+
+    const user = this.usersRepository.create({
+      email: userData.email,
+      name: userData.name,
+      passwordHash: userData.passwordHash,
+      userType,
+      company: userData.companyId ? { id: userData.companyId } as any : null,
+    });
+
     return this.usersRepository.save(user);
   }
 
