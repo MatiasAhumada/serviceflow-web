@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, use, useOptimistic, useTransition } from "react";
-import { useLocalStorage } from "@/components/ui";
+import { useLocalStorage } from "@/hooks";
 import { ClientHandler } from "@/lib/client-handler";
 
 interface User {

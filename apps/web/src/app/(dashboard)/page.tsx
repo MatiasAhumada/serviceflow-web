@@ -1,6 +1,7 @@
 "use client";
 
-import { Button, Card, CardHeader, CardTitle, CardContent, Badge, Icon } from "@/components/ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@/components/ui";
+import { Icon } from "@/components/common";
 import { useSession } from "next-auth/react";
 import { usePlanFeatures } from "@/hooks";
 

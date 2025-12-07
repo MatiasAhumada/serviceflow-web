@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useApp } from "@/contexts";
-import { Sidebar, UserMenu } from "@/components/ui";
+import { Sidebar, UserMenu } from "@/components/layout";
 import { useSession, signOut } from "next-auth/react";
 import { ClientHandler } from "@/lib/client-handler";
 import { usePlanFeatures } from "@/hooks";
-import type { SidebarItem, UserMenuOption } from "@/components/ui";
+import type { SidebarItem, UserMenuOption } from "@/components/layout";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { theme, toggleTheme } = useApp();

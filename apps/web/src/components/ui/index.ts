@@ -1,25 +1,21 @@
+// Primitive UI components
 export { Button } from "./Button";
-export { Table } from "./Table";
-export { Modal } from "./Modal";
-export { Pagination } from "./Pagination";
-export { Select } from "./Select";
 export { Input } from "./Input";
 export { Label } from "./Label";
 export { Textarea } from "./Textarea";
-export { Sidebar } from "./Sidebar";
-export { UserMenu } from "./UserMenu";
-export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./Card";
+export { Select } from "./Select";
 export { Badge } from "./Badge";
-export { Icon } from "./Icon";
+export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./Card";
 export { Tabs, TabsList, TabsTrigger, TabsContent } from "./Tabs";
 export { Progress } from "./Progress";
 export { Alert, AlertTitle, AlertDescription } from "./Alert";
 export { Toaster } from "./sonner";
-export { cn } from "@/lib/utils";
-export * from "./hooks";
 export * from "./dialog";
 export * from "./dropdown-menu";
 export * from "./separator";
+
+// Types
 export type { SelectOption } from "./Select";
-export type { SidebarItem } from "./Sidebar";
-export type { UserMenuOption } from "./UserMenu";
+
+// Utils
+export { cn } from "@/lib/utils";
