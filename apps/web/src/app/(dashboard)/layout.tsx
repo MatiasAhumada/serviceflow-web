@@ -6,13 +6,34 @@ import { Sidebar, UserMenu } from "@/components/layout";
 import { useSession, signOut } from "next-auth/react";
 import { ClientHandler } from "@/lib/client-handler";
 import { usePlanFeatures } from "@/hooks";
+import { useRouter } from "next/navigation";
 import type { SidebarItem, UserMenuOption } from "@/components/layout";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { theme, toggleTheme } = useApp();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const { hasFeature } = usePlanFeatures();
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  // Protección adicional: verificar sesión en cliente
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login");
+    }
+  }, [status, router]);
+
+  // Detectar cambios de sesión en otras pestañas
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "nextauth.message" && e.newValue === "signout") {
+        signOut({ redirect: true, callbackUrl: "/login" });
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
 
   useEffect(() => {
     const saved = localStorage.getItem("sidebarOpen");
@@ -157,12 +178,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </svg>
       ),
       onClick: async () => {
-        await signOut();
+        localStorage.setItem("nextauth.message", "signout");
+        await signOut({ redirect: true, callbackUrl: "/login" });
         ClientHandler.success("Sesión cerrada correctamente");
       },
       variant: "destructive",
     },
   ];
+
+  if (status === "loading") {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-background">
