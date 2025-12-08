@@ -19,16 +19,16 @@ export default function CashRegisterPage() {
   const balance = totalIncome - totalExpense;
 
   return (
-    <div className="p-6 space-y-6">
+    <>
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex-1 flex justify-center">
+      <header className="bg-background border-b border-border px-4 sm:px-6 py-4 pb-7">
+        <div className="flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-foreground">Caja</h1>
-            <p className="text-sm text-muted-foreground">Gestiona los movimientos de caja</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-[#111827] dark:text-white">Caja</h1>
+            <p className="text-xs sm:text-sm text-[#10B981] font-medium">Gestiona los movimientos de caja</p>
           </div>
         </div>
-        <div className="flex gap-2 -mr-2">
+        <div className="flex items-center justify-end gap-3 -mt-12">
           {isOpen ? (
             <Button variant="destructive" onClick={() => ClientHandler.warning("Cerrar caja")}>
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,7 +45,9 @@ export default function CashRegisterPage() {
             </Button>
           )}
         </div>
-      </div>
+      </header>
+
+      <div className="p-6 space-y-6">
 
       {/* Status */}
       <Card variant="elevated">
@@ -132,6 +134,7 @@ export default function CashRegisterPage() {
           </div>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </>
   );
 }

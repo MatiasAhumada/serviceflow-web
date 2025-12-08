@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <>
         {/* Header */}
-        <header className="bg-background border-b border-border px-4 sm:px-6 py-4">
+        <header className="bg-background border-b border-border px-4 sm:px-6 py-4 pb-7">
           <div className="flex items-center justify-center">
             <div className="text-center">
               <h1 className="text-xl sm:text-2xl font-bold text-[#111827] dark:text-white">Dashboard</h1>

@@ -1,38 +1,48 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Badge, Input } from "@/components/ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@/components/ui";
+import { GenericModal } from "@/components/common";
 import { ClientHandler } from "@/lib/client-handler";
 
-export default function RepairsPage() {
-  const [searchTerm, setSearchTerm] = useState("");
+interface Repair {
+  id: string;
+  orderNumber: string;
+  device: string;
+  repair: string;
+  parts: string;
+  labor: number;
+  partsCost: number;
+  total: number;
+  status: string;
+}
 
-  const repairs = [
+export default function RepairsPage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<"create" | "update" | "delete" | "view">("create");
+  const [selectedRepair, setSelectedRepair] = useState<Repair | null>(null);
+
+  const repairs: Repair[] = [
     { id: "1", orderNumber: "OT-001", device: "Laptop HP", repair: "Cambio de disco duro", parts: "Disco SSD 500GB", labor: 2000, partsCost: 8000, total: 10000, status: "completed" },
     { id: "2", orderNumber: "OT-002", device: "PC Desktop", repair: "Limpieza y optimización", parts: "Pasta térmica", labor: 1500, partsCost: 200, total: 1700, status: "in_progress" },
     { id: "3", orderNumber: "OT-003", device: "Impresora", repair: "Cambio de cabezal", parts: "Cabezal HP", labor: 1000, partsCost: 3500, total: 4500, status: "completed" },
   ];
 
   return (
-    <div className="p-6 space-y-6">
+    <>
       {/* Header */}
-      <div className="flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-foreground">Reparaciones</h1>
-          <p className="text-sm text-muted-foreground">Detalle de reparaciones realizadas</p>
+      <header className="bg-background border-b border-border px-4 sm:px-6 py-4 pb-7">
+        <div className="flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-xl sm:text-2xl font-bold text-[#111827] dark:text-white">Reparaciones</h1>
+            <p className="text-xs sm:text-sm text-[#10B981] font-medium">Detalle de reparaciones realizadas</p>
+          </div>
         </div>
-      </div>
+      </header>
 
-      {/* Search */}
-      <Card>
-        <CardContent className="p-4">
-          <Input
-            placeholder="Buscar por número de orden o dispositivo..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </CardContent>
-      </Card>
+      <div className="p-6 space-y-6">
+
+
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -97,9 +107,12 @@ export default function RepairsPage() {
                     <span className="text-foreground">${repair.labor.toLocaleString()}</span>
                   </div>
                 </div>
-                <div className="mt-3 pt-3 border-t border-border flex justify-end">
-                  <Button variant="outline" size="sm" onClick={() => ClientHandler.info(`Ver detalles de ${repair.orderNumber}`)}>
+                <div className="mt-3 pt-3 border-t border-border flex justify-end gap-2">
+                  <Button variant="outline" size="sm" onClick={() => { setSelectedRepair(repair); setModalMode("view"); setIsModalOpen(true); }}>
                     Ver Detalles
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={() => { setSelectedRepair(repair); setModalMode("update"); setIsModalOpen(true); }}>
+                    Editar
                   </Button>
                 </div>
               </div>
@@ -107,6 +120,25 @@ export default function RepairsPage() {
           </div>
         </CardContent>
       </Card>
-    </div>
+      {/* Modal */}
+      <GenericModal
+        isOpen={isModalOpen}
+        onClose={() => { setIsModalOpen(false); setSelectedRepair(null); }}
+        onConfirm={async () => {
+          if (modalMode === "update") {
+            ClientHandler.success("Reparación actualizada correctamente");
+          }
+          setIsModalOpen(false);
+          setSelectedRepair(null);
+        }}
+        mode={modalMode}
+        title={modalMode === "update" ? "Editar Reparación" : "Detalles de la Reparación"}
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">Detalles de la reparación aquí</p>
+        </div>
+      </GenericModal>
+      </div>
+    </>
   );
 }

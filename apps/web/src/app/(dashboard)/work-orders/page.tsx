@@ -1,60 +1,131 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Badge, Input } from "@/components/ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@/components/ui";
+import { GenericTable, GenericModal } from "@/components/common";
+import type { TableColumn, TableAction } from "@/components/common";
 import { ClientHandler } from "@/lib/client-handler";
 
-export default function WorkOrdersPage() {
-  const [searchTerm, setSearchTerm] = useState("");
+interface WorkOrder {
+  id: string;
+  orderNumber: string;
+  date: string;
+  customer: string;
+  device: string;
+  issue: string;
+  status: string;
+  technician: string;
+}
 
-  const orders = [
+const statusLabels: Record<string, string> = {
+  received: "Recibido",
+  in_progress: "En Progreso",
+  completed: "Completado",
+  delivered: "Entregado",
+};
+
+const statusVariants: Record<string, "outline" | "default" | "success"> = {
+  received: "outline",
+  in_progress: "default",
+  completed: "success",
+  delivered: "success",
+};
+
+export default function WorkOrdersPage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<"create" | "update" | "delete" | "view">("create");
+  const [selectedOrder, setSelectedOrder] = useState<WorkOrder | null>(null);
+
+  const orders: WorkOrder[] = [
     { id: "1", orderNumber: "OT-001", date: "2024-01-15", customer: "Juan Pérez", device: "Laptop HP", issue: "No enciende", status: "in_progress", technician: "Carlos Tech" },
     { id: "2", orderNumber: "OT-002", date: "2024-01-15", customer: "María García", device: "PC Desktop", issue: "Lento", status: "received", technician: "Sin asignar" },
     { id: "3", orderNumber: "OT-003", date: "2024-01-14", customer: "Carlos López", device: "Impresora", issue: "No imprime", status: "completed", technician: "Ana Tech" },
   ];
 
-  const statusLabels: Record<string, string> = {
-    received: "Recibido",
-    in_progress: "En Progreso",
-    completed: "Completado",
-    delivered: "Entregado",
-  };
+  const columns: TableColumn<WorkOrder>[] = [
+    { key: "orderNumber", header: "N° Orden", sortable: true },
+    { key: "date", header: "Fecha", sortable: true },
+    { key: "customer", header: "Cliente", sortable: true },
+    { key: "device", header: "Dispositivo", sortable: true },
+    { key: "issue", header: "Problema", sortable: true },
+    { key: "technician", header: "Técnico", sortable: true },
+    {
+      key: "status",
+      header: "Estado",
+      align: "center",
+      render: (order) => (
+        <Badge variant={statusVariants[order.status]} size="sm">
+          {statusLabels[order.status]}
+        </Badge>
+      ),
+    },
+  ];
 
-  const statusVariants: Record<string, "outline" | "default" | "success"> = {
-    received: "outline",
-    in_progress: "default",
-    completed: "success",
-    delivered: "success",
+  const actions: TableAction<WorkOrder>[] = [
+    {
+      label: "",
+      icon: (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        </svg>
+      ),
+      variant: "outline",
+      onClick: (order) => {
+        setSelectedOrder(order);
+        setModalMode("view");
+        setIsModalOpen(true);
+      },
+    },
+    {
+      label: "",
+      icon: (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        </svg>
+      ),
+      variant: "ghost",
+      onClick: (order) => {
+        setSelectedOrder(order);
+        setModalMode("update");
+        setIsModalOpen(true);
+      },
+    },
+  ];
+
+  const handleModalConfirm = async () => {
+    if (modalMode === "create") {
+      ClientHandler.success("Orden creada correctamente");
+    } else if (modalMode === "update") {
+      ClientHandler.success("Orden actualizada correctamente");
+    }
+    setIsModalOpen(false);
+    setSelectedOrder(null);
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <>
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex-1 flex justify-center">
+      <header className="bg-background border-b border-border px-4 sm:px-6 py-4 pb-7">
+        <div className="flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-foreground">Órdenes de Trabajo</h1>
-            <p className="text-sm text-muted-foreground">Gestiona las órdenes de reparación</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-[#111827] dark:text-white">Órdenes de Trabajo</h1>
+            <p className="text-xs sm:text-sm text-[#10B981] font-medium">Gestiona las órdenes de reparación</p>
           </div>
         </div>
-        <Button onClick={() => ClientHandler.info("Nueva orden de trabajo")} className="-mr-2">
-          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          Nueva Orden
-        </Button>
-      </div>
+        <div className="flex items-center justify-end gap-3 -mt-12">
+          <Button onClick={() => { setModalMode("create"); setIsModalOpen(true); }}>
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            Nueva Orden
+          </Button>
+        </div>
+      </header>
 
-      {/* Search */}
-      <Card>
-        <CardContent className="p-4">
-          <Input
-            placeholder="Buscar por número de orden, cliente o dispositivo..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </CardContent>
-      </Card>
+      <div className="p-6 space-y-6">
+
+
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -84,52 +155,29 @@ export default function WorkOrdersPage() {
         </Card>
       </div>
 
-      {/* Orders List */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Órdenes Recientes</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left p-3 text-sm font-medium text-muted-foreground">N° Orden</th>
-                  <th className="text-left p-3 text-sm font-medium text-muted-foreground">Fecha</th>
-                  <th className="text-left p-3 text-sm font-medium text-muted-foreground">Cliente</th>
-                  <th className="text-left p-3 text-sm font-medium text-muted-foreground">Dispositivo</th>
-                  <th className="text-left p-3 text-sm font-medium text-muted-foreground">Problema</th>
-                  <th className="text-left p-3 text-sm font-medium text-muted-foreground">Técnico</th>
-                  <th className="text-center p-3 text-sm font-medium text-muted-foreground">Estado</th>
-                  <th className="text-right p-3 text-sm font-medium text-muted-foreground">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map((order) => (
-                  <tr key={order.id} className="border-b border-border hover:bg-accent/50 transition-colors">
-                    <td className="p-3 font-medium text-foreground">{order.orderNumber}</td>
-                    <td className="p-3 text-muted-foreground">{order.date}</td>
-                    <td className="p-3 text-foreground">{order.customer}</td>
-                    <td className="p-3 text-muted-foreground">{order.device}</td>
-                    <td className="p-3 text-muted-foreground">{order.issue}</td>
-                    <td className="p-3 text-muted-foreground">{order.technician}</td>
-                    <td className="p-3 text-center">
-                      <Badge variant={statusVariants[order.status]} size="sm">
-                        {statusLabels[order.status]}
-                      </Badge>
-                    </td>
-                    <td className="p-3 text-right">
-                      <Button variant="outline" size="sm" onClick={() => ClientHandler.info(`Ver orden ${order.orderNumber}`)}>
-                        Ver
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+      {/* Orders Table */}
+      <GenericTable
+        data={orders}
+        columns={columns}
+        actions={actions}
+        searchable
+        searchPlaceholder="Buscar por número de orden, cliente o dispositivo..."
+        emptyMessage="No hay órdenes de trabajo registradas"
+      />
+
+      {/* Modal */}
+      <GenericModal
+        isOpen={isModalOpen}
+        onClose={() => { setIsModalOpen(false); setSelectedOrder(null); }}
+        onConfirm={handleModalConfirm}
+        mode={modalMode}
+        title={modalMode === "create" ? "Nueva Orden de Trabajo" : modalMode === "update" ? "Editar Orden" : "Detalles de la Orden"}
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">Formulario de orden aquí</p>
+        </div>
+      </GenericModal>
+      </div>
+    </>
   );
 }

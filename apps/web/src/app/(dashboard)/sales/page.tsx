@@ -1,46 +1,116 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Badge, Input } from "@/components/ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@/components/ui";
+import { GenericTable, GenericModal } from "@/components/common";
+import type { TableColumn, TableAction } from "@/components/common";
 import { ClientHandler } from "@/lib/client-handler";
 
-export default function SalesPage() {
-  const [searchTerm, setSearchTerm] = useState("");
+interface Sale {
+  id: string;
+  saleNumber: string;
+  date: string;
+  customer: string;
+  items: number;
+  total: number;
+  status: string;
+  paymentMethod: string;
+}
 
-  const sales = [
+export default function SalesPage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<"create" | "update" | "delete" | "view">("create");
+  const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
+
+  const sales: Sale[] = [
     { id: "1", saleNumber: "V-001", date: "2024-01-15", customer: "Juan Pérez", items: 3, total: 12500, status: "completed", paymentMethod: "card" },
     { id: "2", saleNumber: "V-002", date: "2024-01-15", customer: "María García", items: 5, total: 8300, status: "completed", paymentMethod: "cash" },
     { id: "3", saleNumber: "V-003", date: "2024-01-16", customer: "Carlos López", items: 2, total: 15000, status: "pending", paymentMethod: "transfer" },
   ];
 
+  const columns: TableColumn<Sale>[] = [
+    { key: "saleNumber", header: "N° Venta", sortable: true },
+    { key: "date", header: "Fecha", sortable: true },
+    { key: "customer", header: "Cliente", sortable: true },
+    { key: "items", header: "Items", align: "right", sortable: true },
+    {
+      key: "total",
+      header: "Total",
+      align: "right",
+      sortable: true,
+      render: (sale) => `$${sale.total.toLocaleString()}`,
+    },
+    {
+      key: "paymentMethod",
+      header: "Pago",
+      align: "center",
+      render: (sale) => (
+        <Badge variant="outline" size="sm">
+          {sale.paymentMethod === "card" ? "Tarjeta" : sale.paymentMethod === "cash" ? "Efectivo" : "Transferencia"}
+        </Badge>
+      ),
+    },
+    {
+      key: "status",
+      header: "Estado",
+      align: "center",
+      render: (sale) => (
+        <Badge variant={sale.status === "completed" ? "success" : "outline"} size="sm">
+          {sale.status === "completed" ? "Completada" : "Pendiente"}
+        </Badge>
+      ),
+    },
+  ];
+
+  const actions: TableAction<Sale>[] = [
+    {
+      label: "",
+      icon: (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        </svg>
+      ),
+      variant: "outline",
+      onClick: (sale) => {
+        setSelectedSale(sale);
+        setModalMode("view");
+        setIsModalOpen(true);
+      },
+    },
+  ];
+
+  const handleModalConfirm = async () => {
+    if (modalMode === "create") {
+      ClientHandler.success("Venta registrada correctamente");
+    }
+    setIsModalOpen(false);
+    setSelectedSale(null);
+  };
+
   return (
-    <div className="p-6 space-y-6">
+    <>
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex-1 flex justify-center">
+      <header className="bg-background border-b border-border px-4 sm:px-6 py-4 pb-7">
+        <div className="flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-foreground">Ventas</h1>
-            <p className="text-sm text-muted-foreground">Registra y gestiona tus ventas</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-[#111827] dark:text-white">Ventas</h1>
+            <p className="text-xs sm:text-sm text-[#10B981] font-medium">Registra y gestiona tus ventas</p>
           </div>
         </div>
-        <Button onClick={() => ClientHandler.info("Nueva venta")} className="-mr-2">
-          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          Nueva Venta
-        </Button>
-      </div>
+        <div className="flex items-center justify-end gap-3 -mt-12">
+          <Button onClick={() => { setModalMode("create"); setIsModalOpen(true); }}>
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            Nueva Venta
+          </Button>
+        </div>
+      </header>
 
-      {/* Search */}
-      <Card>
-        <CardContent className="p-4">
-          <Input
-            placeholder="Buscar por número de venta o cliente..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </CardContent>
-      </Card>
+      <div className="p-6 space-y-6">
+
+
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -70,56 +140,29 @@ export default function SalesPage() {
         </Card>
       </div>
 
-      {/* Sales List */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Ventas Recientes</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left p-3 text-sm font-medium text-muted-foreground">N° Venta</th>
-                  <th className="text-left p-3 text-sm font-medium text-muted-foreground">Fecha</th>
-                  <th className="text-left p-3 text-sm font-medium text-muted-foreground">Cliente</th>
-                  <th className="text-right p-3 text-sm font-medium text-muted-foreground">Items</th>
-                  <th className="text-right p-3 text-sm font-medium text-muted-foreground">Total</th>
-                  <th className="text-center p-3 text-sm font-medium text-muted-foreground">Pago</th>
-                  <th className="text-center p-3 text-sm font-medium text-muted-foreground">Estado</th>
-                  <th className="text-right p-3 text-sm font-medium text-muted-foreground">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sales.map((sale) => (
-                  <tr key={sale.id} className="border-b border-border hover:bg-accent/50 transition-colors">
-                    <td className="p-3 font-medium text-foreground">{sale.saleNumber}</td>
-                    <td className="p-3 text-muted-foreground">{sale.date}</td>
-                    <td className="p-3 text-foreground">{sale.customer}</td>
-                    <td className="p-3 text-right text-muted-foreground">{sale.items}</td>
-                    <td className="p-3 text-right font-medium text-foreground">${sale.total.toLocaleString()}</td>
-                    <td className="p-3 text-center">
-                      <Badge variant="outline" size="sm">
-                        {sale.paymentMethod === "card" ? "Tarjeta" : sale.paymentMethod === "cash" ? "Efectivo" : "Transferencia"}
-                      </Badge>
-                    </td>
-                    <td className="p-3 text-center">
-                      <Badge variant={sale.status === "completed" ? "success" : "outline"} size="sm">
-                        {sale.status === "completed" ? "Completada" : "Pendiente"}
-                      </Badge>
-                    </td>
-                    <td className="p-3 text-right">
-                      <Button variant="outline" size="sm" onClick={() => ClientHandler.info(`Ver venta ${sale.saleNumber}`)}>
-                        Ver
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+      {/* Sales Table */}
+      <GenericTable
+        data={sales}
+        columns={columns}
+        actions={actions}
+        searchable
+        searchPlaceholder="Buscar por número de venta o cliente..."
+        emptyMessage="No hay ventas registradas"
+      />
+
+      {/* Modal */}
+      <GenericModal
+        isOpen={isModalOpen}
+        onClose={() => { setIsModalOpen(false); setSelectedSale(null); }}
+        onConfirm={handleModalConfirm}
+        mode={modalMode}
+        title={modalMode === "create" ? "Nueva Venta" : "Detalles de la Venta"}
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">Formulario de venta aquí</p>
+        </div>
+      </GenericModal>
+      </div>
+    </>
   );
 }

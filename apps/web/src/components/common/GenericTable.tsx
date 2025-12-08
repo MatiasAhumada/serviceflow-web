@@ -141,14 +141,13 @@ export function GenericTable<T extends Record<string, any>>({
                   <th
                     key={index}
                     className={cn(
-                      "px-4 py-3 text-sm font-medium text-muted-foreground",
-                      getAlignClass(column.align),
+                      "px-4 py-3 text-sm font-medium text-muted-foreground text-center",
                       column.sortable && "cursor-pointer hover:text-foreground select-none"
                     )}
                     style={{ width: column.width }}
                     onClick={() => column.sortable && handleSort(column.key as string)}
                   >
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-center gap-2">
                       {column.header}
                       {column.sortable && sortConfig?.key === column.key && (
                         <span className="text-xs">
@@ -189,10 +188,7 @@ export function GenericTable<T extends Record<string, any>>({
                     {columns.map((column, colIndex) => (
                       <td
                         key={colIndex}
-                        className={cn(
-                          "px-4 py-3 text-sm text-foreground",
-                          getAlignClass(column.align)
-                        )}
+                        className="px-4 py-3 text-sm text-foreground text-center"
                       >
                         {getCellValue(item, column, rowIndex)}
                       </td>
