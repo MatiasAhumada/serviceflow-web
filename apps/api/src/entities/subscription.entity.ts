@@ -6,7 +6,7 @@ import { User } from './user.entity';
 import { SystemAdmin } from './system-admin.entity';
 import { SubscriptionSeat } from './subscription-seat.entity';
 import { Payment } from './payment.entity';
-import { SUBSCRIPTION_STATUS, SUBSCRIBER_TYPE } from '@serviceflow/shared';
+import { SUBSCRIPTION_STATUS, SUBSCRIBER_TYPE } from '../constants';
 
 @Entity('subscriptions')
 export class Subscription extends BaseEntity {

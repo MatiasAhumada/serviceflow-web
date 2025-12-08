@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { hasPlanFeature, getPlanFeatures, type PlanFeatures, type PlanType } from "@serviceflow/shared";
+import { hasPlanFeature, getPlanFeatures, type PlanFeatures, type PlanType } from "@/lib/plan-features";
 
 export function usePlanFeatures() {
   const { data: session } = useSession();

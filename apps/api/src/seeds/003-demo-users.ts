@@ -15,7 +15,27 @@ export async function seedDemoUsers(dataSource: DataSource) {
     return;
   }
 
+  const superAdminType = await userTypeRepo.findOne({ where: { code: 'super_admin' } });
+  const cajeroType = await userTypeRepo.findOne({ where: { code: 'cajero' } });
+
+  if (!vendedorType || !tecnicoType || !comercioType || !superAdminType || !cajeroType) {
+    console.error('❌ User types not found');
+    return;
+  }
+
   const demoUsers = [
+    {
+      email: 'superadmin@serviceflow.com',
+      name: 'Super Admin',
+      passwordHash: await bcrypt.hash('123456', 10),
+      userType: superAdminType,
+    },
+    {
+      email: 'admin@serviceflow.com',
+      name: 'Admin Demo',
+      passwordHash: await bcrypt.hash('123456', 10),
+      userType: comercioType,
+    },
     {
       email: 'vendedor@serviceflow.com',
       name: 'Vendedor Demo',
@@ -23,16 +43,16 @@ export async function seedDemoUsers(dataSource: DataSource) {
       userType: vendedorType,
     },
     {
-      email: 'taller@serviceflow.com',
-      name: 'Taller Demo',
+      email: 'cajero@serviceflow.com',
+      name: 'Cajero Demo',
       passwordHash: await bcrypt.hash('123456', 10),
-      userType: tecnicoType,
+      userType: cajeroType,
     },
     {
-      email: 'comercio@serviceflow.com',
-      name: 'Comercio Demo',
+      email: 'tecnico@serviceflow.com',
+      name: 'Técnico Demo',
       passwordHash: await bcrypt.hash('123456', 10),
-      userType: comercioType,
+      userType: tecnicoType,
     },
   ];
 

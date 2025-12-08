@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import { SystemAdmin, Plan, Permission } from '../entities';
-import { PLAN_TYPE } from '@serviceflow/shared';
+import { PLAN_TYPE } from '../constants';
 
 export async function seedInitialData(dataSource: DataSource) {
   const systemAdminRepo = dataSource.getRepository(SystemAdmin);

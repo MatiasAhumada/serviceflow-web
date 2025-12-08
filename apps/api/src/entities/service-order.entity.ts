@@ -5,7 +5,7 @@ import { User } from './user.entity';
 import { Customer } from './customer.entity';
 import { ServiceItem } from './service-item.entity';
 import { Warranty } from './warranty.entity';
-import { SERVICE_STATUS, PAYMENT_STATUS } from '@serviceflow/shared';
+import { SERVICE_STATUS, PAYMENT_STATUS } from '../constants';
 
 @Entity('service_orders')
 @Index(['companyId', 'serviceNumber'], { unique: true })

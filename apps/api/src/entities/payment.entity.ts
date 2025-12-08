@@ -1,7 +1,7 @@
 import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Subscription } from './subscription.entity';
-import { PAYMENT_STATUS, PAYMENT_METHOD } from '@serviceflow/shared';
+import { PAYMENT_STATUS, PAYMENT_METHOD } from '../constants';
 
 @Entity('payments')
 export class Payment extends BaseEntity {

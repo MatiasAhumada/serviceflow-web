@@ -4,7 +4,7 @@ import { Company } from './company.entity';
 import { Role } from './role.entity';
 import { Subscription } from './subscription.entity';
 import { UserType } from './user-type.entity';
-import { USER_STATUS } from '@serviceflow/shared';
+import { USER_STATUS } from '../constants';
 
 @Entity('users')
 export class User extends BaseEntity {
