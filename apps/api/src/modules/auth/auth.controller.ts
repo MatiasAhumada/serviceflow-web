@@ -3,12 +3,14 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dtos/login.dto';
 import { RegisterDto } from './dtos/register.dto';
+import { Public } from './decorators/public.decorator';
 
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Public()
   @Post('login')
   @ApiOperation({ 
     summary: 'User login',
@@ -20,6 +22,7 @@ export class AuthController {
     return this.authService.login(body.email, body.password);
   }
 
+  @Public()
   @Post('register')
   @ApiOperation({ 
     summary: 'Register new user',

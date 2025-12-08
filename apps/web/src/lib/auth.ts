@@ -26,8 +26,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             id: response.user.id,
             name: response.user.name,
             email: response.user.email,
-            plan: response.user.planType,
-            permissions: response.user.roleId ? ["authenticated"] : [],
+            plan: response.user.userType.code,
+            permissions: [],
+            userType: response.user.userType,
+            company: response.user.company,
+            role: response.user.role,
           };
         } catch (error) {
           console.error("Auth error:", error);
@@ -44,22 +47,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     maxAge: 24 * 60 * 60, // 24 horas
   },
   callbacks: {
-    async jwt({ token, user, trigger }) {
-      // Prevenir múltiples sesiones: invalidar token anterior
+    async jwt({ token, user }) {
       if (user) {
         token.plan = user.plan;
         token.permissions = user.permissions;
-        token.sessionId = `${user.id}-${Date.now()}`; // ID único por sesión
+        token.userType = user.userType;
+        token.company = user.company;
+        token.role = user.role;
+        token.sessionId = `${user.id}-${Date.now()}`;
       }
       return token;
     },
-    async session({ session, token }) {
-      if (token) {
-        session.user.id = token.sub!;
-        session.user.plan = token.plan as string;
-        session.user.permissions = token.permissions as string[];
+    async session(params) {
+      if ('token' in params && params.token && params.session.user) {
+        params.session.user.id = params.token.sub!;
+        params.session.user.plan = params.token.plan;
+        params.session.user.permissions = params.token.permissions;
+        params.session.user.userType = params.token.userType;
+        params.session.user.company = params.token.company;
+        params.session.user.role = params.token.role;
       }
-      return session;
+      return params.session;
     }
   },
   events: {

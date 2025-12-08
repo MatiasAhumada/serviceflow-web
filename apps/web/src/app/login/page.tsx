@@ -68,19 +68,29 @@ export default function LoginPage() {
           <div className="mt-6 space-y-3">
             <p className="text-sm font-semibold text-foreground">👤 Usuarios demo:</p>
             
-            <div className="p-3 bg-green-500/5 rounded-lg border border-green-500/20">
-              <p className="text-xs font-semibold text-green-600 dark:text-green-400 mb-1">Plan Vendedor</p>
-              <p className="text-xs text-muted-foreground">vendedor@serviceflow.com / 123456</p>
-            </div>
-            
-            <div className="p-3 bg-blue-500/5 rounded-lg border border-blue-500/20">
-              <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-1">Plan Taller</p>
-              <p className="text-xs text-muted-foreground">taller@serviceflow.com / 123456</p>
+            <div className="p-3 bg-red-500/5 rounded-lg border border-red-500/20">
+              <p className="text-xs font-semibold text-red-600 dark:text-red-400 mb-1">Super Admin</p>
+              <p className="text-xs text-muted-foreground">superadmin@serviceflow.com / 123456</p>
             </div>
             
             <div className="p-3 bg-purple-500/5 rounded-lg border border-purple-500/20">
-              <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 mb-1">Plan Comercio</p>
-              <p className="text-xs text-muted-foreground">comercio@serviceflow.com / 123456</p>
+              <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 mb-1">Admin</p>
+              <p className="text-xs text-muted-foreground">admin@serviceflow.com / 123456</p>
+            </div>
+            
+            <div className="p-3 bg-green-500/5 rounded-lg border border-green-500/20">
+              <p className="text-xs font-semibold text-green-600 dark:text-green-400 mb-1">Vendedor</p>
+              <p className="text-xs text-muted-foreground">vendedor@serviceflow.com / 123456</p>
+            </div>
+            
+            <div className="p-3 bg-orange-500/5 rounded-lg border border-orange-500/20">
+              <p className="text-xs font-semibold text-orange-600 dark:text-orange-400 mb-1">Cajero</p>
+              <p className="text-xs text-muted-foreground">cajero@serviceflow.com / 123456</p>
+            </div>
+            
+            <div className="p-3 bg-blue-500/5 rounded-lg border border-blue-500/20">
+              <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-1">Técnico</p>
+              <p className="text-xs text-muted-foreground">tecnico@serviceflow.com / 123456</p>
             </div>
           </div>
         </CardContent>

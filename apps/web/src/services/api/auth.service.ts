@@ -1,5 +1,4 @@
 import clientAxios from "@/lib/axios";
-import { API_ROUTES } from "@/constants";
 
 export interface LoginRequest {
   email: string;
@@ -12,9 +11,13 @@ export interface LoginResponse {
     id: string;
     email: string;
     name: string;
-    planType: string;
-    companyId: string | null;
-    roleId: string | null;
+    userType: {
+      id: string;
+      code: string;
+      name: string;
+    };
+    company: any;
+    role: any;
   };
 }
 
@@ -22,23 +25,22 @@ export interface RegisterRequest {
   email: string;
   password: string;
   name: string;
-  planType: "vendor" | "technician" | "company";
+  userTypeCode: string;
   companyId?: string;
 }
 
-// Service que se comunica con el backend NestJS
 export const authApiService = {
   async login(data: LoginRequest): Promise<LoginResponse> {
-    const response = await clientAxios.post<LoginResponse>(API_ROUTES.AUTH.LOGIN, data);
+    const response = await clientAxios.post<LoginResponse>('http://localhost:3010/auth/login', data);
     return response.data;
   },
 
   async register(data: RegisterRequest): Promise<LoginResponse> {
-    const response = await clientAxios.post<LoginResponse>(API_ROUTES.AUTH.REGISTER, data);
+    const response = await clientAxios.post<LoginResponse>('http://localhost:3010/auth/register', data);
     return response.data;
   },
 
   async logout(): Promise<void> {
-    await clientAxios.post(API_ROUTES.AUTH.LOGOUT);
+    await clientAxios.post('http://localhost:3010/auth/logout');
   },
 };
