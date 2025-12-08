@@ -158,7 +158,7 @@ export function GenericTable<T extends Record<string, any>>({
                   </th>
                 ))}
                 {actions && actions.length > 0 && (
-                  <th className="px-4 py-3 text-sm font-medium text-muted-foreground text-right">
+                  <th className="px-4 py-3 text-sm font-medium text-muted-foreground text-center">
                     Acciones
                   </th>
                 )}
@@ -194,8 +194,8 @@ export function GenericTable<T extends Record<string, any>>({
                       </td>
                     ))}
                     {actions && actions.length > 0 && (
-                      <td className="px-4 py-3 text-right">
-                        <div className="flex items-center justify-end gap-2">
+                      <td className="px-4 py-3 text-center">
+                        <div className="flex items-center justify-center gap-2">
                           {actions.map((action, actionIndex) => {
                             const shouldShow = action.show ? action.show(item) : true;
                             if (!shouldShow) return null;
