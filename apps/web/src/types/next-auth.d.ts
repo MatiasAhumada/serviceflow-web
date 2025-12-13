@@ -25,6 +25,7 @@ declare module "next-auth" {
       permissions: string[];
       userType: UserType;
       company: Company | null;
+      companyId: string | null;
       role: Role | null;
     } & DefaultSession["user"];
   }
@@ -34,6 +35,7 @@ declare module "next-auth" {
     permissions: string[];
     userType: UserType;
     company: Company | null;
+    companyId: string | null;
     role: Role | null;
   }
 }
@@ -44,6 +46,7 @@ declare module "next-auth/jwt" {
     permissions: string[];
     userType: UserType;
     company: Company | null;
+    companyId: string | null;
     role: Role | null;
     sessionId: string;
   }

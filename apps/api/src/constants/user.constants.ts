@@ -54,3 +54,9 @@ export enum SUBSCRIBER_TYPE {
   USER = 'user',
   COMPANY = 'company',
 }
+
+export enum MOVEMENT_TYPE {
+  INCOME = 'income',
+  EXPENSE = 'expense',
+  ADJUSTMENT = 'adjustment',
+}

@@ -3,6 +3,7 @@ import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { User } from './user.entity';
 import { Sale } from './sale.entity';
+import { CashMovement } from './cash-movement.entity';
 import { CASH_REGISTER_STATUS } from '../constants';
 
 @Entity('cash_registers')
@@ -56,4 +57,7 @@ export class CashRegister extends BaseEntity {
 
   @OneToMany(() => Sale, (sale) => sale.cashRegister)
   sales: Sale[];
+
+  @OneToMany(() => CashMovement, (movement) => movement.cashRegister)
+  movements: CashMovement[];
 }

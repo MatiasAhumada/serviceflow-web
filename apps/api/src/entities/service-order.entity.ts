@@ -22,6 +22,9 @@ export class ServiceOrder extends BaseEntity {
   @Column({ name: 'technician_id' })
   technicianId: string;
 
+  @Column({ name: 'received_by', nullable: true })
+  receivedById: string;
+
   @Column({ name: 'service_number' })
   serviceNumber: string;
 
@@ -70,6 +73,10 @@ export class ServiceOrder extends BaseEntity {
   @ManyToOne(() => User)
   @JoinColumn({ name: 'technician_id' })
   technician: User;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'received_by' })
+  receivedBy: User;
 
   @OneToMany(() => ServiceItem, (serviceItem) => serviceItem.serviceOrder, { cascade: true })
   items: ServiceItem[];

@@ -22,6 +22,9 @@ export class Sale extends BaseEntity {
   @Column({ name: 'seller_id' })
   sellerId: string;
 
+  @Column({ name: 'cashier_id', nullable: true })
+  cashierId: string;
+
   @Column({ name: 'cash_register_id', nullable: true })
   cashRegisterId: string;
 
@@ -63,6 +66,10 @@ export class Sale extends BaseEntity {
   @ManyToOne(() => User)
   @JoinColumn({ name: 'seller_id' })
   seller: User;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'cashier_id' })
+  cashier: User;
 
   @ManyToOne(() => CashRegister, (cashRegister) => cashRegister.sales, { nullable: true })
   @JoinColumn({ name: 'cash_register_id' })

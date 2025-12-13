@@ -1,0 +1,206 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { Card, Button, Input, Label, Textarea } from "@/components/ui";
+import { ClientHandler } from "@/lib/client-handler";
+import { companyService, type Company } from "@/services";
+
+export default function CompanyPage() {
+  const { data: session } = useSession();
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [company, setCompany] = useState<Company | null>(null);
+  const [companyData, setCompanyData] = useState({
+    name: "",
+    cuit: "",
+    address: "",
+    email: "",
+    phone: "",
+  });
+
+  useEffect(() => {
+    loadCompanyData();
+  }, [session]);
+
+  const loadCompanyData = async () => {
+    if (!session?.user?.companyId) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const data = await companyService.getById(session.user.companyId);
+      setCompany(data);
+      setCompanyData({
+        name: data.name || "",
+        cuit: data.cuit || "",
+        address: data.address || "",
+        email: data.email || "",
+        phone: data.phone || "",
+      });
+    } catch (error) {
+      ClientHandler.error("Error al cargar la información de la compañía");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!company?.id) return;
+
+    setIsSaving(true);
+    try {
+      const updated = await companyService.update(company.id, companyData);
+      setCompany(updated);
+      ClientHandler.success("Información de la compañía actualizada correctamente");
+      setIsEditing(false);
+    } catch (error) {
+      ClientHandler.error("Error al actualizar la información");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    if (company) {
+      setCompanyData({
+        name: company.name || "",
+        cuit: company.cuit || "",
+        address: company.address || "",
+        email: company.email || "",
+        phone: company.phone || "",
+      });
+    }
+    setIsEditing(false);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!session?.user?.companyId) {
+    return (
+      <div className="p-6">
+        <Card className="p-6">
+          <p className="text-muted-foreground">No tienes una compañía asociada.</p>
+        </Card>
+      </div>
+    );
+  };
+
+  return (
+    <div className="p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Información de la Compañía</h1>
+          <p className="text-muted-foreground mt-1">
+            Gestiona los datos de tu empresa que aparecerán en los comprobantes
+          </p>
+        </div>
+        {!isEditing && (
+          <Button onClick={() => setIsEditing(true)}>
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Editar
+          </Button>
+        )}
+      </div>
+
+      <Card className="p-6">
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="name">Nombre de la Empresa *</Label>
+              <Input
+                id="name"
+                value={companyData.name}
+                onChange={(e) => setCompanyData({ ...companyData, name: e.target.value })}
+                disabled={!isEditing}
+                placeholder="Ej: ServiceFlow S.A."
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="cuit">CUIT / RUT</Label>
+              <Input
+                id="cuit"
+                value={companyData.cuit}
+                onChange={(e) => setCompanyData({ ...companyData, cuit: e.target.value })}
+                disabled={!isEditing}
+                placeholder="Ej: 20-12345678-9"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={companyData.email}
+                onChange={(e) => setCompanyData({ ...companyData, email: e.target.value })}
+                disabled={!isEditing}
+                placeholder="contacto@empresa.com"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="phone">Teléfono</Label>
+              <Input
+                id="phone"
+                value={companyData.phone}
+                onChange={(e) => setCompanyData({ ...companyData, phone: e.target.value })}
+                disabled={!isEditing}
+                placeholder="+54 9 381 123-4567"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="address">Dirección</Label>
+            <Textarea
+              id="address"
+              value={companyData.address}
+              onChange={(e) => setCompanyData({ ...companyData, address: e.target.value })}
+              disabled={!isEditing}
+              placeholder="Calle, Número, Ciudad, Provincia"
+              rows={3}
+            />
+          </div>
+
+          {isEditing && (
+            <div className="flex gap-3 pt-4 border-t">
+              <Button onClick={handleSave} disabled={isSaving}>
+                {isSaving ? "Guardando..." : "Guardar Cambios"}
+              </Button>
+              <Button variant="outline" onClick={handleCancel} disabled={isSaving}>
+                Cancelar
+              </Button>
+            </div>
+          )}
+        </div>
+      </Card>
+
+      <Card className="p-6 bg-muted/50">
+        <div className="flex items-start gap-3">
+          <svg className="w-5 h-5 text-blue-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div>
+            <h3 className="font-semibold text-foreground">Información importante</h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Esta información se utilizará en todos los comprobantes, facturas y documentos generados por el sistema.
+              Asegúrate de mantenerla actualizada.
+            </p>
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+}

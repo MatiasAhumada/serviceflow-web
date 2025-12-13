@@ -3,6 +3,8 @@ import { authApiService } from "@/services";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { APP_ROUTES } from "@/constants/routes.constants";
+import type { JWT } from "next-auth/jwt";
+import type { Session } from "next-auth";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
@@ -30,6 +32,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             permissions: [],
             userType: response.user.userType,
             company: response.user.company,
+            companyId: response.user.company?.id || null,
             role: response.user.role,
           };
         } catch (error) {
@@ -53,27 +56,28 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.permissions = user.permissions;
         token.userType = user.userType;
         token.company = user.company;
+        token.companyId = user.companyId;
         token.role = user.role;
         token.sessionId = `${user.id}-${Date.now()}`;
       }
       return token;
     },
-    async session(params) {
-      if ('token' in params && params.token && params.session.user) {
-        params.session.user.id = params.token.sub!;
-        params.session.user.plan = params.token.plan;
-        params.session.user.permissions = params.token.permissions;
-        params.session.user.userType = params.token.userType;
-        params.session.user.company = params.token.company;
-        params.session.user.role = params.token.role;
+    async session({ session, token }: { session: Session; token: JWT }) {
+      if (token && session.user) {
+        session.user.id = token.sub!;
+        session.user.plan = token.plan;
+        session.user.permissions = token.permissions;
+        session.user.userType = token.userType;
+        session.user.company = token.company;
+        session.user.companyId = token.companyId;
+        session.user.role = token.role;
       }
-      return params.session;
+      return session;
     }
   },
   events: {
-    async signOut({ token }) {
-      // Limpiar sesión al cerrar
-      console.log("Session closed for user:", token?.sub);
+    async signOut(params) {
+      console.log("Session closed");
     }
   }
 });

@@ -34,6 +34,9 @@ export class Product extends BaseEntity {
   @Column({ name: 'reorder_level', nullable: true })
   reorderLevel: number;
 
+  @Column({ name: 'is_spare_part', default: false })
+  isSparePart: boolean;
+
   @ManyToOne(() => Company, { nullable: true })
   @JoinColumn({ name: 'company_id' })
   company: Company;
