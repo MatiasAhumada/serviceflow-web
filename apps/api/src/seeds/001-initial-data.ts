@@ -23,7 +23,7 @@ export async function seedInitialData(dataSource: DataSource) {
     {
       name: 'Plan Vendedor Básico',
       slug: 'vendor-basic',
-      price: 2900,
+      price: 30000,
       description: 'Plan básico para vendedores individuales',
       baseUserSeats: 1,
       features: {
@@ -37,7 +37,7 @@ export async function seedInitialData(dataSource: DataSource) {
     {
       name: 'Plan Técnico Básico',
       slug: 'technician-basic',
-      price: 3500,
+      price: 50000,
       description: 'Plan básico para técnicos individuales',
       baseUserSeats: 1,
       features: {
@@ -51,7 +51,7 @@ export async function seedInitialData(dataSource: DataSource) {
     {
       name: 'Plan Empresa Estándar',
       slug: 'company-standard',
-      price: 8900,
+      price: 80000,
       description: 'Plan completo para empresas pequeñas',
       baseUserSeats: 3,
       features: {
@@ -68,7 +68,7 @@ export async function seedInitialData(dataSource: DataSource) {
     {
       name: 'Plan Empresa Premium',
       slug: 'company-premium',
-      price: 15900,
+      price: 150000,
       description: 'Plan avanzado para empresas medianas',
       baseUserSeats: 5,
       features: {

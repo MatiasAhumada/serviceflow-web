@@ -11,9 +11,9 @@ async function bootstrap() {
 
   try {
     console.log('🌱 Starting database seeding...');
+    await seedInitialData(dataSource);
     await seedUserTypes(dataSource);
     await seedDemoUsers(dataSource);
-    await seedInitialData(dataSource);
     console.log('✅ Database seeding completed!');
   } catch (error) {
     console.error('❌ Error seeding database:', error);
