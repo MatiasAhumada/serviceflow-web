@@ -4,6 +4,7 @@ import { User } from './user.entity';
 import { Role } from './role.entity';
 import { Subscription } from './subscription.entity';
 import { SystemAdmin } from './system-admin.entity';
+import { Address } from './address.entity';
 
 @Entity('companies')
 export class Company extends BaseEntity {
@@ -13,8 +14,12 @@ export class Company extends BaseEntity {
   @Column({ nullable: true })
   cuit: string;
 
-  @Column({ nullable: true })
-  address: string;
+  @Column({ name: 'address_id', nullable: true })
+  addressId: string;
+
+  @OneToOne(() => Address, { nullable: true, cascade: true })
+  @JoinColumn({ name: 'address_id' })
+  address: Address;
 
   @Column({ nullable: true })
   email: string;

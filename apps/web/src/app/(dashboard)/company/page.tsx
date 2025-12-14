@@ -2,23 +2,40 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { Card, Button, Input, Label, Textarea } from "@/components/ui";
+import { useForm, Controller } from "react-hook-form";
+import { Card, Button, Input, Label } from "@/components/ui";
+import { AddressSelector } from "@/components/common";
 import { ClientHandler } from "@/lib/client-handler";
-import { companyService, type Company } from "@/services";
+import { companyService, type Company, type Address } from "@/services";
+
+interface CompanyFormData {
+  name: string;
+  cuit: string;
+  address: Address | null;
+  email: string;
+  phone: string;
+}
 
 export default function CompanyPage() {
   const { data: session } = useSession();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAddressValid, setIsAddressValid] = useState(true);
+  const [shouldValidateAddress, setShouldValidateAddress] = useState(0);
   const [company, setCompany] = useState<Company | null>(null);
-  const [companyData, setCompanyData] = useState({
-    name: "",
-    cuit: "",
-    address: "",
-    email: "",
-    phone: "",
+
+  const { control, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<CompanyFormData>({
+    defaultValues: {
+      name: "",
+      cuit: "",
+      address: null,
+      email: "",
+      phone: "",
+    },
   });
+
+  const companyData = watch();
 
   useEffect(() => {
     loadCompanyData();
@@ -33,10 +50,10 @@ export default function CompanyPage() {
     try {
       const data = await companyService.getById(session.user.companyId);
       setCompany(data);
-      setCompanyData({
+      reset({
         name: data.name || "",
         cuit: data.cuit || "",
-        address: data.address || "",
+        address: data.address || null,
         email: data.email || "",
         phone: data.phone || "",
       });
@@ -47,12 +64,21 @@ export default function CompanyPage() {
     }
   };
 
-  const handleSave = async () => {
+  const onSubmit = async (data: CompanyFormData) => {
     if (!company?.id) return;
+
+    if (!isAddressValid) {
+      ClientHandler.error("Por favor complete correctamente la dirección");
+      setShouldValidateAddress(prev => prev + 1);
+      return;
+    }
 
     setIsSaving(true);
     try {
-      const updated = await companyService.update(company.id, companyData);
+      const updated = await companyService.update(company.id, {
+        ...data,
+        address: data.address || undefined,
+      });
       setCompany(updated);
       ClientHandler.success("Información de la compañía actualizada correctamente");
       setIsEditing(false);
@@ -65,10 +91,10 @@ export default function CompanyPage() {
 
   const handleCancel = () => {
     if (company) {
-      setCompanyData({
+      reset({
         name: company.name || "",
         cuit: company.cuit || "",
-        address: company.address || "",
+        address: company.address || null,
         email: company.email || "",
         phone: company.phone || "",
       });
@@ -118,65 +144,101 @@ export default function CompanyPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="name">Nombre de la Empresa *</Label>
-              <Input
-                id="name"
-                value={companyData.name}
-                onChange={(e) => setCompanyData({ ...companyData, name: e.target.value })}
-                disabled={!isEditing}
-                placeholder="Ej: ServiceFlow S.A."
+              <Controller
+                name="name"
+                control={control}
+                rules={{ required: "El nombre es requerido" }}
+                render={({ field }) => (
+                  <>
+                    <Input
+                      {...field}
+                      id="name"
+                      disabled={!isEditing}
+                      placeholder="Ej: ServiceFlow S.A."
+                      className={errors.name ? "border-destructive" : ""}
+                    />
+                    {errors.name && <p className="text-sm text-destructive mt-1">{errors.name.message}</p>}
+                  </>
+                )}
               />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="cuit">CUIT / RUT</Label>
-              <Input
-                id="cuit"
-                value={companyData.cuit}
-                onChange={(e) => setCompanyData({ ...companyData, cuit: e.target.value })}
-                disabled={!isEditing}
-                placeholder="Ej: 20-12345678-9"
+              <Controller
+                name="cuit"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    id="cuit"
+                    disabled={!isEditing}
+                    placeholder="Ej: 20-12345678-9"
+                  />
+                )}
               />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={companyData.email}
-                onChange={(e) => setCompanyData({ ...companyData, email: e.target.value })}
-                disabled={!isEditing}
-                placeholder="contacto@empresa.com"
+              <Controller
+                name="email"
+                control={control}
+                rules={{
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Email inválido"
+                  }
+                }}
+                render={({ field }) => (
+                  <>
+                    <Input
+                      {...field}
+                      id="email"
+                      type="email"
+                      disabled={!isEditing}
+                      placeholder="contacto@empresa.com"
+                      className={errors.email ? "border-destructive" : ""}
+                    />
+                    {errors.email && <p className="text-sm text-destructive mt-1">{errors.email.message}</p>}
+                  </>
+                )}
               />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="phone">Teléfono</Label>
-              <Input
-                id="phone"
-                value={companyData.phone}
-                onChange={(e) => setCompanyData({ ...companyData, phone: e.target.value })}
-                disabled={!isEditing}
-                placeholder="+54 9 381 123-4567"
+              <Controller
+                name="phone"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    id="phone"
+                    disabled={!isEditing}
+                    placeholder="+54 9 381 123-4567"
+                  />
+                )}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="address">Dirección</Label>
-            <Textarea
-              id="address"
+            <Label>Dirección</Label>
+            <AddressSelector
               value={companyData.address}
-              onChange={(e) => setCompanyData({ ...companyData, address: e.target.value })}
+              onChange={(address, isValid) => {
+                setValue("address", address);
+                setIsAddressValid(isValid);
+              }}
               disabled={!isEditing}
-              placeholder="Calle, Número, Ciudad, Provincia"
-              rows={3}
+              triggerValidation={shouldValidateAddress}
             />
           </div>
 
           {isEditing && (
             <div className="flex gap-3 pt-4 border-t">
-              <Button onClick={handleSave} disabled={isSaving}>
+              <Button onClick={handleSubmit(onSubmit)} disabled={isSaving}>
                 {isSaving ? "Guardando..." : "Guardar Cambios"}
               </Button>
               <Button variant="outline" onClick={handleCancel} disabled={isSaving}>

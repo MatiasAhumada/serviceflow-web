@@ -1,10 +1,11 @@
-import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { User } from './user.entity';
 import { Sale } from './sale.entity';
 import { ServiceOrder } from './service-order.entity';
 import { Device } from './device.entity';
+import { Address } from './address.entity';
 
 @Entity('customers')
 export class Customer extends BaseEntity {
@@ -23,8 +24,12 @@ export class Customer extends BaseEntity {
   @Column({ nullable: true })
   email: string;
 
-  @Column({ nullable: true })
-  address: string;
+  @Column({ name: 'address_id', nullable: true })
+  addressId: string;
+
+  @OneToOne(() => Address, { nullable: true, cascade: true })
+  @JoinColumn({ name: 'address_id' })
+  address: Address;
 
   @Column({ nullable: true })
   notes: string;

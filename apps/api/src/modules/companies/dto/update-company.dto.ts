@@ -1,5 +1,47 @@
-import { IsString, IsOptional, IsEmail } from 'class-validator';
+import { IsString, IsOptional, IsEmail, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+
+export class AddressDto {
+  @ApiPropertyOptional()
+  @IsString()
+  street: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  city?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  state?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  stateCode?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  country?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  countryCode?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  postalCode?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  notes?: string;
+}
 
 export class UpdateCompanyDto {
   @ApiPropertyOptional()
@@ -13,9 +55,10 @@ export class UpdateCompanyDto {
   cuit?: string;
 
   @ApiPropertyOptional()
-  @IsString()
+  @ValidateNested()
+  @Type(() => AddressDto)
   @IsOptional()
-  address?: string;
+  address?: AddressDto;
 
   @ApiPropertyOptional()
   @IsEmail()

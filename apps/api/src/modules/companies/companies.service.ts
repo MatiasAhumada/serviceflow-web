@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Company } from '../../entities';
+import { Company, Address } from '../../entities';
+import { UpdateCompanyDto } from './dto/update-company.dto';
 
 @Injectable()
 export class CompaniesService {
   constructor(
     @InjectRepository(Company)
     private companiesRepository: Repository<Company>,
+    @InjectRepository(Address)
+    private addressRepository: Repository<Address>,
   ) {}
 
   async findAll(): Promise<Company[]> {
@@ -19,7 +22,7 @@ export class CompaniesService {
   async findOne(id: string): Promise<Company | null> {
     return this.companiesRepository.findOne({
       where: { id },
-      relations: ['owner', 'subscription', 'users', 'roles'],
+      relations: ['owner', 'subscription', 'users', 'roles', 'address'],
     });
   }
 
@@ -28,11 +31,23 @@ export class CompaniesService {
     return this.companiesRepository.save(company);
   }
 
-  async update(id: string, companyData: Partial<Company>): Promise<Company | null> {
+  async update(id: string, companyData: UpdateCompanyDto): Promise<Company | null> {
     const company = await this.findOne(id);
     if (!company) {
       return null;
     }
+
+    if (companyData.address) {
+      if (company.address) {
+        Object.assign(company.address, companyData.address);
+        await this.addressRepository.save(company.address);
+      } else {
+        const newAddress = this.addressRepository.create(companyData.address);
+        company.address = await this.addressRepository.save(newAddress);
+      }
+      delete (companyData as any).address;
+    }
+
     Object.assign(company, companyData);
     return this.companiesRepository.save(company);
   }

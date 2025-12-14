@@ -14,7 +14,7 @@ const db_config = {
   password: process.env.DB_PASSWORD,
   autoLoadEntities: true,
   synchronize: false,
-  dropSchema: true,
+  dropSchema: false,
   logging: false,
   entities: Object.values(entities),
   migrationsRun: true,

@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { User, UserType, Company, Subscription, Plan, SystemAdmin } from '../entities';
+import { User, UserType, Company, Subscription, Plan, SystemAdmin, Address } from '../entities';
 import * as bcrypt from 'bcrypt';
 import { SUBSCRIPTION_STATUS, SUBSCRIBER_TYPE } from '../constants';
 
@@ -10,6 +10,7 @@ export async function seedDemoUsers(dataSource: DataSource) {
   const subscriptionRepo = dataSource.getRepository(Subscription);
   const planRepo = dataSource.getRepository(Plan);
   const systemAdminRepo = dataSource.getRepository(SystemAdmin);
+  const addressRepo = dataSource.getRepository(Address);
 
   const systemAdmin = await systemAdminRepo.findOne({ where: { email: 'admin@serviceflow.com' } });
   if (!systemAdmin) {
@@ -49,13 +50,27 @@ export async function seedDemoUsers(dataSource: DataSource) {
     console.log(`✅ Admin user created: ${adminUser.name}`);
   }
 
-  // 2. Crear Compañía
+  // 2. Crear Dirección de Compañía
+  let companyAddress = await addressRepo.findOne({ where: { street: 'Av. Principal 123' } });
+  if (!companyAddress) {
+    companyAddress = addressRepo.create({
+      street: 'Av. Principal 123',
+      city: 'San Miguel de Tucumán',
+      state: 'Tucumán',
+      stateCode: 'T',
+      country: 'Argentina',
+      countryCode: 'AR',
+    });
+    companyAddress = await addressRepo.save(companyAddress);
+  }
+
+  // 3. Crear Compañía
   let company = await companyRepo.findOne({ where: { name: 'Empresa Demo' } });
   if (!company) {
     company = companyRepo.create({
       name: 'Empresa Demo',
       cuit: '20-12345678-9',
-      address: 'Av. Principal 123, Ciudad',
+      address: companyAddress,
       email: 'contacto@empresa.com',
       phone: '+54 9 381 123-4567',
       owner: adminUser,
@@ -64,7 +79,7 @@ export async function seedDemoUsers(dataSource: DataSource) {
     console.log(`✅ Company created: ${company.name}`);
   }
 
-  // 3. Crear Suscripción de Compañía
+  // 4. Crear Suscripción de Compañía
   const companySubExists = await subscriptionRepo.findOne({ where: { companyId: company.id } });
   if (!companySubExists) {
     const companySub = subscriptionRepo.create({
@@ -81,11 +96,11 @@ export async function seedDemoUsers(dataSource: DataSource) {
     console.log(`✅ Company subscription created`);
   }
 
-  // 4. Actualizar Admin con Compañía
+  // 5. Actualizar Admin con Compañía
   adminUser.company = company;
   await userRepo.save(adminUser);
 
-  // 5. Crear Vendedores de Compañía
+  // 6. Crear Vendedores de Compañía
   const vendedores = [
     { email: 'vendedor1@empresa.com', name: 'Vendedor Uno' },
     { email: 'vendedor2@empresa.com', name: 'Vendedor Dos' },
@@ -106,7 +121,7 @@ export async function seedDemoUsers(dataSource: DataSource) {
     }
   }
 
-  // 6. Crear Técnicos de Compañía
+  // 7. Crear Técnicos de Compañía
   const tecnicos = [
     { email: 'tecnico1@empresa.com', name: 'Técnico Uno' },
     { email: 'tecnico2@empresa.com', name: 'Técnico Dos' },
@@ -128,7 +143,7 @@ export async function seedDemoUsers(dataSource: DataSource) {
     }
   }
 
-  // 7. Crear Cajero de Compañía
+  // 8. Crear Cajero de Compañía
   const cajeroExists = await userRepo.findOne({ where: { email: 'cajero@empresa.com' } });
   if (!cajeroExists) {
     const cajero = userRepo.create({
@@ -142,7 +157,7 @@ export async function seedDemoUsers(dataSource: DataSource) {
     console.log(`✅ Cajero created: ${cajero.name}`);
   }
 
-  // 8. Crear Vendedor Individual
+  // 9. Crear Vendedor Individual
   let vendedorIndividual = await userRepo.findOne({ where: { email: 'vendedor.individual@gmail.com' } });
   if (!vendedorIndividual) {
     vendedorIndividual = userRepo.create({
@@ -168,7 +183,7 @@ export async function seedDemoUsers(dataSource: DataSource) {
     console.log(`✅ Vendedor Individual subscription created`);
   }
 
-  // 9. Crear Técnico Individual
+  // 10. Crear Técnico Individual
   let tecnicoIndividual = await userRepo.findOne({ where: { email: 'tecnico.individual@gmail.com' } });
   if (!tecnicoIndividual) {
     tecnicoIndividual = userRepo.create({
