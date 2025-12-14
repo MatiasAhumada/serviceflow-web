@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { CompaniesService } from './companies.service';
 import { Company } from '../../entities';
+import { UpdateCompanyDto } from './dto/update-company.dto';
 
 @ApiTags('Companies')
 @Controller('companies')
@@ -28,7 +29,7 @@ export class CompaniesController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update company' })
-  update(@Param('id') id: string, @Body() companyData: Partial<Company>): Promise<Company | null> {
+  update(@Param('id') id: string, @Body() companyData: UpdateCompanyDto): Promise<Company | null> {
     return this.companiesService.update(id, companyData);
   }
 

@@ -29,8 +29,12 @@ export class CompaniesService {
   }
 
   async update(id: string, companyData: Partial<Company>): Promise<Company | null> {
-    await this.companiesRepository.update(id, companyData);
-    return this.findOne(id);
+    const company = await this.findOne(id);
+    if (!company) {
+      return null;
+    }
+    Object.assign(company, companyData);
+    return this.companiesRepository.save(company);
   }
 
   async remove(id: string): Promise<void> {

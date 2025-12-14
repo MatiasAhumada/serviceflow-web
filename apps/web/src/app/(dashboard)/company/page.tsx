@@ -22,7 +22,7 @@ export default function CompanyPage() {
 
   useEffect(() => {
     loadCompanyData();
-  }, [session]);
+  }, [session?.user?.companyId]);
 
   const loadCompanyData = async () => {
     if (!session?.user?.companyId) {
