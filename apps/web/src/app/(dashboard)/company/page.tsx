@@ -121,23 +121,27 @@ export default function CompanyPage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Información de la Compañía</h1>
-          <p className="text-muted-foreground mt-1">
-            Gestiona los datos de tu empresa que aparecerán en los comprobantes
-          </p>
+    <>
+      <header className="bg-background border-b border-border px-4 sm:px-6 py-4 pb-7">
+        <div className="flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-xl sm:text-2xl font-bold text-[#111827] dark:text-white">Mi Empresa</h1>
+            <p className="text-xs sm:text-sm text-[#10B981] font-medium">Datos para comprobantes y facturas</p>
+          </div>
         </div>
         {!isEditing && (
-          <Button onClick={() => setIsEditing(true)}>
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-            Editar
-          </Button>
+          <div className="flex items-center justify-end gap-3 -mt-12">
+            <Button onClick={() => setIsEditing(true)}>
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              Editar
+            </Button>
+          </div>
         )}
-      </div>
+      </header>
+
+      <div className="p-6 space-y-6">
 
       <Card className="p-6">
         <div className="space-y-6">
@@ -263,6 +267,7 @@ export default function CompanyPage() {
           </div>
         </div>
       </Card>
-    </div>
+      </div>
+    </>
   );
 }

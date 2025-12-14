@@ -42,7 +42,7 @@ export function AddressSelector({ value, onChange, disabled = false, triggerVali
   useEffect(() => {
     const isValid = !errors.street && !!formData.street?.trim();
     onChange(formData, isValid);
-  }, [formData, onChange, errors.street]);
+  }, [formData.street, formData.city, formData.state, formData.stateCode, formData.country, formData.countryCode, formData.postalCode, formData.notes, errors.street]);
 
   useEffect(() => {
     if (triggerValidation) {
