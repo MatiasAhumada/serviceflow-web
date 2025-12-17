@@ -1,32 +1,24 @@
 "use client";
 
-import { useState } from "react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@/components/ui";
+import { useState, useRef } from "react";
+import { Button, Card, CardContent, Badge } from "@/components/ui";
 import { GenericTable, GenericModal } from "@/components/common";
+import { ProductForm } from "@/components/features";
 import type { TableColumn, TableAction } from "@/components/common";
-import { ClientHandler } from "@/lib/client-handler";
-
-interface Product {
-  id: string;
-  name: string;
-  sku: string;
-  category: string;
-  price: number;
-  cost: number;
-  stock: number;
-  reorderLevel: number;
-}
+import { useProducts, useDebounce } from "@/hooks";
+import type { Product } from "@/types";
 
 export default function ProductsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<"create" | "update" | "delete" | "view">("create");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearch = useDebounce(searchTerm, 500);
+  const formRef = useRef<HTMLFormElement>(null);
 
-  const products: Product[] = [
-    { id: "1", name: "Laptop HP", sku: "LAP-001", category: "Computadoras", price: 15000, cost: 12000, stock: 5, reorderLevel: 2 },
-    { id: "2", name: "Mouse Logitech", sku: "MOU-001", category: "Accesorios", price: 500, cost: 300, stock: 25, reorderLevel: 10 },
-    { id: "3", name: "Teclado Mecánico", sku: "TEC-001", category: "Accesorios", price: 1200, cost: 800, stock: 3, reorderLevel: 5 },
-  ];
+  const { products, stats, isLoading, createProduct, updateProduct, deleteProduct } = useProducts({
+    search: debouncedSearch,
+  });
 
   const columns: TableColumn<Product>[] = [
     { key: "name", header: "Producto", sortable: true },
@@ -35,7 +27,13 @@ export default function ProductsPage() {
       key: "category",
       header: "Categoría",
       sortable: true,
-      render: (product) => <Badge variant="outline" size="sm">{product.category}</Badge>,
+      render: (product) => product.category ? <Badge variant="outline" size="sm">{product.category}</Badge> : "-",
+    },
+    {
+      key: "supplier",
+      header: "Proveedor",
+      sortable: true,
+      render: (product) => product.suppliers?.[0]?.name || "-",
     },
     {
       key: "price",
@@ -45,13 +43,13 @@ export default function ProductsPage() {
       render: (product) => `$${product.price.toLocaleString()}`,
     },
     {
-      key: "stock",
+      key: "stockQuantity",
       header: "Stock",
       align: "right",
       sortable: true,
       render: (product) => (
-        <Badge variant={product.stock <= product.reorderLevel ? "destructive" : "success"} size="sm">
-          {product.stock}
+        <Badge variant={product.stockQuantity <= (product.reorderLevel || 0) ? "destructive" : "success"} size="sm">
+          {product.stockQuantity}
         </Badge>
       ),
     },
@@ -104,15 +102,45 @@ export default function ProductsPage() {
   ];
 
   const handleModalConfirm = async () => {
-    if (modalMode === "create") {
-      ClientHandler.success("Producto creado correctamente");
-    } else if (modalMode === "update") {
-      ClientHandler.success("Producto actualizado correctamente");
-    } else if (modalMode === "delete") {
-      ClientHandler.success("Producto eliminado correctamente");
+    if (modalMode === "delete" && selectedProduct) {
+      const success = await deleteProduct(selectedProduct.id);
+      if (success) {
+        setIsModalOpen(false);
+        setSelectedProduct(null);
+      }
+      return;
     }
-    setIsModalOpen(false);
-    setSelectedProduct(null);
+
+    formRef.current?.requestSubmit();
+  };
+
+  const handleFormSubmitInternal = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    
+    const productData = {
+      name: formData.get("name") as string,
+      sku: formData.get("sku") as string,
+      category: formData.get("category") as string,
+      price: parseFloat(formData.get("price") as string),
+      cost: formData.get("cost") ? parseFloat(formData.get("cost") as string) : undefined,
+      stockQuantity: parseInt(formData.get("stockQuantity") as string) || 0,
+      reorderLevel: formData.get("reorderLevel") ? parseInt(formData.get("reorderLevel") as string) : undefined,
+      supplierId: formData.get("supplierId") as string || undefined,
+    };
+
+    let success = false;
+
+    if (modalMode === "create") {
+      success = await createProduct(productData);
+    } else if (modalMode === "update" && selectedProduct) {
+      success = await updateProduct(selectedProduct.id, productData);
+    }
+
+    if (success) {
+      setIsModalOpen(false);
+      setSelectedProduct(null);
+    }
   };
 
   return (
@@ -136,63 +164,105 @@ export default function ProductsPage() {
       </header>
 
       <div className="p-6 space-y-6">
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card variant="stats">
+            <CardContent className="p-4">
+              <p className="text-sm text-muted-foreground">Total Productos</p>
+              <p className="text-2xl font-bold text-foreground">{stats.total}</p>
+            </CardContent>
+          </Card>
+          <Card variant="stats">
+            <CardContent className="p-4">
+              <p className="text-sm text-muted-foreground">Stock Total</p>
+              <p className="text-2xl font-bold text-foreground">{stats.totalStock}</p>
+            </CardContent>
+          </Card>
+          <Card variant="stats">
+            <CardContent className="p-4">
+              <p className="text-sm text-muted-foreground">Stock Bajo</p>
+              <p className="text-2xl font-bold text-destructive">{stats.lowStock}</p>
+            </CardContent>
+          </Card>
+          <Card variant="stats">
+            <CardContent className="p-4">
+              <p className="text-sm text-muted-foreground">Valor Inventario</p>
+              <p className="text-2xl font-bold text-foreground">${stats.inventoryValue.toLocaleString()}</p>
+            </CardContent>
+          </Card>
+        </div>
 
+        {/* Products Table */}
+        <GenericTable
+          data={products}
+          columns={columns}
+          actions={actions}
+          searchable
+          searchPlaceholder="Buscar por nombre, SKU o categoría..."
+          emptyMessage="No hay productos registrados"
+          onSearch={setSearchTerm}
+          isLoading={isLoading}
+        />
 
-
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card variant="stats">
-          <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Total Productos</p>
-            <p className="text-2xl font-bold text-foreground">{products.length}</p>
-          </CardContent>
-        </Card>
-        <Card variant="stats">
-          <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Stock Total</p>
-            <p className="text-2xl font-bold text-foreground">{products.reduce((acc, p) => acc + p.stock, 0)}</p>
-          </CardContent>
-        </Card>
-        <Card variant="stats">
-          <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Stock Bajo</p>
-            <p className="text-2xl font-bold text-destructive">{products.filter(p => p.stock <= p.reorderLevel).length}</p>
-          </CardContent>
-        </Card>
-        <Card variant="stats">
-          <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Valor Inventario</p>
-            <p className="text-2xl font-bold text-foreground">${products.reduce((acc, p) => acc + (p.cost * p.stock), 0).toLocaleString()}</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Products Table */}
-      <GenericTable
-        data={products}
-        columns={columns}
-        actions={actions}
-        searchable
-        searchPlaceholder="Buscar por nombre, SKU o categoría..."
-        emptyMessage="No hay productos registrados"
-      />
-
-      {/* Modal */}
-      <GenericModal
-        isOpen={isModalOpen}
-        onClose={() => { setIsModalOpen(false); setSelectedProduct(null); }}
-        onConfirm={handleModalConfirm}
-        mode={modalMode}
-        title={modalMode === "create" ? "Nuevo Producto" : modalMode === "update" ? "Editar Producto" : modalMode === "delete" ? "Eliminar Producto" : "Detalles del Producto"}
-      >
-        {modalMode === "delete" ? (
-          <p>¿Está seguro que desea eliminar <strong>{selectedProduct?.name}</strong>?</p>
-        ) : (
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">Formulario de producto aquí</p>
-          </div>
-        )}
-      </GenericModal>
+        {/* Modal */}
+        <GenericModal
+          isOpen={isModalOpen}
+          onClose={() => { setIsModalOpen(false); setSelectedProduct(null); }}
+          onConfirm={handleModalConfirm}
+          mode={modalMode}
+          title={modalMode === "create" ? "Nuevo Producto" : modalMode === "update" ? "Editar Producto" : modalMode === "delete" ? "Eliminar Producto" : "Detalles del Producto"}
+        >
+          {modalMode === "delete" ? (
+            <p>¿Está seguro que desea eliminar <strong>{selectedProduct?.name}</strong>?</p>
+          ) : modalMode === "view" && selectedProduct ? (
+            <div className="space-y-3">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Nombre</p>
+                <p className="text-base">{selectedProduct.name}</p>
+              </div>
+              {selectedProduct.sku && (
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">SKU</p>
+                  <p className="text-base">{selectedProduct.sku}</p>
+                </div>
+              )}
+              {selectedProduct.category && (
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Categoría</p>
+                  <p className="text-base">{selectedProduct.category}</p>
+                </div>
+              )}
+              <div className="grid grid-cols-2 gap-4">
+                {selectedProduct.cost && (
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Precio Compra</p>
+                    <p className="text-base">${selectedProduct.cost.toLocaleString()}</p>
+                  </div>
+                )}
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Precio Venta</p>
+                  <p className="text-base">${selectedProduct.price.toLocaleString()}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Stock</p>
+                  <p className="text-base">{selectedProduct.stockQuantity}</p>
+                </div>
+                {selectedProduct.reorderLevel && (
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Nivel Reorden</p>
+                    <p className="text-base">{selectedProduct.reorderLevel}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <form ref={formRef} onSubmit={handleFormSubmitInternal}>
+              <ProductForm product={selectedProduct} />
+            </form>
+          )}
+        </GenericModal>
       </div>
     </>
   );

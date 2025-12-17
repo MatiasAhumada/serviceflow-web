@@ -5,6 +5,8 @@ export const API_ROUTES = {
     REGISTER: "/auth/register",
   },
   CUSTOMERS: "/customers",
+  PRODUCTS: "/products",
+  SUPPLIERS: "/suppliers",
 } as const;
 
 export const APP_ROUTES = {
