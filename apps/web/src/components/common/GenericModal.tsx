@@ -72,10 +72,12 @@ export function GenericModal({
   className,
 }: GenericModalProps) {
   const handleConfirm = async () => {
+    if (mode === "view") {
+      onClose();
+      return;
+    }
     if (onConfirm) {
       await onConfirm();
-    } else if (mode === "view") {
-      onClose();
     }
   };
 
@@ -94,6 +96,14 @@ export function GenericModal({
         {children && <div className="py-4">{children}</div>}
 
         <DialogFooter>
+          <Button
+            type="button"
+            variant={mode === "view" ? "outline" : mode === "delete" ? "destructive" : "default"}
+            onClick={handleConfirm}
+            disabled={isLoading}
+          >
+            {isLoading ? "Procesando..." : confirmText || confirmTexts[mode]}
+          </Button>
           {mode !== "view" && (
             <Button
               type="button"
@@ -104,14 +114,6 @@ export function GenericModal({
               {cancelText}
             </Button>
           )}
-          <Button
-            type="button"
-            variant={mode === "delete" ? "destructive" : "default"}
-            onClick={handleConfirm}
-            disabled={isLoading}
-          >
-            {isLoading ? "Procesando..." : confirmText || confirmTexts[mode]}
-          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

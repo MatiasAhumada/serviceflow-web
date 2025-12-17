@@ -4,6 +4,7 @@ export const API_ROUTES = {
     LOGOUT: "/auth/logout",
     REGISTER: "/auth/register",
   },
+  CUSTOMERS: "/customers",
 } as const;
 
 export const APP_ROUTES = {

@@ -65,9 +65,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (!response.ok) throw new Error("Credenciales inválidas");
 
-        const userData = await response.json();
-        setStoredUser(userData);
-        setOptimisticState({ type: "LOGIN_SUCCESS", payload: userData });
+        const authData = await response.json();
+        localStorage.setItem("auth-token", JSON.stringify(authData));
+        setStoredUser(authData.user);
+        setOptimisticState({ type: "LOGIN_SUCCESS", payload: authData.user });
         ClientHandler.success("Sesión iniciada correctamente");
       } catch (error) {
         const errorMsg = error instanceof Error ? error.message : "Error de login";
@@ -81,11 +82,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     startTransition(async () => {
       try {
         await fetch("/api/auth/logout", { method: "POST" });
+        localStorage.removeItem("auth-token");
         setStoredUser(null);
         setOptimisticState({ type: "LOGOUT" });
         ClientHandler.success("Sesión cerrada correctamente");
       } catch (error) {
         console.warn("Error during logout:", error);
+        localStorage.removeItem("auth-token");
         setStoredUser(null);
         setOptimisticState({ type: "LOGOUT" });
         ClientHandler.warning("Sesión cerrada localmente");

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getSession } from "next-auth/react";
 
 const clientAxios = axios.create({
   baseURL: "http://localhost:3010",
@@ -8,14 +9,12 @@ const clientAxios = axios.create({
   },
 });
 
-// Request interceptor para agregar token si existe
 clientAxios.interceptors.request.use(
-  (config) => {
-    // Aquí puedes agregar el token de autenticación si lo necesitas
-    // const token = getToken();
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+  async (config) => {
+    const session = await getSession();
+    if (session?.user?.accessToken) {
+      config.headers.Authorization = `Bearer ${session.user.accessToken}`;
+    }
     return config;
   },
   (error) => {

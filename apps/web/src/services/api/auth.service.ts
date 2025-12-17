@@ -1,4 +1,12 @@
-import clientAxios from "@/lib/axios";
+import axios from "axios";
+
+const authAxios = axios.create({
+  baseURL: "http://localhost:3010",
+  timeout: 10000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
 export interface LoginRequest {
   email: string;
@@ -31,16 +39,16 @@ export interface RegisterRequest {
 
 export const authApiService = {
   async login(data: LoginRequest): Promise<LoginResponse> {
-    const response = await clientAxios.post<LoginResponse>('http://localhost:3010/auth/login', data);
+    const response = await authAxios.post<LoginResponse>('/auth/login', data);
     return response.data;
   },
 
   async register(data: RegisterRequest): Promise<LoginResponse> {
-    const response = await clientAxios.post<LoginResponse>('http://localhost:3010/auth/register', data);
+    const response = await authAxios.post<LoginResponse>('/auth/register', data);
     return response.data;
   },
 
   async logout(): Promise<void> {
-    await clientAxios.post('http://localhost:3010/auth/logout');
+    await authAxios.post('/auth/logout');
   },
 };

@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, ILike, MoreThanOrEqual } from 'typeorm';
 import { Customer } from '../../entities';
+import { CreateCustomerDto, UpdateCustomerDto, QueryCustomerDto } from './dto';
 
 @Injectable()
 export class CustomersService {
@@ -10,37 +11,76 @@ export class CustomersService {
     private customersRepository: Repository<Customer>,
   ) {}
 
-  async findAll(): Promise<Customer[]> {
+  async getStats(companyId: string) {
+    const now = new Date();
+    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const [total, newThisMonth] = await Promise.all([
+      this.customersRepository.count({ where: { companyId } }),
+      this.customersRepository.count({
+        where: {
+          companyId,
+          createdAt: MoreThanOrEqual(firstDayOfMonth),
+        },
+      }),
+    ]);
+
+    return { total, active: total, newThisMonth };
+  }
+
+  async findAll(query: QueryCustomerDto): Promise<Customer[]> {
+    const { companyId, search } = query;
+    const where: Record<string, unknown> = {};
+
+    if (companyId) {
+      where.companyId = companyId;
+    }
+
+    if (search) {
+      return this.customersRepository.find({
+        where: [
+          { ...where, name: ILike(`%${search}%`) },
+          { ...where, email: ILike(`%${search}%`) },
+          { ...where, phone: ILike(`%${search}%`) },
+        ],
+        relations: ['address'],
+        order: { createdAt: 'DESC' },
+      });
+    }
+
     return this.customersRepository.find({
-      relations: ['company', 'user', 'sales', 'serviceOrders', 'devices'],
+      where,
+      relations: ['address'],
+      order: { createdAt: 'DESC' },
     });
   }
 
-  async findOne(id: string): Promise<Customer | null> {
-    return this.customersRepository.findOne({
-      where: { id },
-      relations: ['company', 'user', 'sales', 'serviceOrders', 'devices'],
+  async findOne(id: string, companyId: string): Promise<Customer> {
+    const customer = await this.customersRepository.findOne({
+      where: { id, companyId },
+      relations: ['address', 'sales', 'serviceOrders', 'devices'],
     });
+
+    if (!customer) {
+      throw new NotFoundException('Cliente no encontrado');
+    }
+
+    return customer;
   }
 
-  async findByCompany(companyId: string): Promise<Customer[]> {
-    return this.customersRepository.find({
-      where: { companyId },
-      relations: ['sales', 'serviceOrders', 'devices'],
-    });
-  }
-
-  async create(customerData: Partial<Customer>): Promise<Customer> {
-    const customer = this.customersRepository.create(customerData);
+  async create(createCustomerDto: CreateCustomerDto): Promise<Customer> {
+    const customer = this.customersRepository.create(createCustomerDto);
     return this.customersRepository.save(customer);
   }
 
-  async update(id: string, customerData: Partial<Customer>): Promise<Customer | null> {
-    await this.customersRepository.update(id, customerData);
-    return this.findOne(id);
+  async update(id: string, companyId: string, updateCustomerDto: UpdateCustomerDto): Promise<Customer> {
+    const customer = await this.findOne(id, companyId);
+    Object.assign(customer, updateCustomerDto);
+    return this.customersRepository.save(customer);
   }
 
-  async remove(id: string): Promise<void> {
-    await this.customersRepository.delete(id);
+  async remove(id: string, companyId: string): Promise<void> {
+    const customer = await this.findOne(id, companyId);
+    await this.customersRepository.remove(customer);
   }
 }

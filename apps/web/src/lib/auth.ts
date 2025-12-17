@@ -34,6 +34,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             company: response.user.company,
             companyId: response.user.company?.id || null,
             role: response.user.role,
+            accessToken: response.access_token,
           };
         } catch (error) {
           console.error("Auth error:", error);
@@ -58,6 +59,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.company = user.company;
         token.companyId = user.companyId;
         token.role = user.role;
+        token.accessToken = user.accessToken;
         token.sessionId = `${user.id}-${Date.now()}`;
       }
       return token;
@@ -71,6 +73,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.company = token.company;
         session.user.companyId = token.companyId;
         session.user.role = token.role;
+        session.user.accessToken = token.accessToken;
       }
       return session;
     }

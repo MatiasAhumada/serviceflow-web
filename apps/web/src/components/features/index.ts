@@ -1,4 +1,4 @@
 // Feature-specific components
-// export * from "./clients";
+export * from "./CustomerForm";
 // export * from "./products";
 // export * from "./sales";

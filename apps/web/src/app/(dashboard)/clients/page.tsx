@@ -1,63 +1,54 @@
 "use client";
 
-import { useState } from "react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@/components/ui";
+import { useState, useRef } from "react";
+import { Button, Card, CardContent } from "@/components/ui";
 import { GenericTable, GenericModal } from "@/components/common";
+import { CustomerForm, type CustomerFormData } from "@/components/features";
 import type { TableColumn, TableAction } from "@/components/common";
-import { ClientHandler } from "@/lib/client-handler";
-
-interface Client {
-  id: string;
-  name: string;
-  phone: string;
-  email: string;
-  totalPurchases: number;
-  totalAmount: number;
-}
+import { useCustomers, useDebounce } from "@/hooks";
+import type { Customer } from "@/types";
 
 export default function ClientsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<"create" | "update" | "delete" | "view">("create");
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [selectedClient, setSelectedClient] = useState<Customer | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearch = useDebounce(searchTerm, 500);
+  const formRef = useRef<HTMLFormElement>(null);
 
-  const clients: Client[] = [
-    { id: "1", name: "Juan Pérez", phone: "1234567890", email: "juan@email.com", totalPurchases: 15, totalAmount: 45000 },
-    { id: "2", name: "María García", phone: "0987654321", email: "maria@email.com", totalPurchases: 8, totalAmount: 23000 },
-    { id: "3", name: "Carlos López", phone: "1122334455", email: "carlos@email.com", totalPurchases: 12, totalAmount: 38000 },
-  ];
+  const { customers, stats, isLoading, createCustomer, updateCustomer, deleteCustomer } = useCustomers({
+    search: debouncedSearch,
+  });
 
-  const columns: TableColumn<Client>[] = [
+  const columns: TableColumn<Customer>[] = [
     {
       key: "name",
       header: "Nombre",
       sortable: true,
-      render: (client) => (
+      render: (customer) => (
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-            <span className="text-sm font-bold text-primary">{client.name.charAt(0)}</span>
+            <span className="text-sm font-bold text-primary">{customer.name.charAt(0)}</span>
           </div>
-          <span className="font-medium">{client.name}</span>
+          <span className="font-medium">{customer.name}</span>
         </div>
       ),
     },
-    { key: "phone", header: "Teléfono", sortable: true },
-    { key: "email", header: "Email", sortable: true },
-    {
-      key: "totalPurchases",
-      header: "Compras",
-      align: "right",
+    { 
+      key: "phone", 
+      header: "Teléfono", 
       sortable: true,
+      render: (customer) => customer.phone || "-",
     },
-    {
-      key: "totalAmount",
-      header: "Total",
-      align: "right",
+    { 
+      key: "email", 
+      header: "Email", 
       sortable: true,
-      render: (client) => `$${client.totalAmount.toLocaleString()}`,
+      render: (customer) => customer.email || "-",
     },
   ];
 
-  const actions: TableAction<Client>[] = [
+  const actions: TableAction<Customer>[] = [
     {
       label: "",
       icon: (
@@ -67,8 +58,8 @@ export default function ClientsPage() {
         </svg>
       ),
       variant: "outline",
-      onClick: (client) => {
-        setSelectedClient(client);
+      onClick: (customer) => {
+        setSelectedClient(customer);
         setModalMode("view");
         setIsModalOpen(true);
       },
@@ -81,8 +72,8 @@ export default function ClientsPage() {
         </svg>
       ),
       variant: "ghost",
-      onClick: (client) => {
-        setSelectedClient(client);
+      onClick: (customer) => {
+        setSelectedClient(customer);
         setModalMode("update");
         setIsModalOpen(true);
       },
@@ -95,24 +86,52 @@ export default function ClientsPage() {
         </svg>
       ),
       variant: "destructive",
-      onClick: (client) => {
-        setSelectedClient(client);
+      onClick: (customer) => {
+        setSelectedClient(customer);
         setModalMode("delete");
         setIsModalOpen(true);
       },
     },
   ];
 
+
+
   const handleModalConfirm = async () => {
-    if (modalMode === "create") {
-      ClientHandler.success("Cliente creado correctamente");
-    } else if (modalMode === "update") {
-      ClientHandler.success("Cliente actualizado correctamente");
-    } else if (modalMode === "delete") {
-      ClientHandler.success("Cliente eliminado correctamente");
+    if (modalMode === "delete" && selectedClient) {
+      const success = await deleteCustomer(selectedClient.id);
+      if (success) {
+        setIsModalOpen(false);
+        setSelectedClient(null);
+      }
+      return;
     }
-    setIsModalOpen(false);
-    setSelectedClient(null);
+
+    formRef.current?.requestSubmit();
+  };
+
+  const handleFormSubmitInternal = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    
+    const customerData = {
+      name: formData.get("name") as string,
+      phone: formData.get("phone") as string,
+      email: formData.get("email") as string,
+      notes: formData.get("notes") as string,
+    };
+
+    let success = false;
+
+    if (modalMode === "create") {
+      success = await createCustomer(customerData);
+    } else if (modalMode === "update" && selectedClient) {
+      success = await updateCustomer(selectedClient.id, customerData);
+    }
+
+    if (success) {
+      setIsModalOpen(false);
+      setSelectedClient(null);
+    }
   };
 
   return (
@@ -136,57 +155,81 @@ export default function ClientsPage() {
       </header>
 
       <div className="p-6 space-y-6">
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card variant="stats">
+            <CardContent className="p-4">
+              <p className="text-sm text-muted-foreground">Total Clientes</p>
+              <p className="text-2xl font-bold text-foreground">{stats.total}</p>
+            </CardContent>
+          </Card>
+          <Card variant="stats">
+            <CardContent className="p-4">
+              <p className="text-sm text-muted-foreground">Clientes Activos</p>
+              <p className="text-2xl font-bold text-foreground">{stats.active}</p>
+            </CardContent>
+          </Card>
+          <Card variant="stats">
+            <CardContent className="p-4">
+              <p className="text-sm text-muted-foreground">Nuevos este mes</p>
+              <p className="text-2xl font-bold text-foreground">{stats.newThisMonth}</p>
+            </CardContent>
+          </Card>
+        </div>
 
+        {/* Clients Table */}
+        <GenericTable
+          data={customers}
+          columns={columns}
+          actions={actions}
+          searchable
+          searchPlaceholder="Buscar por nombre, teléfono o email..."
+          emptyMessage="No hay clientes registrados"
+          onSearch={setSearchTerm}
+          isLoading={isLoading}
+        />
 
-
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card variant="stats">
-          <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Total Clientes</p>
-            <p className="text-2xl font-bold text-foreground">{clients.length}</p>
-          </CardContent>
-        </Card>
-        <Card variant="stats">
-          <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Clientes Activos</p>
-            <p className="text-2xl font-bold text-foreground">{clients.length}</p>
-          </CardContent>
-        </Card>
-        <Card variant="stats">
-          <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Nuevos este mes</p>
-            <p className="text-2xl font-bold text-foreground">5</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Clients Table */}
-      <GenericTable
-        data={clients}
-        columns={columns}
-        actions={actions}
-        searchable
-        searchPlaceholder="Buscar por nombre, teléfono o email..."
-        emptyMessage="No hay clientes registrados"
-      />
-
-      {/* Modal */}
-      <GenericModal
-        isOpen={isModalOpen}
-        onClose={() => { setIsModalOpen(false); setSelectedClient(null); }}
-        onConfirm={handleModalConfirm}
-        mode={modalMode}
-        title={modalMode === "create" ? "Nuevo Cliente" : modalMode === "update" ? "Editar Cliente" : modalMode === "delete" ? "Eliminar Cliente" : "Detalles del Cliente"}
-      >
-        {modalMode === "delete" ? (
-          <p>¿Está seguro que desea eliminar a <strong>{selectedClient?.name}</strong>?</p>
-        ) : (
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">Formulario de cliente aquí</p>
-          </div>
-        )}
-      </GenericModal>
+        {/* Modal */}
+        <GenericModal
+          isOpen={isModalOpen}
+          onClose={() => { setIsModalOpen(false); setSelectedClient(null); }}
+          onConfirm={handleModalConfirm}
+          mode={modalMode}
+          title={modalMode === "create" ? "Nuevo Cliente" : modalMode === "update" ? "Editar Cliente" : modalMode === "delete" ? "Eliminar Cliente" : "Detalles del Cliente"}
+        >
+          {modalMode === "delete" ? (
+            <p>¿Está seguro que desea eliminar a <strong>{selectedClient?.name}</strong>?</p>
+          ) : modalMode === "view" && selectedClient ? (
+            <div className="space-y-3">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Nombre</p>
+                <p className="text-base">{selectedClient.name}</p>
+              </div>
+              {selectedClient.phone && (
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Teléfono</p>
+                  <p className="text-base">{selectedClient.phone}</p>
+                </div>
+              )}
+              {selectedClient.email && (
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Email</p>
+                  <p className="text-base">{selectedClient.email}</p>
+                </div>
+              )}
+              {selectedClient.notes && (
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Notas</p>
+                  <p className="text-base">{selectedClient.notes}</p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <form ref={formRef} onSubmit={handleFormSubmitInternal}>
+              <CustomerForm customer={selectedClient} />
+            </form>
+          )}
+        </GenericModal>
       </div>
     </>
   );
