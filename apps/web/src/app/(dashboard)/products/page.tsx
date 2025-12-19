@@ -201,7 +201,7 @@ export default function ProductsPage() {
           searchPlaceholder="Buscar por nombre, SKU o categoría..."
           emptyMessage="No hay productos registrados"
           onSearch={setSearchTerm}
-          isLoading={isLoading}
+          loading={isLoading}
         />
 
         {/* Modal */}

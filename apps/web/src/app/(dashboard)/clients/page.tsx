@@ -186,7 +186,7 @@ export default function ClientsPage() {
           searchPlaceholder="Buscar por nombre, teléfono o email..."
           emptyMessage="No hay clientes registrados"
           onSearch={setSearchTerm}
-          isLoading={isLoading}
+          loading={isLoading}
         />
 
         {/* Modal */}

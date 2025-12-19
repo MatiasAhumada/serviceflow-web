@@ -4,7 +4,7 @@ import type { Customer } from "@/types";
 
 interface CustomerFormProps {
   customer?: Customer | null;
-  onSubmit: (data: CustomerFormData) => void;
+  onSubmit?: (data: CustomerFormData) => void;
 }
 
 export interface CustomerFormData {

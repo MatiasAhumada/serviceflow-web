@@ -183,7 +183,7 @@ export default function SuppliersPage() {
           searchPlaceholder="Buscar por nombre, teléfono o email..."
           emptyMessage="No hay proveedores registrados"
           onSearch={setSearchTerm}
-          isLoading={isLoading}
+          loading={isLoading}
         />
 
         {/* Modal */}
