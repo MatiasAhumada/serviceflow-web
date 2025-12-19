@@ -17,7 +17,7 @@ const db_config = {
   dropSchema: false,
   logging: false,
   entities: Object.values(entities),
-  migrationsRun: true,
+  migrationsRun: false,
   migrations: ['dist/migrations/*.{js,ts}'],
 };
 
