@@ -17,6 +17,7 @@ export { CashMovement } from './cash-movement.entity';
 export { Address } from './address.entity';
 export { Sale } from './sale.entity';
 export { SaleItem } from './sale-item.entity';
+export { SaleCardDetail } from './sale-card-detail.entity';
 export { ServiceOrder } from './service-order.entity';
 export { ServiceItem } from './service-item.entity';
 export { Device } from './device.entity';

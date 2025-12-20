@@ -77,4 +77,6 @@ export class Sale extends BaseEntity {
 
   @OneToMany(() => SaleItem, (saleItem) => saleItem.sale, { cascade: true })
   items: SaleItem[];
+
+  cardDetail?: any;
 }

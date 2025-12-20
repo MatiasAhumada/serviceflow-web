@@ -1,46 +1,175 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Sale } from '../../entities';
+import { Repository, ILike, MoreThanOrEqual } from 'typeorm';
+import { Sale, SaleItem, SaleCardDetail } from '../../entities';
+import { CreateSaleDto, QuerySaleDto } from './dto';
+import { SALE_STATUS } from '../../constants';
 
 @Injectable()
 export class SalesService {
   constructor(
     @InjectRepository(Sale)
     private salesRepository: Repository<Sale>,
+    @InjectRepository(SaleItem)
+    private saleItemsRepository: Repository<SaleItem>,
+    @InjectRepository(SaleCardDetail)
+    private saleCardDetailsRepository: Repository<SaleCardDetail>,
   ) {}
 
-  async findAll(): Promise<Sale[]> {
-    return this.salesRepository.find({
-      relations: ['customer', 'seller', 'cashRegister', 'items', 'items.product'],
-    });
+  async getStats(companyId: string) {
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const [totalSales, todaySales, monthSales] = await Promise.all([
+      this.salesRepository
+        .createQueryBuilder('sale')
+        .where('sale.companyId = :companyId', { companyId })
+        .andWhere('sale.status = :status', { status: SALE_STATUS.COMPLETED })
+        .select('COALESCE(SUM(sale.total), 0)', 'total')
+        .getRawOne(),
+      this.salesRepository
+        .createQueryBuilder('sale')
+        .where('sale.companyId = :companyId', { companyId })
+        .andWhere('sale.date >= :startOfDay', { startOfDay })
+        .andWhere('sale.status = :status', { status: SALE_STATUS.COMPLETED })
+        .select('COUNT(*)', 'count')
+        .addSelect('COALESCE(SUM(sale.total), 0)', 'total')
+        .getRawOne(),
+      this.salesRepository
+        .createQueryBuilder('sale')
+        .where('sale.companyId = :companyId', { companyId })
+        .andWhere('sale.date >= :firstDayOfMonth', { firstDayOfMonth })
+        .andWhere('sale.status = :status', { status: SALE_STATUS.COMPLETED })
+        .select('COUNT(*)', 'count')
+        .addSelect('COALESCE(SUM(sale.total), 0)', 'total')
+        .getRawOne(),
+    ]);
+
+    return {
+      totalSales: parseFloat(totalSales.total),
+      todayCount: parseInt(todaySales.count),
+      todayTotal: parseFloat(todaySales.total),
+      monthCount: parseInt(monthSales.count),
+      monthTotal: parseFloat(monthSales.total),
+    };
   }
 
-  async findOne(id: string): Promise<Sale | null> {
-    return this.salesRepository.findOne({
-      where: { id },
-      relations: ['customer', 'seller', 'cashRegister', 'items', 'items.product'],
-    });
+  async findAll(query: QuerySaleDto): Promise<Sale[]> {
+    const { companyId, search, status, paymentMethod, customerId } = query;
+    const queryBuilder = this.salesRepository
+      .createQueryBuilder('sale')
+      .leftJoinAndSelect('sale.customer', 'customer')
+      .leftJoinAndSelect('sale.seller', 'seller')
+      .leftJoinAndSelect('sale.items', 'items')
+      .leftJoinAndSelect('items.product', 'product')
+      .where('sale.companyId = :companyId', { companyId });
+
+    if (search) {
+      queryBuilder.andWhere('sale.saleNumber ILIKE :search', { search: `%${search}%` });
+    }
+
+    if (status) {
+      queryBuilder.andWhere('sale.status = :status', { status });
+    }
+
+    if (paymentMethod) {
+      queryBuilder.andWhere('sale.paymentMethod = :paymentMethod', { paymentMethod });
+    }
+
+    if (customerId) {
+      queryBuilder.andWhere('sale.customerId = :customerId', { customerId });
+    }
+
+    return queryBuilder.orderBy('sale.date', 'DESC').getMany();
   }
 
-  async findByCompany(companyId: string): Promise<Sale[]> {
-    return this.salesRepository.find({
+  async findOne(id: string, companyId: string): Promise<Sale> {
+    const sale = await this.salesRepository.findOne({
+      where: { id, companyId },
+      relations: ['customer', 'seller', 'cashRegister', 'items', 'items.product'],
+    });
+
+    if (!sale) {
+      throw new NotFoundException('Venta no encontrada');
+    }
+
+    // Cargar detalles de tarjeta si existe
+    if (sale.paymentMethod === 'debit_card' || sale.paymentMethod === 'credit_card') {
+      const cardDetail = await this.saleCardDetailsRepository.findOne({
+        where: { saleId: sale.id },
+      });
+      if (cardDetail) {
+        sale.cardDetail = cardDetail;
+      }
+    }
+
+    return sale;
+  }
+
+  async create(createSaleDto: CreateSaleDto): Promise<Sale> {
+    const { items, cardDetail, companyId, sellerId, ...saleData } = createSaleDto;
+
+    // Generar número de venta
+    const lastSale = await this.salesRepository.findOne({
       where: { companyId },
-      relations: ['customer', 'seller', 'items', 'items.product'],
+      order: { createdAt: 'DESC' },
     });
+
+    const saleNumber = this.generateSaleNumber(lastSale?.saleNumber);
+
+    // Calcular total
+    const total = items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
+
+    // Crear venta
+    const sale = this.salesRepository.create({
+      ...saleData,
+      companyId,
+      sellerId,
+      saleNumber,
+      total,
+      date: saleData.date ? new Date(saleData.date) : new Date(),
+      status: SALE_STATUS.COMPLETED,
+    });
+
+    const savedSale = await this.salesRepository.save(sale);
+
+    // Crear items
+    const saleItems = items.map((item) =>
+      this.saleItemsRepository.create({
+        saleId: savedSale.id!,
+        productId: item.productId,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        subtotal: item.quantity * item.unitPrice,
+      }),
+    );
+
+    await this.saleItemsRepository.save(saleItems);
+
+    // Guardar detalles de tarjeta si aplica
+    if (cardDetail && (saleData.paymentMethod === 'debit_card' || saleData.paymentMethod === 'credit_card')) {
+      await this.saleCardDetailsRepository.save({
+        saleId: savedSale.id!,
+        ...cardDetail,
+      });
+    }
+
+    return this.findOne(savedSale.id!, companyId);
   }
 
-  async create(saleData: Partial<Sale>): Promise<Sale> {
-    const sale = this.salesRepository.create(saleData);
+  async cancel(id: string, companyId: string): Promise<Sale> {
+    const sale = await this.findOne(id, companyId);
+    sale.status = SALE_STATUS.CANCELLED;
     return this.salesRepository.save(sale);
   }
 
-  async update(id: string, saleData: Partial<Sale>): Promise<Sale | null> {
-    await this.salesRepository.update(id, saleData);
-    return this.findOne(id);
-  }
+  private generateSaleNumber(lastSaleNumber?: string): string {
+    if (!lastSaleNumber) {
+      return 'V-00001';
+    }
 
-  async remove(id: string): Promise<void> {
-    await this.salesRepository.delete(id);
+    const number = parseInt(lastSaleNumber.split('-')[1]) + 1;
+    return `V-${number.toString().padStart(5, '0')}`;
   }
 }

@@ -10,29 +10,9 @@ export enum PLAN_TYPE {
   COMPANY = 'company',
 }
 
-export enum PAYMENT_STATUS {
-  PENDING = 'pending',
-  COMPLETED = 'completed',
-  FAILED = 'failed',
-  REFUNDED = 'refunded',
-}
-
-export enum PAYMENT_METHOD {
-  CREDIT_CARD = 'credit_card',
-  DEBIT_CARD = 'debit_card',
-  BANK_TRANSFER = 'bank_transfer',
-  CASH = 'cash',
-}
-
 export enum CASH_REGISTER_STATUS {
   OPEN = 'open',
   CLOSED = 'closed',
-}
-
-export enum SALE_STATUS {
-  PENDING = 'pending',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled',
 }
 
 export enum SERVICE_STATUS {
