@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ILike, MoreThanOrEqual } from 'typeorm';
 import { Sale, SaleItem, SaleCardDetail, CashMovement } from '../../entities';
-import { CreateSaleDto, QuerySaleDto } from './dto';
+import { CreateSaleDto, QuerySaleDto, UpdateSaleDto } from './dto';
 import { SALE_STATUS, MOVEMENT_TYPE } from '../../constants';
 
 @Injectable()
@@ -160,11 +160,12 @@ export class SalesService {
     // Crear movimiento de caja automáticamente
     if (saleData.cashRegisterId) {
       await this.cashMovementsRepository.save({
+        saleId: savedSale.id!,
         cashRegisterId: saleData.cashRegisterId,
         userId: sellerId,
         companyId,
         type: MOVEMENT_TYPE.INCOME,
-        amount: total,
+        amount: total - (saleData.discount || 0),
         concept: `Venta ${saleNumber}`,
         notes: `Cobro automático - ${saleData.paymentMethod}`,
         date: saleData.date ? new Date(saleData.date) : new Date(),
@@ -174,10 +175,69 @@ export class SalesService {
     return this.findOne(savedSale.id!, companyId);
   }
 
+  async update(id: string, updateSaleDto: UpdateSaleDto, companyId: string): Promise<Sale> {
+    const sale = await this.findOne(id, companyId);
+    const { items, discount } = updateSaleDto;
+
+    // Actualizar items si se proporcionan
+    if (items) {
+      await this.saleItemsRepository.delete({ saleId: id });
+      const saleItems = items.map((item) =>
+        this.saleItemsRepository.create({
+          saleId: id,
+          productId: item.productId,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          subtotal: item.quantity * item.unitPrice,
+        }),
+      );
+      await this.saleItemsRepository.save(saleItems);
+      sale.total = items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
+    }
+
+    // Actualizar descuento si se proporciona
+    if (discount !== undefined) {
+      sale.discount = discount;
+    }
+
+    await this.salesRepository.save(sale);
+
+    // Actualizar movimiento de caja si existe
+    if (sale.cashRegisterId) {
+      const movement = await this.cashMovementsRepository.findOne({
+        where: { saleId: id },
+      });
+      if (movement) {
+        movement.amount = sale.total - sale.discount;
+        await this.cashMovementsRepository.save(movement);
+      }
+    }
+
+    return this.findOne(id, companyId);
+  }
+
+  async remove(id: string, companyId: string): Promise<void> {
+    const sale = await this.findOne(id, companyId);
+
+    // Eliminar movimiento de caja asociado
+    if (sale.cashRegisterId) {
+      await this.cashMovementsRepository.delete({ saleId: id });
+    }
+
+    await this.salesRepository.remove(sale);
+  }
+
   async cancel(id: string, companyId: string): Promise<Sale> {
     const sale = await this.findOne(id, companyId);
     sale.status = SALE_STATUS.CANCELLED;
-    return this.salesRepository.save(sale);
+    await this.salesRepository.save(sale);
+
+    // Eliminar movimiento de caja al cancelar
+    if (sale.cashRegisterId) {
+      await this.cashMovementsRepository.delete({ saleId: id });
+    }
+
+    return sale;
   }
 
   private generateSaleNumber(lastSaleNumber?: string): string {

@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body, Param, Patch, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Query, HttpCode, HttpStatus, Delete, Put } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { SalesService } from './sales.service';
-import { CreateSaleDto, QuerySaleDto } from './dto';
+import { CreateSaleDto, QuerySaleDto, UpdateSaleDto } from './dto';
 import { Sale } from '../../entities';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
@@ -50,6 +50,30 @@ export class SalesController {
       companyId: user.companyId,
       sellerId: user.userId,
     });
+  }
+
+  @Put(':id')
+  @ApiOperation({ summary: 'Update sale' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Sale updated successfully' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Sale not found' })
+  update(
+    @CurrentUser() user: { companyId: string },
+    @Param('id') id: string,
+    @Body() updateSaleDto: UpdateSaleDto,
+  ): Promise<Sale> {
+    return this.salesService.update(id, updateSaleDto, user.companyId);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Delete sale' })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Sale deleted successfully' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Sale not found' })
+  remove(
+    @CurrentUser() user: { companyId: string },
+    @Param('id') id: string,
+  ): Promise<void> {
+    return this.salesService.remove(id, user.companyId);
   }
 
   @Patch(':id/cancel')

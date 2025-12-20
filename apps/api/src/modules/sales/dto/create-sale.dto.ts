@@ -1,4 +1,4 @@
-import { IsString, IsEnum, IsArray, ValidateNested, IsOptional, IsDateString } from 'class-validator';
+import { IsString, IsEnum, IsArray, ValidateNested, IsOptional, IsDateString, IsNumber, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { PAYMENT_METHOD } from '../../../constants';
@@ -24,6 +24,12 @@ export class CreateSaleDto {
   @ValidateNested({ each: true })
   @Type(() => CreateSaleItemDto)
   items: CreateSaleItemDto[];
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  discount?: number;
 
   @ApiPropertyOptional({ type: CardDetailDto })
   @IsOptional()

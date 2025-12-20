@@ -7,6 +7,9 @@ import { MOVEMENT_TYPE } from '../constants';
 
 @Entity('cash_movements')
 export class CashMovement extends BaseEntity {
+  @Column({ name: 'sale_id', nullable: true })
+  saleId: string;
+
   @Column({ name: 'cash_register_id' })
   cashRegisterId: string;
 

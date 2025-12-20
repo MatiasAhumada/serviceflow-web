@@ -34,6 +34,9 @@ export class Sale extends BaseEntity {
   @Column()
   date: Date;
 
+  @Column('decimal', { precision: 10, scale: 2, default: 0 })
+  discount: number;
+
   @Column('decimal', { precision: 10, scale: 2 })
   total: number;
 
