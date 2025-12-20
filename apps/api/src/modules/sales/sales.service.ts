@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ILike, MoreThanOrEqual } from 'typeorm';
-import { Sale, SaleItem, SaleCardDetail } from '../../entities';
+import { Sale, SaleItem, SaleCardDetail, CashMovement } from '../../entities';
 import { CreateSaleDto, QuerySaleDto } from './dto';
-import { SALE_STATUS } from '../../constants';
+import { SALE_STATUS, MOVEMENT_TYPE } from '../../constants';
 
 @Injectable()
 export class SalesService {
@@ -14,6 +14,8 @@ export class SalesService {
     private saleItemsRepository: Repository<SaleItem>,
     @InjectRepository(SaleCardDetail)
     private saleCardDetailsRepository: Repository<SaleCardDetail>,
+    @InjectRepository(CashMovement)
+    private cashMovementsRepository: Repository<CashMovement>,
   ) {}
 
   async getStats(companyId: string) {
@@ -152,6 +154,20 @@ export class SalesService {
       await this.saleCardDetailsRepository.save({
         saleId: savedSale.id!,
         ...cardDetail,
+      });
+    }
+
+    // Crear movimiento de caja automáticamente
+    if (saleData.cashRegisterId) {
+      await this.cashMovementsRepository.save({
+        cashRegisterId: saleData.cashRegisterId,
+        userId: sellerId,
+        companyId,
+        type: MOVEMENT_TYPE.INCOME,
+        amount: total,
+        concept: `Venta ${saleNumber}`,
+        notes: `Cobro automático - ${saleData.paymentMethod}`,
+        date: saleData.date ? new Date(saleData.date) : new Date(),
       });
     }
 
