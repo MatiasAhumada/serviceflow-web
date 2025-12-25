@@ -91,3 +91,61 @@ export interface UpdateSupplierDto {
   phone?: string;
   email?: string;
 }
+
+export interface Sale {
+  id: string;
+  companyId: string;
+  customerId: string;
+  sellerId: string;
+  cashRegisterId?: string;
+  saleNumber: string;
+  date: string;
+  total: number;
+  discount: number;
+  paymentMethod: string;
+  status: string;
+  customer?: Customer;
+  seller?: any;
+  items: SaleItem[];
+  cardDetail?: CardDetail;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SaleItem {
+  id: string;
+  saleId: string;
+  productId: string;
+  quantity: number;
+  unitPrice: number;
+  subtotal: number;
+  product?: Product;
+}
+
+export interface CardDetail {
+  cardBrand: string;
+  cardType: string;
+  lastFourDigits: string;
+  installments: number;
+}
+
+export interface CreateSaleDto {
+  customerId: string;
+  cashRegisterId?: string;
+  paymentMethod: string;
+  items: CreateSaleItemDto[];
+  cardDetail?: CardDetail;
+  discount?: number;
+  date?: string;
+}
+
+export interface CreateSaleItemDto {
+  productId: string;
+  quantity: number;
+  unitPrice: number;
+}
+
+export interface UpdateSaleDto {
+  items?: CreateSaleItemDto[];
+  discount?: number;
+}

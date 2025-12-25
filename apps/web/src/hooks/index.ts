@@ -5,3 +5,4 @@ export { usePlanFeatures } from "./usePlanFeatures";
 export { useCustomers } from "./useCustomers";
 export { useProducts } from "./useProducts";
 export { useSuppliers } from "./useSuppliers";
+export { useSales } from "./useSales";

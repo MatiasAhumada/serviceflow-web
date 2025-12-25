@@ -179,6 +179,8 @@ export class SalesService {
     const sale = await this.findOne(id, companyId);
     const { items, discount } = updateSaleDto;
 
+    let totalUpdated = false;
+
     // Actualizar items si se proporcionan
     if (items) {
       await this.saleItemsRepository.delete({ saleId: id });
@@ -193,22 +195,27 @@ export class SalesService {
       );
       await this.saleItemsRepository.save(saleItems);
       sale.total = items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
+      totalUpdated = true;
     }
 
     // Actualizar descuento si se proporciona
     if (discount !== undefined) {
       sale.discount = discount;
+      totalUpdated = true;
     }
 
     await this.salesRepository.save(sale);
 
-    // Actualizar movimiento de caja si existe
-    if (sale.cashRegisterId) {
+    // Actualizar movimiento de caja en tiempo real si existe y hubo cambios
+    if (sale.cashRegisterId && totalUpdated) {
       const movement = await this.cashMovementsRepository.findOne({
         where: { saleId: id },
       });
       if (movement) {
-        movement.amount = sale.total - sale.discount;
+        const newAmount = sale.total - (sale.discount || 0);
+        movement.amount = newAmount;
+        movement.concept = `Venta ${sale.saleNumber} (Actualizada)`;
+        movement.notes = `Actualización automática - ${sale.paymentMethod} - Total: $${sale.total} - Descuento: $${sale.discount || 0}`;
         await this.cashMovementsRepository.save(movement);
       }
     }
@@ -229,12 +236,36 @@ export class SalesService {
 
   async cancel(id: string, companyId: string): Promise<Sale> {
     const sale = await this.findOne(id, companyId);
+    
+    if (sale.status === SALE_STATUS.CANCELLED) {
+      throw new NotFoundException('La venta ya está cancelada');
+    }
+
     sale.status = SALE_STATUS.CANCELLED;
     await this.salesRepository.save(sale);
 
-    // Eliminar movimiento de caja al cancelar
+    // Crear movimiento de caja negativo para reflejar la cancelación en tiempo real
     if (sale.cashRegisterId) {
-      await this.cashMovementsRepository.delete({ saleId: id });
+      const originalMovement = await this.cashMovementsRepository.findOne({
+        where: { saleId: id },
+      });
+      
+      if (originalMovement) {
+        // Eliminar el movimiento original
+        await this.cashMovementsRepository.delete({ saleId: id });
+        
+        // Crear movimiento de egreso por cancelación
+        await this.cashMovementsRepository.save({
+          cashRegisterId: sale.cashRegisterId,
+          userId: sale.sellerId,
+          companyId: sale.companyId,
+          type: MOVEMENT_TYPE.EXPENSE,
+          amount: originalMovement.amount,
+          concept: `Cancelación de Venta ${sale.saleNumber}`,
+          notes: `Venta cancelada - Devolución ${sale.paymentMethod}`,
+          date: new Date(),
+        });
+      }
     }
 
     return sale;

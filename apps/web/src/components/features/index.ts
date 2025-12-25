@@ -2,3 +2,4 @@
 export * from "./CustomerForm";
 export * from "./ProductForm";
 export * from "./SupplierForm";
+export * from "./SaleForm";
