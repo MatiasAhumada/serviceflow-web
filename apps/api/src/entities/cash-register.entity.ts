@@ -28,16 +28,16 @@ export class CashRegister extends BaseEntity {
   status: string;
 
   @Column({ name: 'opened_by', nullable: true })
-  openedBy: string;
+  openedBy?: string;
 
   @Column({ name: 'closed_by', nullable: true })
-  closedBy: string;
+  closedBy?: string;
 
   @Column({ name: 'open_time', nullable: true })
-  openTime: Date;
+  openTime?: Date;
 
   @Column({ name: 'close_time', nullable: true })
-  closeTime: Date;
+  closeTime?: Date;
 
   @ManyToOne(() => Company, { nullable: true })
   @JoinColumn({ name: 'company_id' })
