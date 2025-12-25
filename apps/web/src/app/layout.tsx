@@ -73,7 +73,11 @@ export const metadata: Metadata = {
     title: "ServiceFlow - Software para Negocios de Electrónica",
     description: "Sistema integral para vendedores y service técnico de electrónica. Gestiona ventas, reparaciones e inventario desde la nube.",
   },
-  viewport: "width=device-width, initial-scale=1",
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
   themeColor: "#10B981",
 };
 
