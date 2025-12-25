@@ -20,7 +20,8 @@ jobs:
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
             cd serviceflow-web/
-            git pull origin dev
+            git fetch origin dev
+            git reset --hard origin/dev
             corepack enable
             corepack prepare pnpm@latest --activate
             pnpm install
