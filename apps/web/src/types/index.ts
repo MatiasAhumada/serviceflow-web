@@ -149,3 +149,17 @@ export interface UpdateSaleDto {
   items?: CreateSaleItemDto[];
   discount?: number;
 }
+
+export interface CashRegister {
+  id: string;
+  companyId: string;
+  name: string;
+  currentBalance: number;
+  status: string;
+  openedBy?: string;
+  closedBy?: string;
+  openTime?: string;
+  closeTime?: string;
+  createdAt: string;
+  updatedAt: string;
+}
