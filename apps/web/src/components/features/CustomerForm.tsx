@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Input, Label } from "@/components/ui";
+import { Input, Label, Textarea } from "@/components/ui";
 import type { Customer } from "@/types";
 
 interface CustomerFormProps {
@@ -51,12 +51,11 @@ export function CustomerForm({ customer }: CustomerFormProps) {
 
       <div>
         <Label htmlFor="notes">Notas</Label>
-        <textarea
+        <Textarea
           id="notes"
           name="notes"
           defaultValue={customer?.notes || ""}
           placeholder="Notas adicionales"
-          className="w-full min-h-[80px] px-3 py-2 border border-input rounded-md bg-background text-sm"
         />
       </div>
     </div>
