@@ -14,6 +14,7 @@ export interface SidebarItem {
   active?: boolean;
   disabled?: boolean;
   badge?: string | number;
+  children?: SidebarItem[];
 }
 
 interface SidebarProps {
@@ -40,6 +41,7 @@ interface SidebarProps {
 export function Sidebar({ items, isOpen, onToggle, header, footer, className, user, userMenuOptions }: SidebarProps) {
   const pathname = usePathname();
   const [isUserMenuOpen, setIsUserMenuOpen] = React.useState(false);
+  const [openSubmenus, setOpenSubmenus] = React.useState<Record<string, boolean>>({});
   const userMenuRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -117,11 +119,60 @@ export function Sidebar({ items, isOpen, onToggle, header, footer, className, us
           </div>
 
           {/* Navigation Items */}
-          <nav className="flex-1 p-4 space-y-2">
+          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
             {items.map((item) => {
               const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href || "");
-              const ItemComponent = item.href ? Link : "button";
+              const hasChildren = item.children && item.children.length > 0;
+              const isSubmenuOpen = openSubmenus[item.id];
 
+              if (hasChildren) {
+                return (
+                  <div key={item.id}>
+                    <button
+                      onClick={() => setOpenSubmenus(prev => ({ ...prev, [item.id]: !prev[item.id] }))}
+                      className={cn(
+                        "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
+                        "hover:bg-muted/10 focus:outline-none",
+                        "text-muted-foreground hover:text-foreground hover:bg-accent",
+                        !isOpen && "lg:justify-center lg:px-2"
+                      )}
+                    >
+                      {item.icon && <span className="flex-shrink-0 w-5 h-5">{item.icon}</span>}
+                      {isOpen && (
+                        <>
+                          <span className="flex-1 text-left">{item.label}</span>
+                          <svg className={cn("w-4 h-4 transition-transform", isSubmenuOpen && "rotate-180")} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </>
+                      )}
+                    </button>
+                    {isOpen && isSubmenuOpen && (
+                      <div className="ml-8 mt-1 space-y-1">
+                        {item.children.map((child) => {
+                          const isChildActive = child.href === "/" ? pathname === "/" : pathname.startsWith(child.href || "");
+                          return (
+                            <Link
+                              key={child.id}
+                              href={child.href || "#"}
+                              className={cn(
+                                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                                isChildActive
+                                  ? "bg-gradient-to-r from-[#10B981] to-[#2563EB] text-white shadow-lg"
+                                  : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                              )}
+                            >
+                              <span>{child.label}</span>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
+              const ItemComponent = item.href ? Link : "button";
               return (
                 <ItemComponent
                   key={item.id}
@@ -138,10 +189,7 @@ export function Sidebar({ items, isOpen, onToggle, header, footer, className, us
                     !isOpen && "lg:justify-center lg:px-2"
                   )}
                 >
-                  {item.icon && (
-                    <span className={cn("flex-shrink-0 w-5 h-5")}>{item.icon}</span>
-                  )}
-
+                  {item.icon && <span className={cn("flex-shrink-0 w-5 h-5")}>{item.icon}</span>}
                   {isOpen && (
                     <>
                       <span className="flex-1 text-left">{item.label}</span>

@@ -1,6 +1,6 @@
-export type PlanType = 'vendedor' | 'taller' | 'comercio';
+export type UserRole = 'admin' | 'vendedor' | 'tecnico' | 'cajero';
 
-export interface PlanFeatures {
+export interface RoleFeatures {
   products: boolean;
   sales: boolean;
   workOrders: boolean;
@@ -8,31 +8,11 @@ export interface PlanFeatures {
   stock: boolean;
   employees: boolean;
   reports: boolean;
-  multiUser: boolean;
+  cashRegister: boolean;
 }
 
-const planFeatures: Record<PlanType, PlanFeatures> = {
-  vendedor: {
-    products: true,
-    sales: true,
-    workOrders: false,
-    repairs: false,
-    stock: true,
-    employees: true,
-    reports: false,
-    multiUser: false,
-  },
-  taller: {
-    products: false,
-    sales: false,
-    workOrders: true,
-    repairs: true,
-    stock: false,
-    employees: true,
-    reports: false,
-    multiUser: false,
-  },
-  comercio: {
+const roleFeatures: Record<UserRole, RoleFeatures> = {
+  admin: {
     products: true,
     sales: true,
     workOrders: true,
@@ -40,14 +20,44 @@ const planFeatures: Record<PlanType, PlanFeatures> = {
     stock: true,
     employees: true,
     reports: true,
-    multiUser: true,
+    cashRegister: true,
+  },
+  vendedor: {
+    products: true,
+    sales: true,
+    workOrders: true,
+    repairs: false,
+    stock: true,
+    employees: false,
+    reports: false,
+    cashRegister: false,
+  },
+  tecnico: {
+    products: false,
+    sales: false,
+    workOrders: true,
+    repairs: true,
+    stock: false,
+    employees: false,
+    reports: false,
+    cashRegister: false,
+  },
+  cajero: {
+    products: false,
+    sales: true,
+    workOrders: false,
+    repairs: false,
+    stock: false,
+    employees: false,
+    reports: false,
+    cashRegister: true,
   },
 };
 
-export function getPlanFeatures(planType: PlanType): PlanFeatures {
-  return planFeatures[planType] || planFeatures.vendedor;
+export function getRoleFeatures(role: UserRole): RoleFeatures {
+  return roleFeatures[role] || roleFeatures.vendedor;
 }
 
-export function hasPlanFeature(planType: PlanType, feature: keyof PlanFeatures): boolean {
-  return getPlanFeatures(planType)[feature];
+export function hasRoleFeature(role: UserRole, feature: keyof RoleFeatures): boolean {
+  return getRoleFeatures(role)[feature];
 }

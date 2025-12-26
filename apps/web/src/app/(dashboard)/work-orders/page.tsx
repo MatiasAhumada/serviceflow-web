@@ -1,67 +1,68 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@/components/ui";
-import { GenericTable, GenericModal } from "@/components/common";
+import { Button, Card, CardContent, Badge } from "@/components/ui";
+import { GenericTable } from "@/components/common";
 import type { TableColumn, TableAction } from "@/components/common";
-import { ClientHandler } from "@/lib/client-handler";
+import { useServiceOrders } from "@/hooks/useServiceOrders";
 
-interface WorkOrder {
-  id: string;
-  orderNumber: string;
-  date: string;
-  customer: string;
-  device: string;
-  issue: string;
-  status: string;
-  technician: string;
-}
-
-const statusLabels: Record<string, string> = {
-  received: "Recibido",
-  in_progress: "En Progreso",
-  completed: "Completado",
-  delivered: "Entregado",
-};
-
-const statusVariants: Record<string, "outline" | "default" | "success"> = {
-  received: "outline",
-  in_progress: "default",
-  completed: "success",
-  delivered: "success",
+const STATUS_CONFIG = {
+  received: { label: "Recibido", variant: "default" as const, color: "bg-blue-500" },
+  in_progress: { label: "En Progreso", variant: "default" as const, color: "bg-yellow-500" },
+  completed: { label: "Completado", variant: "success" as const, color: "bg-green-500" },
+  delivered: { label: "Entregado", variant: "success" as const, color: "bg-emerald-500" },
+  cancelled: { label: "Cancelado", variant: "destructive" as const, color: "bg-red-500" },
 };
 
 export default function WorkOrdersPage() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState<"create" | "update" | "delete" | "view">("create");
-  const [selectedOrder, setSelectedOrder] = useState<WorkOrder | null>(null);
+  const { orders, stats, loading, updateStatus } = useServiceOrders();
+  const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
 
-  const orders: WorkOrder[] = [
-    { id: "1", orderNumber: "OT-001", date: "2024-01-15", customer: "Juan Pérez", device: "Laptop HP", issue: "No enciende", status: "in_progress", technician: "Carlos Tech" },
-    { id: "2", orderNumber: "OT-002", date: "2024-01-15", customer: "María García", device: "PC Desktop", issue: "Lento", status: "received", technician: "Sin asignar" },
-    { id: "3", orderNumber: "OT-003", date: "2024-01-14", customer: "Carlos López", device: "Impresora", issue: "No imprime", status: "completed", technician: "Ana Tech" },
-  ];
-
-  const columns: TableColumn<WorkOrder>[] = [
-    { key: "orderNumber", header: "N° Orden", sortable: true },
-    { key: "date", header: "Fecha", sortable: true },
-    { key: "customer", header: "Cliente", sortable: true },
-    { key: "device", header: "Dispositivo", sortable: true },
-    { key: "issue", header: "Problema", sortable: true },
-    { key: "technician", header: "Técnico", sortable: true },
+  const columns: TableColumn<any>[] = [
+    {
+      key: "serviceNumber",
+      header: "N° Orden",
+      sortable: true,
+      render: (order) => (
+        <span className="font-mono font-bold text-primary">{order.serviceNumber}</span>
+      ),
+    },
+    {
+      key: "customer",
+      header: "Cliente",
+      sortable: true,
+      render: (order) => order.customer?.name || "N/A",
+    },
+    {
+      key: "technician",
+      header: "Técnico",
+      sortable: true,
+      render: (order) => order.technician?.name || "Sin asignar",
+    },
+    {
+      key: "entryDate",
+      header: "Ingreso",
+      sortable: true,
+      render: (order) => new Date(order.entryDate).toLocaleDateString('es-AR'),
+    },
+    {
+      key: "expectedDelivery",
+      header: "Entrega Est.",
+      sortable: true,
+      render: (order) => order.expectedDelivery ? new Date(order.expectedDelivery).toLocaleDateString('es-AR') : "N/A",
+    },
     {
       key: "status",
       header: "Estado",
       align: "center",
-      render: (order) => (
-        <Badge variant={statusVariants[order.status]} size="sm">
-          {statusLabels[order.status]}
-        </Badge>
-      ),
+      render: (order) => {
+        const config = STATUS_CONFIG[order.status as keyof typeof STATUS_CONFIG];
+        return <Badge variant={config.variant}>{config.label}</Badge>;
+      },
     },
   ];
 
-  const actions: TableAction<WorkOrder>[] = [
+  const actions: TableAction<any>[] = [
     {
       label: "",
       icon: (
@@ -71,112 +72,142 @@ export default function WorkOrdersPage() {
         </svg>
       ),
       variant: "outline",
-      onClick: (order) => {
-        setSelectedOrder(order);
-        setModalMode("view");
-        setIsModalOpen(true);
-      },
-    },
-    {
-      label: "",
-      icon: (
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-        </svg>
-      ),
-      variant: "ghost",
-      onClick: (order) => {
-        setSelectedOrder(order);
-        setModalMode("update");
-        setIsModalOpen(true);
-      },
+      onClick: (order) => setSelectedOrder(order),
     },
   ];
 
-  const handleModalConfirm = async () => {
-    if (modalMode === "create") {
-      ClientHandler.success("Orden creada correctamente");
-    } else if (modalMode === "update") {
-      ClientHandler.success("Orden actualizada correctamente");
-    }
-    setIsModalOpen(false);
-    setSelectedOrder(null);
+  const handleStatusChange = async (orderId: string, newStatus: string) => {
+    await updateStatus(orderId, newStatus);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <>
-      {/* Header */}
       <header className="bg-background border-b border-border px-4 sm:px-6 py-4 pb-7">
         <div className="flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-xl sm:text-2xl font-bold text-[#111827] dark:text-white">Órdenes de Trabajo</h1>
-            <p className="text-xs sm:text-sm text-[#10B981] font-medium">Gestiona las órdenes de reparación</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-[#111827] dark:text-white">Servicio Técnico</h1>
+            <p className="text-xs sm:text-sm text-[#10B981] font-medium">Gestiona las órdenes de servicio</p>
           </div>
-        </div>
-        <div className="flex items-center justify-end gap-3 -mt-12">
-          <Button onClick={() => { setModalMode("create"); setIsModalOpen(true); }}>
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            Nueva Orden
-          </Button>
         </div>
       </header>
 
       <div className="p-6 space-y-6">
-
-
-
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card variant="stats">
-          <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Recibidas</p>
-            <p className="text-2xl font-bold text-foreground">{orders.filter(o => o.status === "received").length}</p>
-          </CardContent>
-        </Card>
-        <Card variant="stats">
-          <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">En Progreso</p>
-            <p className="text-2xl font-bold text-foreground">{orders.filter(o => o.status === "in_progress").length}</p>
-          </CardContent>
-        </Card>
-        <Card variant="stats">
-          <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Completadas</p>
-            <p className="text-2xl font-bold text-foreground">{orders.filter(o => o.status === "completed").length}</p>
-          </CardContent>
-        </Card>
-        <Card variant="stats">
-          <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Total Mes</p>
-            <p className="text-2xl font-bold text-foreground">45</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Orders Table */}
-      <GenericTable
-        data={orders}
-        columns={columns}
-        actions={actions}
-        searchable
-        searchPlaceholder="Buscar por número de orden, cliente o dispositivo..."
-        emptyMessage="No hay órdenes de trabajo registradas"
-      />
-
-      {/* Modal */}
-      <GenericModal
-        isOpen={isModalOpen}
-        onClose={() => { setIsModalOpen(false); setSelectedOrder(null); }}
-        onConfirm={handleModalConfirm}
-        mode={modalMode}
-        title={modalMode === "create" ? "Nueva Orden de Trabajo" : modalMode === "update" ? "Editar Orden" : "Detalles de la Orden"}
-      >
-        <div className="space-y-4">
-          <p className="text-sm text-muted-foreground">Formulario de orden aquí</p>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <Card variant="stats">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                <p className="text-sm text-muted-foreground">Recibidas</p>
+              </div>
+              <p className="text-2xl font-bold text-foreground">{stats?.received || 0}</p>
+            </CardContent>
+          </Card>
+          <Card variant="stats">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <p className="text-sm text-muted-foreground">En Progreso</p>
+              </div>
+              <p className="text-2xl font-bold text-foreground">{stats?.inProgress || 0}</p>
+            </CardContent>
+          </Card>
+          <Card variant="stats">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <p className="text-sm text-muted-foreground">Completadas</p>
+              </div>
+              <p className="text-2xl font-bold text-foreground">{stats?.completed || 0}</p>
+            </CardContent>
+          </Card>
+          <Card variant="stats">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                <p className="text-sm text-muted-foreground">Entregadas</p>
+              </div>
+              <p className="text-2xl font-bold text-foreground">{stats?.delivered || 0}</p>
+            </CardContent>
+          </Card>
+          <Card variant="stats">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-3 h-3 rounded-full bg-gray-500"></div>
+                <p className="text-sm text-muted-foreground">Total</p>
+              </div>
+              <p className="text-2xl font-bold text-foreground">{stats?.total || 0}</p>
+            </CardContent>
+          </Card>
         </div>
-      </GenericModal>
+
+        <GenericTable
+          data={orders}
+          columns={columns}
+          actions={actions}
+          searchable
+          searchPlaceholder="Buscar por número, cliente o técnico..."
+          emptyMessage="No hay órdenes de servicio registradas"
+        />
+
+        {selectedOrder && (
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold">Orden {selectedOrder.serviceNumber}</h3>
+                <Button variant="ghost" size="sm" onClick={() => setSelectedOrder(null)}>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </Button>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Cliente</p>
+                  <p className="font-medium">{selectedOrder.customer?.name}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Técnico</p>
+                  <p className="font-medium">{selectedOrder.technician?.name}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Estado Actual</p>
+                  <Badge variant={STATUS_CONFIG[selectedOrder.status as keyof typeof STATUS_CONFIG].variant}>
+                    {STATUS_CONFIG[selectedOrder.status as keyof typeof STATUS_CONFIG].label}
+                  </Badge>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Fecha Ingreso</p>
+                  <p className="font-medium">{new Date(selectedOrder.entryDate).toLocaleDateString('es-AR')}</p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                {selectedOrder.status === 'received' && (
+                  <Button onClick={() => handleStatusChange(selectedOrder.id, 'in_progress')}>
+                    Iniciar Reparación
+                  </Button>
+                )}
+                {selectedOrder.status === 'in_progress' && (
+                  <Button onClick={() => handleStatusChange(selectedOrder.id, 'completed')}>
+                    Marcar Completada
+                  </Button>
+                )}
+                {selectedOrder.status === 'completed' && (
+                  <Button onClick={() => handleStatusChange(selectedOrder.id, 'delivered')}>
+                    Entregar al Cliente
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </>
   );
