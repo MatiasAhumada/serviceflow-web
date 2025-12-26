@@ -3,13 +3,21 @@
   "private": true,
   "version": "0.0.1",
   "devDependencies": {
-    "concurrently": "^9.0.0"
+    "concurrently": "^9.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7"
   },
   "scripts": {
     "dev:web": "pnpm --filter ./apps/web dev",
     "dev:api": "pnpm --filter ./apps/api start:dev",
     "dev": "concurrently \"pnpm dev:api\" \"pnpm dev:web\"",
     "build": "pnpm -r --filter ./apps/* build",
-    "lint": "pnpm -r --filter ./apps/* lint"
+    "lint": "pnpm -r --filter ./apps/* lint",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "apps/web/**/*.{js,jsx,ts,tsx}": [
+      "pnpm --filter ./apps/web lint --fix"
+    ]
   }
 }
