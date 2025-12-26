@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button, Input, Label, Select } from "@/components/ui";
 import { useProducts } from "@/hooks/useProducts";
 import { useCustomers } from "@/hooks/useCustomers";
@@ -8,7 +8,7 @@ import { CreateSaleDto, CreateSaleItemDto } from "@/types";
 
 interface SaleFormProps {
   onSubmit?: (data: CreateSaleDto) => void;
-  defaultValue?: any;
+  defaultValue?: Record<string, unknown>;
 }
 
 const PAYMENT_METHODS = [
@@ -46,11 +46,7 @@ export function SaleForm({ onSubmit }: SaleFormProps) {
   const [paymentMethod, setPaymentMethod] = useState<string | number>("cash");
   const [cardBrand, setCardBrand] = useState<string | number>("");
   const [cardType, setCardType] = useState<string | number>("");
-  const [showCardDetails, setShowCardDetails] = useState(false);
-
-  useEffect(() => {
-    setShowCardDetails(paymentMethod === "debit_card" || paymentMethod === "credit_card");
-  }, [paymentMethod]);
+  const showCardDetails = paymentMethod === "debit_card" || paymentMethod === "credit_card";
 
   const handleAddItem = () => {
     const product = products.find((p) => p.id === selectedProduct);

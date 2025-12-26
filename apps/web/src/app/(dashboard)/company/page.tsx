@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useForm, Controller } from "react-hook-form";
 import { Card, Button, Input, Label } from "@/components/ui";
@@ -37,11 +37,7 @@ export default function CompanyPage() {
 
   const companyData = watch();
 
-  useEffect(() => {
-    loadCompanyData();
-  }, [session?.user?.companyId]);
-
-  const loadCompanyData = async () => {
+  const loadCompanyData = useCallback(async () => {
     if (!session?.user?.companyId) {
       setIsLoading(false);
       return;
@@ -57,12 +53,16 @@ export default function CompanyPage() {
         email: data.email || "",
         phone: data.phone || "",
       });
-    } catch (error) {
+    } catch {
       ClientHandler.error("Error al cargar la información de la compañía");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [session?.user?.companyId, reset]);
+
+  useEffect(() => {
+    loadCompanyData();
+  }, [loadCompanyData]);
 
   const onSubmit = async (data: CompanyFormData) => {
     if (!company?.id) return;
@@ -82,7 +82,7 @@ export default function CompanyPage() {
       setCompany(updated);
       ClientHandler.success("Información de la compañía actualizada correctamente");
       setIsEditing(false);
-    } catch (error) {
+    } catch {
       ClientHandler.error("Error al actualizar la información");
     } finally {
       setIsSaving(false);

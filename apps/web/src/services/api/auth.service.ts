@@ -24,8 +24,8 @@ export interface LoginResponse {
       code: string;
       name: string;
     };
-    company: any;
-    role: any;
+    company: Record<string, unknown>;
+    role: Record<string, unknown>;
   };
 }
 

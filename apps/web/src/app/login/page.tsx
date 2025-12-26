@@ -37,7 +37,7 @@ export default function LoginPage() {
         });
         router.push("/");
       }
-    } catch (error) {
+    } catch {
       ClientHandler.error({
         title: "Error",
         description: "Ocurrió un error inesperado",

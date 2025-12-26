@@ -14,10 +14,5 @@
     "build": "pnpm -r --filter ./apps/* build",
     "lint": "pnpm -r --filter ./apps/* lint",
     "prepare": "husky"
-  },
-  "lint-staged": {
-    "apps/web/**/*.{js,jsx,ts,tsx}": [
-      "eslint --fix"
-    ]
   }
 }

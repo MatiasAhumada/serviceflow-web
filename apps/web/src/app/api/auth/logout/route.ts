@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { authApiService } from "@/services";
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     await authApiService.logout();
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch {
     return NextResponse.json({ success: true });
   }
 }

@@ -5,14 +5,15 @@ import { Button, Card, CardContent, Badge } from "@/components/ui";
 import { GenericTable } from "@/components/common";
 import type { TableColumn, TableAction } from "@/components/common";
 import { useServiceOrders } from "@/hooks/useServiceOrders";
+import { ServiceOrder } from "@/types";
 import { formatters } from "@/utils/formatters.util";
 import { STATUS_CONFIGS } from "@/utils/status-configs.util";
 
 export default function WorkOrdersPage() {
   const { orders, stats, loading, updateStatus } = useServiceOrders();
-  const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<ServiceOrder | null>(null);
 
-  const columns: TableColumn<any>[] = [
+  const columns: TableColumn<ServiceOrder>[] = [
     {
       key: "serviceNumber",
       header: "N° Orden",
@@ -56,7 +57,7 @@ export default function WorkOrdersPage() {
     },
   ];
 
-  const actions: TableAction<any>[] = [
+  const actions: TableAction<ServiceOrder>[] = [
     {
       label: "",
       icon: (

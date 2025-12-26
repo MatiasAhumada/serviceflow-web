@@ -14,7 +14,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const { data: session, status } = useSession();
   const { hasFeature } = usePlanFeatures();
   const router = useRouter();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("sidebarOpen");
+      return saved !== null ? JSON.parse(saved) : true;
+    }
+    return true;
+  });
 
   // Protección adicional: verificar sesión en cliente
   useEffect(() => {
@@ -33,13 +39,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("sidebarOpen");
-    if (saved !== null) {
-      setSidebarOpen(JSON.parse(saved));
-    }
   }, []);
 
   const handleToggle = () => {

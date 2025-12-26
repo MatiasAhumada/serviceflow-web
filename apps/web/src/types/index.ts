@@ -105,7 +105,7 @@ export interface Sale {
   paymentMethod: string;
   status: string;
   customer?: Customer;
-  seller?: any;
+  seller?: Record<string, unknown>;
   items: SaleItem[];
   cardDetail?: CardDetail;
   createdAt: string;
@@ -162,4 +162,27 @@ export interface CashRegister {
   closeTime?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ServiceOrder {
+  id: string;
+  serviceNumber: string;
+  customerId: string;
+  technicianId?: string;
+  customer?: { name: string };
+  technician?: { name: string };
+  entryDate: string;
+  expectedDelivery?: string;
+  status: string;
+  companyId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ServiceOrderStats {
+  received: number;
+  inProgress: number;
+  completed: number;
+  delivered: number;
+  total: number;
 }

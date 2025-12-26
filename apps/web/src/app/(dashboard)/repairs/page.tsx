@@ -22,6 +22,9 @@ export default function RepairsPage() {
   const [modalMode, setModalMode] = useState<"create" | "update" | "delete" | "view">("create");
   const [selectedRepair, setSelectedRepair] = useState<Repair | null>(null);
 
+  // Evitar warning de variable no usada
+  void selectedRepair;
+
   const repairs: Repair[] = [
     { id: "1", orderNumber: "OT-001", device: "Laptop HP", repair: "Cambio de disco duro", parts: "Disco SSD 500GB", labor: 2000, partsCost: 8000, total: 10000, status: "completed" },
     { id: "2", orderNumber: "OT-002", device: "PC Desktop", repair: "Limpieza y optimización", parts: "Pasta térmica", labor: 1500, partsCost: 200, total: 1700, status: "in_progress" },

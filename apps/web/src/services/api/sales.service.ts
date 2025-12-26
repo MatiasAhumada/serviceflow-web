@@ -7,7 +7,7 @@ export const salesService = {
     return data;
   },
 
-  getAll: async (params?: any) => {
+  getAll: async (params?: Record<string, unknown>) => {
     const { data } = await clientAxios.get<Sale[]>('/sales', { params });
     return data;
   },

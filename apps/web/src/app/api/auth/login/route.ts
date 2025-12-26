@@ -6,10 +6,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const response = await authApiService.login(body);
     return NextResponse.json(response);
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { response?: { data?: { message?: string }; status?: number } };
     return NextResponse.json(
-      { error: error.response?.data?.message || "Invalid credentials" },
-      { status: error.response?.status || 401 }
+      { error: err.response?.data?.message || "Invalid credentials" },
+      { status: err.response?.status || 401 }
     );
   }
 }

@@ -40,9 +40,11 @@ export function AddressSelector({ value, onChange, disabled = false, triggerVali
   const cities = formData.countryCode && formData.stateCode ? City.getCitiesOfState(formData.countryCode, formData.stateCode) : [];
 
   useEffect(() => {
-    const isValid = !errors.street && !!formData.street?.trim();
-    onChange(formData, isValid);
-  }, [formData.street, formData.city, formData.state, formData.stateCode, formData.country, formData.countryCode, formData.postalCode, formData.notes, errors.street]);
+    const handleChange = () => {
+      onChange(formData, !errors.street && !!formData.street?.trim());
+    };
+    handleChange();
+  }, [formData.street, formData.city, formData.state, formData.stateCode, formData.country, formData.countryCode, formData.postalCode, formData.notes, errors.street, formData, onChange]);
 
   useEffect(() => {
     if (triggerValidation) {

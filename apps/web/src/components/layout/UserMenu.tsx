@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 export interface UserMenuOption {
@@ -44,7 +45,7 @@ export function UserMenu({ user, options, className }: UserMenuProps) {
       >
         <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium overflow-hidden">
           {user.avatar ? (
-            <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+            <Image src={user.avatar} alt={user.name} width={32} height={32} className="w-full h-full object-cover" />
           ) : (
             user.name.charAt(0).toUpperCase()
           )}

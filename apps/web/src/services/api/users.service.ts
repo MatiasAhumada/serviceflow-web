@@ -16,7 +16,7 @@ export const usersService = {
     return data;
   },
 
-  update: async (id: string, userData: any) => {
+  update: async (id: string, userData: Record<string, unknown>) => {
     const { data } = await clientAxios.patch(`/users/${id}`, userData);
     return data;
   },

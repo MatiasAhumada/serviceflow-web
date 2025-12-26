@@ -3,6 +3,7 @@
 import * as React from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 export interface SidebarItem {
@@ -21,7 +22,6 @@ interface SidebarProps {
   items: SidebarItem[];
   isOpen: boolean;
   onToggle: () => void;
-  header?: React.ReactNode;
   footer?: React.ReactNode;
   className?: string;
   user?: {
@@ -38,7 +38,7 @@ interface SidebarProps {
   }>;
 }
 
-export function Sidebar({ items, isOpen, onToggle, header, footer, className, user, userMenuOptions }: SidebarProps) {
+export function Sidebar({ items, isOpen, onToggle, footer, className, user, userMenuOptions }: SidebarProps) {
   const pathname = usePathname();
   const [isUserMenuOpen, setIsUserMenuOpen] = React.useState(false);
   const [openSubmenus, setOpenSubmenus] = React.useState<Record<string, boolean>>({});
@@ -219,7 +219,7 @@ export function Sidebar({ items, isOpen, onToggle, header, footer, className, us
                     className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium hover:bg-primary/90 transition-colors overflow-hidden"
                   >
                     {user?.avatar ? (
-                      <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                      <Image src={user.avatar} alt={user.name} width={40} height={40} className="w-full h-full object-cover" />
                     ) : (
                       user?.name?.charAt(0).toUpperCase() || "A"
                     )}

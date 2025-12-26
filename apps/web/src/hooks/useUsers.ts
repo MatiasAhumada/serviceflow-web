@@ -1,41 +1,53 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { usersService } from '@/services/api/users.service';
 import { toast } from 'sonner';
 
+interface User {
+  id: string | number;
+  name: string;
+  email: string;
+  phone?: string;
+  userType?: {
+    name?: string;
+  };
+  status: string;
+  createdAt: string;
+}
+
 export const useUsers = (role?: string) => {
-  const [users, setUsers] = useState<any[]>([]);
-  const [stats, setStats] = useState<any>(null);
+  const [users, setUsers] = useState<User[]>([]);
+  const [stats, setStats] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
       const data = await usersService.getAll(role);
       setUsers(data);
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al cargar usuarios');
+    } catch (error: unknown) {
+      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al cargar usuarios');
     } finally {
       setLoading(false);
     }
-  };
+  }, [role]);
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       const data = await usersService.getStats();
       setStats(data);
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al cargar estadísticas');
+    } catch (error: unknown) {
+      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al cargar estadísticas');
     }
-  };
+  }, []);
 
-  const updateUser = async (id: string, userData: any) => {
+  const updateUser = async (id: string, userData: Record<string, unknown>): Promise<User> => {
     try {
       const updatedUser = await usersService.update(id, userData);
       setUsers((prev) => prev.map((u) => (u.id === id ? updatedUser : u)));
       toast.success('Usuario actualizado exitosamente');
-      return updatedUser;
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al actualizar usuario');
+      return updatedUser as User;
+    } catch (error: unknown) {
+      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al actualizar usuario');
       throw error;
     }
   };
@@ -45,8 +57,8 @@ export const useUsers = (role?: string) => {
       await usersService.delete(id);
       setUsers((prev) => prev.filter((u) => u.id !== id));
       toast.success('Usuario eliminado exitosamente');
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al eliminar usuario');
+    } catch (error: unknown) {
+      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al eliminar usuario');
       throw error;
     }
   };
@@ -54,7 +66,7 @@ export const useUsers = (role?: string) => {
   useEffect(() => {
     fetchUsers();
     fetchStats();
-  }, [role]);
+  }, [fetchUsers, fetchStats]);
 
   return {
     users,

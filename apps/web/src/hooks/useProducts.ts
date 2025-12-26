@@ -28,7 +28,7 @@ export function useProducts({ search }: UseProductsParams = {}) {
       ]);
       setProducts(productsData);
       setStats(statsData);
-    } catch (error) {
+    } catch {
       ClientHandler.error("Error al cargar productos");
     } finally {
       setIsLoading(false);
@@ -41,7 +41,7 @@ export function useProducts({ search }: UseProductsParams = {}) {
       ClientHandler.success("Producto creado correctamente");
       await fetchProducts();
       return true;
-    } catch (error) {
+    } catch {
       ClientHandler.error("Error al crear producto");
       return false;
     }
@@ -53,7 +53,7 @@ export function useProducts({ search }: UseProductsParams = {}) {
       ClientHandler.success("Producto actualizado correctamente");
       await fetchProducts();
       return true;
-    } catch (error) {
+    } catch {
       ClientHandler.error("Error al actualizar producto");
       return false;
     }
@@ -65,7 +65,7 @@ export function useProducts({ search }: UseProductsParams = {}) {
       ClientHandler.success("Producto eliminado correctamente");
       await fetchProducts();
       return true;
-    } catch (error) {
+    } catch {
       ClientHandler.error("Error al eliminar producto");
       return false;
     }

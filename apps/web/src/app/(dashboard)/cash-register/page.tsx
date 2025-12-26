@@ -9,7 +9,7 @@ export default function CashRegisterPage() {
   const { stats, movements, loading, openCashRegister, closeCashRegister } = useCashRegister();
 
   const handleOpenClose = async () => {
-    if (!stats?.cashRegisterId) return;
+    if (!stats?.cashRegisterId || typeof stats.cashRegisterId !== 'string') return;
     
     if (stats.isOpen) {
       if (confirm('¿Cerrar la caja?')) {
@@ -68,17 +68,17 @@ export default function CashRegisterPage() {
                   <Badge variant={statusConfig.variant}>
                     {statusConfig.label}
                   </Badge>
-                  {stats?.openTime && (
+                  {stats?.openTime && typeof stats.openTime === 'string' ? (
                     <span className="text-sm text-muted-foreground">
                       • Apertura: {formatters.time(stats.openTime)}
                     </span>
-                  )}
+                  ) : null}
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">Saldo Actual</p>
                 <p className="text-3xl font-bold text-foreground">
-                  {formatters.currency(stats?.currentBalance || 0)}
+                  {formatters.currency(typeof stats?.currentBalance === 'number' ? stats.currentBalance : 0)}
                 </p>
               </div>
             </div>
@@ -90,7 +90,7 @@ export default function CashRegisterPage() {
             <CardContent className="p-4">
               <p className="text-sm text-muted-foreground">Ingresos</p>
               <p className="text-2xl font-bold text-green-600">
-                {formatters.currency(stats?.totalIncome || 0)}
+                {formatters.currency(typeof stats?.totalIncome === 'number' ? stats.totalIncome : 0)}
               </p>
             </CardContent>
           </Card>
@@ -98,14 +98,14 @@ export default function CashRegisterPage() {
             <CardContent className="p-4">
               <p className="text-sm text-muted-foreground">Egresos</p>
               <p className="text-2xl font-bold text-red-600">
-                {formatters.currency(stats?.totalExpense || 0)}
+                {formatters.currency(typeof stats?.totalExpense === 'number' ? stats.totalExpense : 0)}
               </p>
             </CardContent>
           </Card>
           <Card variant="stats">
             <CardContent className="p-4">
               <p className="text-sm text-muted-foreground">Movimientos</p>
-              <p className="text-2xl font-bold text-foreground">{stats?.movementsCount || 0}</p>
+              <p className="text-2xl font-bold text-foreground">{typeof stats?.movementsCount === 'number' ? stats.movementsCount : 0}</p>
             </CardContent>
           </Card>
         </div>
@@ -119,8 +119,8 @@ export default function CashRegisterPage() {
               <p className="text-center text-muted-foreground py-8">No hay movimientos registrados</p>
             ) : (
               <div className="space-y-3">
-                {movements.map((movement) => (
-                  <div key={movement.id} className="flex items-center justify-between p-4 border border-border rounded-lg">
+                {movements.map((movement, index) => (
+                  <div key={typeof movement.id === 'string' || typeof movement.id === 'number' ? movement.id : index} className="flex items-center justify-between p-4 border border-border rounded-lg">
                     <div className="flex items-center gap-4">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                         movement.type === "income" ? "bg-green-500/10" : "bg-red-500/10"

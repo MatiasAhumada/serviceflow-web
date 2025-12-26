@@ -25,7 +25,7 @@ export function useSuppliers({ search }: UseSuppliersParams = {}) {
       ]);
       setSuppliers(suppliersData);
       setStats(statsData);
-    } catch (error) {
+    } catch {
       ClientHandler.error("Error al cargar proveedores");
     } finally {
       setIsLoading(false);
@@ -38,7 +38,7 @@ export function useSuppliers({ search }: UseSuppliersParams = {}) {
       ClientHandler.success("Proveedor creado correctamente");
       await fetchSuppliers();
       return true;
-    } catch (error) {
+    } catch {
       ClientHandler.error("Error al crear proveedor");
       return false;
     }
@@ -50,7 +50,7 @@ export function useSuppliers({ search }: UseSuppliersParams = {}) {
       ClientHandler.success("Proveedor actualizado correctamente");
       await fetchSuppliers();
       return true;
-    } catch (error) {
+    } catch {
       ClientHandler.error("Error al actualizar proveedor");
       return false;
     }
@@ -62,7 +62,7 @@ export function useSuppliers({ search }: UseSuppliersParams = {}) {
       ClientHandler.success("Proveedor eliminado correctamente");
       await fetchSuppliers();
       return true;
-    } catch (error) {
+    } catch {
       ClientHandler.error("Error al eliminar proveedor");
       return false;
     }

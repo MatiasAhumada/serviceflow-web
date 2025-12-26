@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { serviceOrdersService } from '@/services/api/service-orders.service';
+import { ServiceOrder, ServiceOrderStats } from '@/types';
 import { toast } from 'sonner';
 
 export const useServiceOrders = () => {
-  const [orders, setOrders] = useState<any[]>([]);
-  const [stats, setStats] = useState<any>(null);
+  const [orders, setOrders] = useState<ServiceOrder[]>([]);
+  const [stats, setStats] = useState<ServiceOrderStats | null>(null);
   const [loading, setLoading] = useState(false);
 
   const fetchOrders = async () => {
@@ -12,8 +13,8 @@ export const useServiceOrders = () => {
       setLoading(true);
       const data = await serviceOrdersService.getAll();
       setOrders(data);
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al cargar órdenes');
+    } catch (error: unknown) {
+      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al cargar órdenes');
     } finally {
       setLoading(false);
     }
@@ -23,19 +24,19 @@ export const useServiceOrders = () => {
     try {
       const data = await serviceOrdersService.getStats();
       setStats(data);
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al cargar estadísticas');
+    } catch (error: unknown) {
+      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al cargar estadísticas');
     }
   };
 
-  const createOrder = async (orderData: any) => {
+  const createOrder = async (orderData: Record<string, unknown>) => {
     try {
       const newOrder = await serviceOrdersService.create(orderData);
       setOrders((prev) => [newOrder, ...prev]);
       toast.success('Orden creada exitosamente');
       return newOrder;
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al crear orden');
+    } catch (error: unknown) {
+      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al crear orden');
       throw error;
     }
   };
@@ -47,20 +48,20 @@ export const useServiceOrders = () => {
       toast.success('Estado actualizado exitosamente');
       await fetchStats();
       return updatedOrder;
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al actualizar estado');
+    } catch (error: unknown) {
+      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al actualizar estado');
       throw error;
     }
   };
 
-  const updateOrder = async (id: string, orderData: any) => {
+  const updateOrder = async (id: string, orderData: Record<string, unknown>) => {
     try {
       const updatedOrder = await serviceOrdersService.update(id, orderData);
       setOrders((prev) => prev.map((o) => (o.id === id ? updatedOrder : o)));
       toast.success('Orden actualizada exitosamente');
       return updatedOrder;
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al actualizar orden');
+    } catch (error: unknown) {
+      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al actualizar orden');
       throw error;
     }
   };
@@ -70,8 +71,8 @@ export const useServiceOrders = () => {
       await serviceOrdersService.delete(id);
       setOrders((prev) => prev.filter((o) => o.id !== id));
       toast.success('Orden eliminada exitosamente');
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al eliminar orden');
+    } catch (error: unknown) {
+      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al eliminar orden');
       throw error;
     }
   };

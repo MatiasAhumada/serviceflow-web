@@ -1,5 +1,4 @@
 import { DefaultSession, DefaultUser } from "next-auth";
-import { JWT, DefaultJWT } from "next-auth/jwt";
 
 interface UserType {
   id: string;
@@ -43,6 +42,8 @@ declare module "next-auth" {
 }
 
 declare module "next-auth/jwt" {
+  import { DefaultJWT } from "next-auth/jwt";
+  
   interface JWT extends DefaultJWT {
     plan: string;
     permissions: string[];

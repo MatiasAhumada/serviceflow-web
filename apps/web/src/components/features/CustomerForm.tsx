@@ -1,17 +1,8 @@
-import { useEffect } from "react";
 import { Input, Label, Textarea } from "@/components/ui";
 import type { Customer } from "@/types";
 
 interface CustomerFormProps {
   customer?: Customer | null;
-  onSubmit?: (data: CustomerFormData) => void;
-}
-
-export interface CustomerFormData {
-  name: string;
-  phone: string;
-  email: string;
-  notes: string;
 }
 
 export function CustomerForm({ customer }: CustomerFormProps) {

@@ -34,18 +34,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   
   const [optimisticState, setOptimisticState] = useOptimistic(
     { user: storedUser, isLoading: false, error: null },
-    (state: AuthState, action: { type: string; payload?: any }) => {
+    (state: AuthState, action: { type: string; payload?: User | string | null }): AuthState => {
       switch (action.type) {
         case "LOGIN_START":
           return { ...state, isLoading: true, error: null };
         case "LOGIN_SUCCESS":
-          return { user: action.payload, isLoading: false, error: null };
+          return { user: action.payload as User, isLoading: false, error: null };
         case "LOGIN_ERROR":
-          return { ...state, isLoading: false, error: action.payload };
+          return { ...state, isLoading: false, error: action.payload as string };
         case "LOGOUT":
           return { user: null, isLoading: false, error: null };
         case "UPDATE_USER":
-          return { ...state, user: action.payload };
+          return { ...state, user: action.payload as User };
         default:
           return state;
       }
@@ -70,8 +70,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setStoredUser(authData.user);
         setOptimisticState({ type: "LOGIN_SUCCESS", payload: authData.user });
         ClientHandler.success("Sesión iniciada correctamente");
-      } catch (error) {
-        const errorMsg = error instanceof Error ? error.message : "Error de login";
+      } catch {
+        const errorMsg = "Error de login";
         setOptimisticState({ type: "LOGIN_ERROR", payload: errorMsg });
         ClientHandler.error(errorMsg);
       }
@@ -86,8 +86,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setStoredUser(null);
         setOptimisticState({ type: "LOGOUT" });
         ClientHandler.success("Sesión cerrada correctamente");
-      } catch (error) {
-        console.warn("Error during logout:", error);
+      } catch {
+        console.warn("Error during logout");
         localStorage.removeItem("auth-token");
         setStoredUser(null);
         setOptimisticState({ type: "LOGOUT" });
@@ -113,7 +113,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         setStoredUser(updatedUser);
         ClientHandler.success("Usuario actualizado correctamente");
-      } catch (error) {
+      } catch {
         setOptimisticState({ type: "UPDATE_USER", payload: optimisticState.user });
         ClientHandler.error("Error al actualizar usuario");
       }

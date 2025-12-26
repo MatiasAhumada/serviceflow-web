@@ -3,18 +3,25 @@ import { salesService } from '@/services/api/sales.service';
 import { Sale, CreateSaleDto, UpdateSaleDto } from '@/types';
 import { toast } from 'sonner';
 
+interface SalesStats {
+  todayCount: number;
+  todayTotal: number;
+  monthCount: number;
+  monthTotal: number;
+}
+
 export const useSales = () => {
   const [sales, setSales] = useState<Sale[]>([]);
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<SalesStats | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const fetchSales = async (params?: any) => {
+  const fetchSales = async (params?: Record<string, unknown>) => {
     try {
       setLoading(true);
       const data = await salesService.getAll(params);
       setSales(data);
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al cargar ventas');
+    } catch (error: unknown) {
+      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al cargar ventas');
     } finally {
       setLoading(false);
     }
@@ -24,8 +31,8 @@ export const useSales = () => {
     try {
       const data = await salesService.getStats();
       setStats(data);
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al cargar estadísticas');
+    } catch (error: unknown) {
+      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al cargar estadísticas');
     }
   };
 
@@ -35,8 +42,8 @@ export const useSales = () => {
       setSales((prev) => [newSale, ...prev]);
       toast.success('Venta creada exitosamente');
       return newSale;
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al crear venta');
+    } catch (error: unknown) {
+      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al crear venta');
       throw error;
     }
   };
@@ -47,8 +54,8 @@ export const useSales = () => {
       setSales((prev) => prev.map((s) => (s.id === id ? updatedSale : s)));
       toast.success('Venta actualizada exitosamente');
       return updatedSale;
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al actualizar venta');
+    } catch (error: unknown) {
+      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al actualizar venta');
       throw error;
     }
   };
@@ -58,8 +65,8 @@ export const useSales = () => {
       await salesService.delete(id);
       setSales((prev) => prev.filter((s) => s.id !== id));
       toast.success('Venta eliminada exitosamente');
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al eliminar venta');
+    } catch (error: unknown) {
+      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al eliminar venta');
       throw error;
     }
   };
@@ -70,8 +77,8 @@ export const useSales = () => {
       setSales((prev) => prev.map((s) => (s.id === id ? cancelledSale : s)));
       toast.success('Venta cancelada exitosamente');
       return cancelledSale;
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al cancelar venta');
+    } catch (error: unknown) {
+      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al cancelar venta');
       throw error;
     }
   };

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Button, Card, CardContent } from "@/components/ui";
 import { GenericTable, GenericModal } from "@/components/common";
-import { CustomerForm, type CustomerFormData } from "@/components/features";
+import { CustomerForm } from "@/components/features";
 import type { TableColumn, TableAction } from "@/components/common";
 import { useCustomers, useDebounce } from "@/hooks";
 import type { Customer } from "@/types";
@@ -14,7 +14,6 @@ export default function ClientsPage() {
   const [selectedClient, setSelectedClient] = useState<Customer | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearch = useDebounce(searchTerm, 500);
-  const formRef = useRef<HTMLFormElement>(null);
 
   const { customers, stats, isLoading, createCustomer, updateCustomer, deleteCustomer } = useCustomers({
     search: debouncedSearch,
@@ -106,7 +105,10 @@ export default function ClientsPage() {
       return;
     }
 
-    formRef.current?.requestSubmit();
+    const form = document.querySelector('form') as HTMLFormElement;
+    if (form) {
+      form.requestSubmit();
+    }
   };
 
   const handleFormSubmitInternal = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -225,7 +227,7 @@ export default function ClientsPage() {
               )}
             </div>
           ) : (
-            <form ref={formRef} onSubmit={handleFormSubmitInternal}>
+            <form onSubmit={handleFormSubmitInternal}>
               <CustomerForm customer={selectedClient} />
             </form>
           )}

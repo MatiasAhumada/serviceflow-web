@@ -2,9 +2,21 @@ import { useState, useEffect } from 'react';
 import { cashRegistersService } from '@/services/api/cash-registers.service';
 import { toast } from 'sonner';
 
+interface CashMovement {
+  id: string | number;
+  type: string;
+  concept: string;
+  date: string;
+  amount: number;
+  notes?: string;
+  user?: {
+    name?: string;
+  };
+}
+
 export const useCashRegister = () => {
-  const [stats, setStats] = useState<any>(null);
-  const [movements, setMovements] = useState<any[]>([]);
+  const [stats, setStats] = useState<Record<string, unknown> | null>(null);
+  const [movements, setMovements] = useState<CashMovement[]>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchStats = async () => {
@@ -12,8 +24,8 @@ export const useCashRegister = () => {
       setLoading(true);
       const data = await cashRegistersService.getStats();
       setStats(data);
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al cargar estadísticas');
+    } catch (error: unknown) {
+      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al cargar estadísticas');
     } finally {
       setLoading(false);
     }
@@ -23,8 +35,8 @@ export const useCashRegister = () => {
     try {
       const data = await cashRegistersService.getMovements();
       setMovements(data);
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al cargar movimientos');
+    } catch (error: unknown) {
+      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al cargar movimientos');
     }
   };
 
@@ -34,8 +46,8 @@ export const useCashRegister = () => {
       toast.success('Caja abierta exitosamente');
       await fetchStats();
       await fetchMovements();
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al abrir caja');
+    } catch (error: unknown) {
+      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al abrir caja');
       throw error;
     }
   };
@@ -46,8 +58,8 @@ export const useCashRegister = () => {
       toast.success('Caja cerrada exitosamente');
       await fetchStats();
       setMovements([]);
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error al cerrar caja');
+    } catch (error: unknown) {
+      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al cerrar caja');
       throw error;
     }
   };

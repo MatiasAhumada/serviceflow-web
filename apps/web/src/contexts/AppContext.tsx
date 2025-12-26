@@ -43,10 +43,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   
   const [optimisticState, setOptimisticState] = useOptimistic(
     { ...storedSettings, isLoading: false },
-    (state: AppState, action: { type: string; payload?: any }) => {
+    (state: AppState, action: { type: string; payload?: Partial<AppSettings> }): AppState => {
       switch (action.type) {
         case "UPDATE_SETTINGS":
-          return { ...state, ...action.payload };
+          return { ...state, ...(action.payload || {}) } as AppState;
         case "TOGGLE_SIDEBAR":
           return { ...state, sidebarOpen: !state.sidebarOpen };
         case "TOGGLE_THEME":

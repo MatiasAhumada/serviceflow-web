@@ -1,20 +1,32 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Card, CardContent, Badge } from "@/components/ui";
+import { Card, CardContent, Badge } from "@/components/ui";
 import { GenericTable, GenericModal } from "@/components/common";
 import type { TableColumn, TableAction } from "@/components/common";
 import { useUsers } from "@/hooks/useUsers";
 import { formatters } from "@/utils/formatters.util";
 import { STATUS_CONFIGS } from "@/utils/status-configs.util";
 
+interface User {
+  id: string | number;
+  name: string;
+  email: string;
+  phone?: string;
+  userType?: {
+    name?: string;
+  };
+  status: string;
+  createdAt: string;
+}
+
 export default function EmployeesPage() {
   const { users, stats, loading } = useUsers();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<"create" | "update" | "delete" | "view">("view");
-  const [selectedEmployee, setSelectedEmployee] = useState<any | null>(null);
+  const [selectedEmployee, setSelectedEmployee] = useState<User | null>(null);
 
-  const columns: TableColumn<any>[] = [
+  const columns: TableColumn<User>[] = [
     {
       key: "name",
       header: "Nombre",
@@ -50,7 +62,7 @@ export default function EmployeesPage() {
     },
   ];
 
-  const actions: TableAction<any>[] = [
+  const actions: TableAction<User>[] = [
     {
       label: "",
       icon: (
@@ -92,30 +104,30 @@ export default function EmployeesPage() {
           <Card variant="stats">
             <CardContent className="p-4">
               <p className="text-sm text-muted-foreground">Total Empleados</p>
-              <p className="text-2xl font-bold text-foreground">{stats?.total || 0}</p>
+              <p className="text-2xl font-bold text-foreground">{typeof stats?.total === 'number' ? stats.total : 0}</p>
             </CardContent>
           </Card>
           <Card variant="stats">
             <CardContent className="p-4">
               <p className="text-sm text-muted-foreground">Activos</p>
-              <p className="text-2xl font-bold text-green-600">{stats?.active || 0}</p>
+              <p className="text-2xl font-bold text-green-600">{typeof stats?.active === 'number' ? stats.active : 0}</p>
             </CardContent>
           </Card>
           <Card variant="stats">
             <CardContent className="p-4">
               <p className="text-sm text-muted-foreground">Inactivos</p>
-              <p className="text-2xl font-bold text-red-600">{stats?.inactive || 0}</p>
+              <p className="text-2xl font-bold text-red-600">{typeof stats?.inactive === 'number' ? stats.inactive : 0}</p>
             </CardContent>
           </Card>
           <Card variant="stats">
             <CardContent className="p-4">
               <p className="text-sm text-muted-foreground">Roles</p>
-              <p className="text-2xl font-bold text-foreground">{Object.keys(stats?.byRole || {}).length}</p>
+              <p className="text-2xl font-bold text-foreground">{typeof stats?.byRole === 'object' && stats.byRole ? Object.keys(stats.byRole).length : 0}</p>
             </CardContent>
           </Card>
         </div>
 
-        <GenericTable
+        <GenericTable<User>
           data={users}
           columns={columns}
           actions={actions}

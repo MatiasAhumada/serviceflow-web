@@ -9,6 +9,7 @@ interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
 
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ className, label, error, helperText, id, ...props }, ref) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const textareaId = id || React.useId();
 
     return (

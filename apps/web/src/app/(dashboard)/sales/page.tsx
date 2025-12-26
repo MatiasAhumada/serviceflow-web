@@ -62,7 +62,7 @@ export default function SalesPage() {
       header: "Estado",
       align: "center",
       render: (sale) => {
-        const statuses: Record<string, { label: string; variant: any }> = {
+        const statuses: Record<string, { label: string; variant: "success" | "outline" | "destructive" }> = {
           completed: { label: 'Completada', variant: 'success' },
           pending: { label: 'Pendiente', variant: 'outline' },
           cancelled: { label: 'Cancelada', variant: 'destructive' },

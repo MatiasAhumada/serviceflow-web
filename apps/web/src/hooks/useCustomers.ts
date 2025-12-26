@@ -27,7 +27,7 @@ export function useCustomers({ search }: UseCustomersParams = {}) {
       ]);
       setCustomers(customersData);
       setStats(statsData);
-    } catch (error) {
+    } catch {
       ClientHandler.error("Error al cargar clientes");
     } finally {
       setIsLoading(false);
@@ -40,7 +40,7 @@ export function useCustomers({ search }: UseCustomersParams = {}) {
       ClientHandler.success("Cliente creado correctamente");
       await fetchCustomers();
       return true;
-    } catch (error) {
+    } catch {
       ClientHandler.error("Error al crear cliente");
       return false;
     }
@@ -52,7 +52,7 @@ export function useCustomers({ search }: UseCustomersParams = {}) {
       ClientHandler.success("Cliente actualizado correctamente");
       await fetchCustomers();
       return true;
-    } catch (error) {
+    } catch {
       ClientHandler.error("Error al actualizar cliente");
       return false;
     }
@@ -64,7 +64,7 @@ export function useCustomers({ search }: UseCustomersParams = {}) {
       ClientHandler.success("Cliente eliminado correctamente");
       await fetchCustomers();
       return true;
-    } catch (error) {
+    } catch {
       ClientHandler.error("Error al eliminar cliente");
       return false;
     }

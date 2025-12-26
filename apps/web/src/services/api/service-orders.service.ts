@@ -16,7 +16,7 @@ export const serviceOrdersService = {
     return data;
   },
 
-  create: async (orderData: any) => {
+  create: async (orderData: Record<string, unknown>) => {
     const { data } = await clientAxios.post('/service-orders', orderData);
     return data;
   },
@@ -26,7 +26,7 @@ export const serviceOrdersService = {
     return data;
   },
 
-  update: async (id: string, orderData: any) => {
+  update: async (id: string, orderData: Record<string, unknown>) => {
     const { data } = await clientAxios.patch(`/service-orders/${id}`, orderData);
     return data;
   },

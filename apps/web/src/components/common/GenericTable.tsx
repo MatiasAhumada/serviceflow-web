@@ -4,7 +4,6 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { Badge } from "@/components/ui/Badge";
 
 export interface TableColumn<T> {
   key: keyof T | string;
@@ -37,7 +36,7 @@ interface GenericTableProps<T> {
   onRowClick?: (item: T) => void;
 }
 
-export function GenericTable<T extends Record<string, any>>({
+export function GenericTable<T = Record<string, unknown>>({
   data,
   columns,
   actions,
@@ -76,11 +75,14 @@ export function GenericTable<T extends Record<string, any>>({
     if (!sortConfig) return data;
 
     return [...data].sort((a, b) => {
-      const aValue = a[sortConfig.key];
-      const bValue = b[sortConfig.key];
+      const aValue = (a as Record<string, unknown>)[sortConfig.key];
+      const bValue = (b as Record<string, unknown>)[sortConfig.key];
 
-      if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
-      if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
+      const aComp = aValue ?? "";
+      const bComp = bValue ?? "";
+
+      if (aComp < bComp) return sortConfig.direction === "asc" ? -1 : 1;
+      if (aComp > bComp) return sortConfig.direction === "asc" ? 1 : -1;
       return 0;
     });
   }, [data, sortConfig]);
@@ -89,7 +91,7 @@ export function GenericTable<T extends Record<string, any>>({
     if (!searchTerm || onSearch) return sortedData;
 
     return sortedData.filter((item) =>
-      Object.values(item).some((value) =>
+      Object.values(item as Record<string, unknown>).some((value) =>
         String(value).toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
