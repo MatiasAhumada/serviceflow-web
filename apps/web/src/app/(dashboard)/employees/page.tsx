@@ -5,6 +5,8 @@ import { Button, Card, CardContent, Badge } from "@/components/ui";
 import { GenericTable, GenericModal } from "@/components/common";
 import type { TableColumn, TableAction } from "@/components/common";
 import { useUsers } from "@/hooks/useUsers";
+import { formatters } from "@/utils/formatters.util";
+import { STATUS_CONFIGS } from "@/utils/status-configs.util";
 
 export default function EmployeesPage() {
   const { users, stats, loading } = useUsers();
@@ -35,17 +37,16 @@ export default function EmployeesPage() {
       key: "createdAt",
       header: "Ingreso",
       sortable: true,
-      render: (user) => new Date(user.createdAt).toLocaleDateString('es-AR'),
+      render: (user) => formatters.date(user.createdAt),
     },
     {
       key: "status",
       header: "Estado",
       align: "center",
-      render: (user) => (
-        <Badge variant={user.status === 'active' ? 'success' : 'destructive'} size="sm">
-          {user.status === 'active' ? 'Activo' : 'Inactivo'}
-        </Badge>
-      ),
+      render: (user) => {
+        const config = STATUS_CONFIGS.user[user.status as keyof typeof STATUS_CONFIGS.user];
+        return <Badge variant={config.variant} size="sm">{config.label}</Badge>;
+      },
     },
   ];
 
@@ -145,8 +146,8 @@ export default function EmployeesPage() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Estado</p>
-                <Badge variant={selectedEmployee.status === 'active' ? 'success' : 'destructive'}>
-                  {selectedEmployee.status === 'active' ? 'Activo' : 'Inactivo'}
+                <Badge variant={STATUS_CONFIGS.user[selectedEmployee.status as keyof typeof STATUS_CONFIGS.user].variant}>
+                  {STATUS_CONFIGS.user[selectedEmployee.status as keyof typeof STATUS_CONFIGS.user].label}
                 </Badge>
               </div>
             </div>

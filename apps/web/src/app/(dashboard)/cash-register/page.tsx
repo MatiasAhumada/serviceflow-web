@@ -2,6 +2,8 @@
 
 import { useCashRegister } from "@/hooks/useCashRegister";
 import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from "@/components/ui";
+import { formatters } from "@/utils/formatters.util";
+import { STATUS_CONFIGS } from "@/utils/status-configs.util";
 
 export default function CashRegisterPage() {
   const { stats, movements, loading, openCashRegister, closeCashRegister } = useCashRegister();
@@ -25,6 +27,8 @@ export default function CashRegisterPage() {
       </div>
     );
   }
+
+  const statusConfig = stats?.isOpen ? STATUS_CONFIGS.cashRegister.open : STATUS_CONFIGS.cashRegister.closed;
 
   return (
     <>
@@ -61,12 +65,12 @@ export default function CashRegisterPage() {
               <div>
                 <p className="text-sm text-muted-foreground">Estado de Caja</p>
                 <div className="flex items-center gap-2 mt-1">
-                  <Badge variant={stats?.isOpen ? "success" : "destructive"}>
-                    {stats?.isOpen ? "Abierta" : "Cerrada"}
+                  <Badge variant={statusConfig.variant}>
+                    {statusConfig.label}
                   </Badge>
                   {stats?.openTime && (
                     <span className="text-sm text-muted-foreground">
-                      • Apertura: {new Date(stats.openTime).toLocaleTimeString('es-AR')}
+                      • Apertura: {formatters.time(stats.openTime)}
                     </span>
                   )}
                 </div>
@@ -74,7 +78,7 @@ export default function CashRegisterPage() {
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">Saldo Actual</p>
                 <p className="text-3xl font-bold text-foreground">
-                  ${(stats?.currentBalance || 0).toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+                  {formatters.currency(stats?.currentBalance || 0)}
                 </p>
               </div>
             </div>
@@ -86,7 +90,7 @@ export default function CashRegisterPage() {
             <CardContent className="p-4">
               <p className="text-sm text-muted-foreground">Ingresos</p>
               <p className="text-2xl font-bold text-green-600">
-                ${(stats?.totalIncome || 0).toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+                {formatters.currency(stats?.totalIncome || 0)}
               </p>
             </CardContent>
           </Card>
@@ -94,7 +98,7 @@ export default function CashRegisterPage() {
             <CardContent className="p-4">
               <p className="text-sm text-muted-foreground">Egresos</p>
               <p className="text-2xl font-bold text-red-600">
-                ${(stats?.totalExpense || 0).toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+                {formatters.currency(stats?.totalExpense || 0)}
               </p>
             </CardContent>
           </Card>
@@ -132,7 +136,7 @@ export default function CashRegisterPage() {
                       <div>
                         <p className="font-medium text-foreground">{movement.concept}</p>
                         <p className="text-sm text-muted-foreground">
-                          {new Date(movement.date).toLocaleTimeString('es-AR')} • {movement.user?.name || 'Usuario'}
+                          {formatters.time(movement.date)} • {movement.user?.name || 'Usuario'}
                         </p>
                         {movement.notes && (
                           <p className="text-xs text-muted-foreground mt-1">{movement.notes}</p>
@@ -140,7 +144,7 @@ export default function CashRegisterPage() {
                       </div>
                     </div>
                     <p className={`text-lg font-bold ${movement.type === "income" ? "text-green-600" : "text-red-600"}`}>
-                      {movement.type === "income" ? "+" : "-"}${Number(movement.amount).toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+                      {movement.type === "income" ? "+" : "-"}{formatters.currency(movement.amount)}
                     </p>
                   </div>
                 ))}

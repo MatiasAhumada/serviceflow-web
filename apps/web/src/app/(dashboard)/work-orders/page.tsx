@@ -5,14 +5,8 @@ import { Button, Card, CardContent, Badge } from "@/components/ui";
 import { GenericTable } from "@/components/common";
 import type { TableColumn, TableAction } from "@/components/common";
 import { useServiceOrders } from "@/hooks/useServiceOrders";
-
-const STATUS_CONFIG = {
-  received: { label: "Recibido", variant: "default" as const, color: "bg-blue-500" },
-  in_progress: { label: "En Progreso", variant: "default" as const, color: "bg-yellow-500" },
-  completed: { label: "Completado", variant: "success" as const, color: "bg-green-500" },
-  delivered: { label: "Entregado", variant: "success" as const, color: "bg-emerald-500" },
-  cancelled: { label: "Cancelado", variant: "destructive" as const, color: "bg-red-500" },
-};
+import { formatters } from "@/utils/formatters.util";
+import { STATUS_CONFIGS } from "@/utils/status-configs.util";
 
 export default function WorkOrdersPage() {
   const { orders, stats, loading, updateStatus } = useServiceOrders();
@@ -43,20 +37,20 @@ export default function WorkOrdersPage() {
       key: "entryDate",
       header: "Ingreso",
       sortable: true,
-      render: (order) => new Date(order.entryDate).toLocaleDateString('es-AR'),
+      render: (order) => formatters.date(order.entryDate),
     },
     {
       key: "expectedDelivery",
       header: "Entrega Est.",
       sortable: true,
-      render: (order) => order.expectedDelivery ? new Date(order.expectedDelivery).toLocaleDateString('es-AR') : "N/A",
+      render: (order) => order.expectedDelivery ? formatters.date(order.expectedDelivery) : "N/A",
     },
     {
       key: "status",
       header: "Estado",
       align: "center",
       render: (order) => {
-        const config = STATUS_CONFIG[order.status as keyof typeof STATUS_CONFIG];
+        const config = STATUS_CONFIGS.service[order.status as keyof typeof STATUS_CONFIGS.service];
         return <Badge variant={config.variant}>{config.label}</Badge>;
       },
     },
@@ -179,13 +173,13 @@ export default function WorkOrdersPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Estado Actual</p>
-                  <Badge variant={STATUS_CONFIG[selectedOrder.status as keyof typeof STATUS_CONFIG].variant}>
-                    {STATUS_CONFIG[selectedOrder.status as keyof typeof STATUS_CONFIG].label}
+                  <Badge variant={STATUS_CONFIGS.service[selectedOrder.status as keyof typeof STATUS_CONFIGS.service].variant}>
+                    {STATUS_CONFIGS.service[selectedOrder.status as keyof typeof STATUS_CONFIGS.service].label}
                   </Badge>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Fecha Ingreso</p>
-                  <p className="font-medium">{new Date(selectedOrder.entryDate).toLocaleDateString('es-AR')}</p>
+                  <p className="font-medium">{formatters.date(selectedOrder.entryDate)}</p>
                 </div>
               </div>
               <div className="flex gap-2">
