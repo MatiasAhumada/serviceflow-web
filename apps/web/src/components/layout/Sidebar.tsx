@@ -88,10 +88,7 @@ export function Sidebar({ items, isOpen, onToggle, header, footer, className, us
         <div className="flex flex-col h-full">
           {/* Header with Logo */}
           <div className={cn("border-b border-border", isOpen ? "p-4 sm:p-6" : "p-4 flex justify-center")}>
-            <button
-              onClick={onToggle}
-              className={cn("flex items-center hover:opacity-80 transition-opacity", isOpen ? "gap-3" : "justify-center")}
-            >
+            <button onClick={onToggle} className={cn("flex items-center hover:opacity-80 transition-opacity", isOpen ? "gap-3" : "justify-center")}>
               <div
                 className={cn(
                   "bg-gradient-to-br from-[#10B981] to-[#2563EB] rounded-lg flex items-center justify-center shadow-lg",
@@ -129,7 +126,7 @@ export function Sidebar({ items, isOpen, onToggle, header, footer, className, us
                 return (
                   <div key={item.id}>
                     <button
-                      onClick={() => setOpenSubmenus(prev => ({ ...prev, [item.id]: !prev[item.id] }))}
+                      onClick={() => setOpenSubmenus((prev) => ({ ...prev, [item.id]: !prev[item.id] }))}
                       className={cn(
                         "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
                         "hover:bg-muted/10 focus:outline-none",
@@ -141,7 +138,12 @@ export function Sidebar({ items, isOpen, onToggle, header, footer, className, us
                       {isOpen && (
                         <>
                           <span className="flex-1 text-left">{item.label}</span>
-                          <svg className={cn("w-4 h-4 transition-transform", isSubmenuOpen && "rotate-180")} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg
+                            className={cn("w-4 h-4 transition-transform", isSubmenuOpen && "rotate-180")}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                           </svg>
                         </>
@@ -149,7 +151,7 @@ export function Sidebar({ items, isOpen, onToggle, header, footer, className, us
                     </button>
                     {isOpen && isSubmenuOpen && (
                       <div className="ml-8 mt-1 space-y-1">
-                        {item.children.map((child) => {
+                        {item.children?.map((child) => {
                           const isChildActive = child.href === "/" ? pathname === "/" : pathname.startsWith(child.href || "");
                           return (
                             <Link
@@ -237,11 +239,7 @@ export function Sidebar({ items, isOpen, onToggle, header, footer, className, us
                             option.variant === "destructive" && "text-destructive hover:bg-destructive/10"
                           )}
                         >
-                          {option.icon && (
-                            <span className="w-4 h-4 flex-shrink-0">
-                              {option.icon}
-                            </span>
-                          )}
+                          {option.icon && <span className="w-4 h-4 flex-shrink-0">{option.icon}</span>}
                           {option.label}
                         </button>
                       ))}
