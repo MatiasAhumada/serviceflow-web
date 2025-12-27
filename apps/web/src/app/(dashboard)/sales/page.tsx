@@ -6,10 +6,12 @@ import { GenericTable, GenericModal } from "@/components/common";
 import type { TableColumn, TableAction } from "@/components/common";
 import { SaleForm } from "@/components/features";
 import { useSales } from "@/hooks/useSales";
+import { useReceipts } from "@/hooks/useReceipts";
 import { Sale, CreateSaleDto } from "@/types";
 
 export default function SalesPage() {
   const { sales, stats, loading, createSale, cancelSale } = useSales();
+  const { createReceipt, downloadPDF } = useReceipts();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<"create" | "view">("create");
   const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
@@ -88,6 +90,14 @@ export default function SalesPage() {
         setModalMode("view");
         setIsModalOpen(true);
       },
+    },
+    {
+      label: "Generar Factura",
+      variant: "default",
+      onClick: async (sale) => {
+        createReceipt({ saleId: sale.id });
+      },
+      show: (sale) => sale.status === 'completed',
     },
     {
       label: "Cancelar",

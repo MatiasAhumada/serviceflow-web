@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ILike, MoreThanOrEqual } from 'typeorm';
-import { Sale, SaleItem, SaleCardDetail, CashMovement } from '../../entities';
+import { Sale, SaleItem, SaleCardDetail, CashMovement, PaymentOrder } from '../../entities';
 import { CreateSaleDto, QuerySaleDto, UpdateSaleDto } from './dto';
 import { SALE_STATUS, MOVEMENT_TYPE } from '../../constants';
 
@@ -16,6 +16,8 @@ export class SalesService {
     private saleCardDetailsRepository: Repository<SaleCardDetail>,
     @InjectRepository(CashMovement)
     private cashMovementsRepository: Repository<CashMovement>,
+    @InjectRepository(PaymentOrder)
+    private paymentOrdersRepository: Repository<PaymentOrder>,
   ) {}
 
   async getStats(companyId: string) {
@@ -131,7 +133,7 @@ export class SalesService {
       saleNumber,
       total,
       date: saleData.date ? new Date(saleData.date) : new Date(),
-      status: SALE_STATUS.COMPLETED,
+      status: SALE_STATUS.PENDING,
     });
 
     const savedSale = await this.salesRepository.save(sale);
@@ -157,8 +159,24 @@ export class SalesService {
       });
     }
 
-    // Crear movimiento de caja automáticamente
-    if (saleData.cashRegisterId) {
+    // Crear orden de pago
+    const lastOrder = await this.paymentOrdersRepository.findOne({
+      where: { companyId },
+      order: { createdAt: 'DESC' },
+    });
+
+    const orderNumber = this.generateOrderNumber(lastOrder?.orderNumber);
+
+    await this.paymentOrdersRepository.save({
+      companyId,
+      saleId: savedSale.id!,
+      orderNumber,
+      amount: total - (saleData.discount || 0),
+      status: 'pending',
+    });
+
+    // Crear movimiento de caja automáticamente solo si la venta está completada
+    if (saleData.cashRegisterId && savedSale.status === SALE_STATUS.COMPLETED) {
       await this.cashMovementsRepository.save({
         saleId: savedSale.id!,
         cashRegisterId: saleData.cashRegisterId,
@@ -278,5 +296,14 @@ export class SalesService {
 
     const number = parseInt(lastSaleNumber.split('-')[1]) + 1;
     return `V-${number.toString().padStart(5, '0')}`;
+  }
+
+  private generateOrderNumber(lastOrderNumber?: string): string {
+    if (!lastOrderNumber) {
+      return 'ORD-00001';
+    }
+
+    const number = parseInt(lastOrderNumber.split('-')[1]) + 1;
+    return `ORD-${number.toString().padStart(5, '0')}`;
   }
 }

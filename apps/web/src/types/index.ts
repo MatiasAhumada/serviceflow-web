@@ -186,3 +186,52 @@ export interface ServiceOrderStats {
   delivered: number;
   total: number;
 }
+
+export interface Receipt {
+  id: string;
+  companyId: string;
+  saleId: string;
+  customerId: string;
+  sellerId: string;
+  technicianId?: string;
+  receiptNumber: string;
+  date: string;
+  subtotal: number;
+  discount: number;
+  total: number;
+  paymentMethod: string;
+  pdfPath?: string;
+  company?: Record<string, unknown>;
+  sale?: Sale;
+  customer?: Customer;
+  seller?: Record<string, unknown>;
+  technician?: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateReceiptDto {
+  saleId: string;
+  technicianId?: string;
+}
+
+export interface PaymentOrder {
+  id: string;
+  companyId: string;
+  saleId: string;
+  cashierId?: string;
+  cashRegisterId?: string;
+  orderNumber: string;
+  amount: number;
+  status: string;
+  completedAt?: string;
+  sale?: Sale;
+  cashier?: Record<string, unknown>;
+  cashRegister?: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CompletePaymentOrderDto {
+  cashRegisterId?: string;
+}

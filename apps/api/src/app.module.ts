@@ -23,6 +23,8 @@ import { SalesModule } from './modules/sales/sales.module';
 import { ServiceOrdersModule } from './modules/service-orders/service-orders.module';
 import { DevicesModule } from './modules/devices/devices.module';
 import { WarrantiesModule } from './modules/warranties/warranties.module';
+import { ReceiptsModule } from './modules/receipts/receipts.module';
+import { PaymentOrdersModule } from './modules/payment-orders/payment-orders.module';
 
 @Module({
   imports: [
@@ -58,6 +60,8 @@ import { WarrantiesModule } from './modules/warranties/warranties.module';
     ServiceOrdersModule,
     DevicesModule,
     WarrantiesModule,
+    ReceiptsModule,
+    PaymentOrdersModule,
   ],
   controllers: [AppController],
   providers: [

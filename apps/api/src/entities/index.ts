@@ -22,3 +22,5 @@ export { ServiceOrder } from './service-order.entity';
 export { ServiceItem } from './service-item.entity';
 export { Device } from './device.entity';
 export { Warranty } from './warranty.entity';
+export { Receipt } from './receipt.entity';
+export { PaymentOrder } from './payment-order.entity';
