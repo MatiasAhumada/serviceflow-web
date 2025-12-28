@@ -10,12 +10,14 @@ export { Tabs, TabsList, TabsTrigger, TabsContent } from "./Tabs";
 export { Progress } from "./Progress";
 export { Alert, AlertTitle, AlertDescription } from "./Alert";
 export { Toaster } from "./sonner";
+export { Breadcrumb } from "./Breadcrumb";
 export * from "./dialog";
 export * from "./dropdown-menu";
 export * from "./separator";
 
 // Types
 export type { SelectOption } from "./SelectWrapper";
+export type { BreadcrumbItem } from "./Breadcrumb";
 
 // Utils
 export { cn } from "@/lib/utils";

@@ -70,11 +70,39 @@ export class CashRegistersService {
   }
 
   async findAll(companyId: string): Promise<CashRegister[]> {
-    return this.cashRegistersRepository.find({
+    const cashRegisters = await this.cashRegistersRepository.find({
       where: { companyId },
-      relations: ['opener', 'closer'],
+      relations: ['opener', 'closer', 'user'],
       order: { createdAt: 'DESC' },
     });
+
+    const cashRegistersWithStats = await Promise.all(
+      cashRegisters.map(async (cashRegister) => {
+        if (cashRegister.status === CASH_REGISTER_STATUS.OPEN) {
+          const movements = await this.cashMovementsRepository.find({
+            where: { cashRegisterId: cashRegister.id, companyId },
+          });
+
+          const totalIncome = movements
+            .filter((m) => m.type === 'income')
+            .reduce((sum, m) => sum + Number(m.amount), 0);
+
+          const totalExpense = movements
+            .filter((m) => m.type === 'expense')
+            .reduce((sum, m) => sum + Number(m.amount), 0);
+
+          return {
+            ...cashRegister,
+            totalIncome,
+            totalExpense,
+            movementsCount: movements.length,
+          };
+        }
+        return cashRegister;
+      }),
+    );
+
+    return cashRegistersWithStats as CashRegister[];
   }
 
   async findOne(id: string, companyId: string): Promise<CashRegister> {

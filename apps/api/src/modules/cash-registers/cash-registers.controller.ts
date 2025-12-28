@@ -48,7 +48,7 @@ export class CashRegistersController {
     @CurrentUser() user: { companyId: string; userId: string },
     @Body() cashRegisterData: Partial<CashRegister>,
   ): Promise<CashRegister> {
-    return this.cashRegistersService.create({ ...cashRegisterData, companyId: user.companyId, userId: user.userId });
+    return this.cashRegistersService.create({ ...cashRegisterData, companyId: user.companyId });
   }
 
   @Patch(':id/open')

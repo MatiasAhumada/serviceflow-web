@@ -53,9 +53,9 @@ export const useCashRegister = () => {
     }
   };
 
-  const createCashRegister = async (name: string, assignedUserId?: string) => {
+  const createCashRegister = async (name: string, userId?: string) => {
     try {
-      await cashRegistersService.create({ name, assignedUserId });
+      await cashRegistersService.create({ name, userId });
       ClientHandler.success('Caja creada exitosamente');
       await fetchCashRegisters();
     } catch {
