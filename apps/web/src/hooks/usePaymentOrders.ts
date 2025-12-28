@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { paymentOrdersService } from '@/services/api/payment-orders.service';
 import { CompletePaymentOrderDto } from '@/types';
-import { toast } from 'sonner';
+import { ClientHandler } from '@/lib/client-handler';
 
 export const usePaymentOrders = () => {
   const queryClient = useQueryClient();
@@ -17,10 +17,10 @@ export const usePaymentOrders = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payment-orders'] });
       queryClient.invalidateQueries({ queryKey: ['sales'] });
-      toast.success('Pago completado exitosamente');
+      ClientHandler.success('Pago completado exitosamente');
     },
     onError: () => {
-      toast.error('Error al completar el pago');
+      ClientHandler.error('Error al completar el pago');
     },
   });
 
@@ -29,10 +29,10 @@ export const usePaymentOrders = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payment-orders'] });
       queryClient.invalidateQueries({ queryKey: ['sales'] });
-      toast.success('Orden cancelada');
+      ClientHandler.success('Orden cancelada');
     },
     onError: () => {
-      toast.error('Error al cancelar orden');
+      ClientHandler.error('Error al cancelar orden');
     },
   });
 

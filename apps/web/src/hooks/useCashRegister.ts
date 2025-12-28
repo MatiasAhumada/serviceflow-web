@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { cashRegistersService } from '@/services/api/cash-registers.service';
-import { toast } from 'sonner';
+import { ClientHandler } from '@/lib/client-handler';
 
 interface CashMovement {
   id: string | number;
@@ -24,8 +24,8 @@ export const useCashRegister = () => {
       setLoading(true);
       const data = await cashRegistersService.getStats();
       setStats(data);
-    } catch (error: unknown) {
-      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al cargar estadísticas');
+    } catch {
+      ClientHandler.error('Error al cargar estadísticas');
     } finally {
       setLoading(false);
     }
@@ -35,32 +35,32 @@ export const useCashRegister = () => {
     try {
       const data = await cashRegistersService.getMovements();
       setMovements(data);
-    } catch (error: unknown) {
-      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al cargar movimientos');
+    } catch {
+      ClientHandler.error('Error al cargar movimientos');
     }
   };
 
   const openCashRegister = async (id: string) => {
     try {
       await cashRegistersService.open(id);
-      toast.success('Caja abierta exitosamente');
+      ClientHandler.success('Caja abierta exitosamente');
       await fetchStats();
       await fetchMovements();
-    } catch (error: unknown) {
-      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al abrir caja');
-      throw error;
+    } catch {
+      ClientHandler.error('Error al abrir caja');
+      throw new Error('Error al abrir caja');
     }
   };
 
   const closeCashRegister = async (id: string) => {
     try {
       await cashRegistersService.close(id);
-      toast.success('Caja cerrada exitosamente');
+      ClientHandler.success('Caja cerrada exitosamente');
       await fetchStats();
       setMovements([]);
-    } catch (error: unknown) {
-      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al cerrar caja');
-      throw error;
+    } catch {
+      ClientHandler.error('Error al cerrar caja');
+      throw new Error('Error al cerrar caja');
     }
   };
 

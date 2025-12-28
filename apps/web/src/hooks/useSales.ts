@@ -1,62 +1,62 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { salesService } from '@/services/api/sales.service';
-import { Sale, CreateSaleDto, UpdateSaleDto } from '@/types';
-import { toast } from 'sonner';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { salesService } from "@/services/api/sales.service";
+import { CreateSaleDto, UpdateSaleDto } from "@/types";
+import { ClientHandler } from "@/lib/client-handler";
 
 export const useSales = () => {
   const queryClient = useQueryClient();
 
   const salesQuery = useQuery({
-    queryKey: ['sales'],
+    queryKey: ["sales"],
     queryFn: () => salesService.getAll(),
   });
 
   const statsQuery = useQuery({
-    queryKey: ['sales', 'stats'],
+    queryKey: ["sales", "stats"],
     queryFn: salesService.getStats,
   });
 
   const createMutation = useMutation({
     mutationFn: (saleData: CreateSaleDto) => salesService.create(saleData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sales'] });
-      toast.success('Venta creada exitosamente');
+      queryClient.invalidateQueries({ queryKey: ["sales"] });
+      ClientHandler.success("Venta creada exitosamente");
     },
-    onError: (error: unknown) => {
-      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al crear venta');
+    onError: () => {
+      ClientHandler.error("Error al crear venta");
     },
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateSaleDto }) => salesService.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sales'] });
-      toast.success('Venta actualizada exitosamente');
+      queryClient.invalidateQueries({ queryKey: ["sales"] });
+      ClientHandler.success("Venta actualizada exitosamente");
     },
-    onError: (error: unknown) => {
-      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al actualizar venta');
+    onError: () => {
+      ClientHandler.error("Error al actualizar venta");
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => salesService.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sales'] });
-      toast.success('Venta eliminada exitosamente');
+      queryClient.invalidateQueries({ queryKey: ["sales"] });
+      ClientHandler.success("Venta eliminada exitosamente");
     },
-    onError: (error: unknown) => {
-      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al eliminar venta');
+    onError: () => {
+      ClientHandler.error("Error al eliminar venta");
     },
   });
 
   const cancelMutation = useMutation({
     mutationFn: (id: string) => salesService.cancel(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sales'] });
-      toast.success('Venta cancelada exitosamente');
+      queryClient.invalidateQueries({ queryKey: ["sales"] });
+      ClientHandler.success("Venta cancelada exitosamente");
     },
-    onError: (error: unknown) => {
-      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al cancelar venta');
+    onError: () => {
+      ClientHandler.error("Error al cancelar venta");
     },
   });
 
@@ -64,8 +64,8 @@ export const useSales = () => {
     sales: salesQuery.data || [],
     stats: statsQuery.data || { todayCount: 0, todayTotal: 0, monthCount: 0, monthTotal: 0 },
     loading: salesQuery.isLoading || statsQuery.isLoading,
-    fetchSales: () => queryClient.invalidateQueries({ queryKey: ['sales'] }),
-    fetchStats: () => queryClient.invalidateQueries({ queryKey: ['sales', 'stats'] }),
+    fetchSales: () => queryClient.invalidateQueries({ queryKey: ["sales"] }),
+    fetchStats: () => queryClient.invalidateQueries({ queryKey: ["sales", "stats"] }),
     createSale: createMutation.mutateAsync,
     updateSale: async (id: string, data: UpdateSaleDto) => updateMutation.mutateAsync({ id, data }),
     deleteSale: deleteMutation.mutateAsync,

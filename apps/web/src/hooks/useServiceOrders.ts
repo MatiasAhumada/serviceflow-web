@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { serviceOrdersService } from '@/services/api/service-orders.service';
 import { ServiceOrder, ServiceOrderStats } from '@/types';
-import { toast } from 'sonner';
+import { ClientHandler } from '@/lib/client-handler';
 
 export const useServiceOrders = () => {
   const [orders, setOrders] = useState<ServiceOrder[]>([]);
@@ -13,8 +13,8 @@ export const useServiceOrders = () => {
       setLoading(true);
       const data = await serviceOrdersService.getAll();
       setOrders(data);
-    } catch (error: unknown) {
-      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al cargar órdenes');
+    } catch {
+      ClientHandler.error('Error al cargar órdenes');
     } finally {
       setLoading(false);
     }
@@ -24,8 +24,8 @@ export const useServiceOrders = () => {
     try {
       const data = await serviceOrdersService.getStats();
       setStats(data);
-    } catch (error: unknown) {
-      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al cargar estadísticas');
+    } catch {
+      ClientHandler.error('Error al cargar estadísticas');
     }
   };
 
@@ -33,47 +33,47 @@ export const useServiceOrders = () => {
     try {
       const newOrder = await serviceOrdersService.create(orderData);
       setOrders((prev) => [newOrder, ...prev]);
-      toast.success('Orden creada exitosamente');
+      ClientHandler.success('Orden creada exitosamente');
       return newOrder;
-    } catch (error: unknown) {
-      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al crear orden');
-      throw error;
+    } catch {
+      ClientHandler.error('Error al crear orden');
+      throw new Error('Error al crear orden');
     }
   };
 
   const updateStatus = async (id: string, status: string, notes?: string) => {
     try {
       const updatedOrder = await serviceOrdersService.updateStatus(id, status, notes);
-      setOrders((prev) => prev.map((o) => (o.id === id ? updatedOrder : o)));
-      toast.success('Estado actualizado exitosamente');
+      setOrders((prev) => prev.map((order) => (order.id === id ? updatedOrder : order)));
+      ClientHandler.success('Estado actualizado exitosamente');
       await fetchStats();
       return updatedOrder;
-    } catch (error: unknown) {
-      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al actualizar estado');
-      throw error;
+    } catch {
+      ClientHandler.error('Error al actualizar estado');
+      throw new Error('Error al actualizar estado');
     }
   };
 
   const updateOrder = async (id: string, orderData: Record<string, unknown>) => {
     try {
       const updatedOrder = await serviceOrdersService.update(id, orderData);
-      setOrders((prev) => prev.map((o) => (o.id === id ? updatedOrder : o)));
-      toast.success('Orden actualizada exitosamente');
+      setOrders((prev) => prev.map((order) => (order.id === id ? updatedOrder : order)));
+      ClientHandler.success('Orden actualizada exitosamente');
       return updatedOrder;
-    } catch (error: unknown) {
-      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al actualizar orden');
-      throw error;
+    } catch {
+      ClientHandler.error('Error al actualizar orden');
+      throw new Error('Error al actualizar orden');
     }
   };
 
   const deleteOrder = async (id: string) => {
     try {
       await serviceOrdersService.delete(id);
-      setOrders((prev) => prev.filter((o) => o.id !== id));
-      toast.success('Orden eliminada exitosamente');
-    } catch (error: unknown) {
-      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al eliminar orden');
-      throw error;
+      setOrders((prev) => prev.filter((order) => order.id !== id));
+      ClientHandler.success('Orden eliminada exitosamente');
+    } catch {
+      ClientHandler.error('Error al eliminar orden');
+      throw new Error('Error al eliminar orden');
     }
   };
 

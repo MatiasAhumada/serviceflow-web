@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { customersService } from "@/services";
 import { ClientHandler } from "@/lib/client-handler";
-import type { Customer, CreateCustomerDto, UpdateCustomerDto } from "@/types";
+import type { CreateCustomerDto, UpdateCustomerDto } from "@/types";
 
 interface UseCustomersParams {
   search?: string;

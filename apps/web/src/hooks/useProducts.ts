@@ -1,7 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { productsService } from "@/services";
 import { ClientHandler } from "@/lib/client-handler";
-import type { Product, CreateProductDto, UpdateProductDto } from "@/types";
+import type { CreateProductDto, UpdateProductDto } from "@/types";
 
 interface UseProductsParams {
   search?: string;
@@ -11,19 +11,19 @@ export function useProducts({ search }: UseProductsParams = {}) {
   const queryClient = useQueryClient();
 
   const productsQuery = useQuery({
-    queryKey: ['products', search],
+    queryKey: ["products", search],
     queryFn: () => productsService.getAll({ search }),
   });
 
   const statsQuery = useQuery({
-    queryKey: ['products', 'stats'],
+    queryKey: ["products", "stats"],
     queryFn: productsService.getStats,
   });
 
   const createMutation = useMutation({
     mutationFn: (productData: CreateProductDto) => productsService.create(productData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
       ClientHandler.success("Producto creado correctamente");
     },
     onError: () => {
@@ -34,7 +34,7 @@ export function useProducts({ search }: UseProductsParams = {}) {
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateProductDto }) => productsService.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
       ClientHandler.success("Producto actualizado correctamente");
     },
     onError: () => {
@@ -45,7 +45,7 @@ export function useProducts({ search }: UseProductsParams = {}) {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => productsService.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ["products"] });
       ClientHandler.success("Producto eliminado correctamente");
     },
     onError: () => {
@@ -69,6 +69,6 @@ export function useProducts({ search }: UseProductsParams = {}) {
       await deleteMutation.mutateAsync(id);
       return true;
     },
-    refetch: () => queryClient.invalidateQueries({ queryKey: ['products'] }),
+    refetch: () => queryClient.invalidateQueries({ queryKey: ["products"] }),
   };
 }

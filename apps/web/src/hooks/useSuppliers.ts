@@ -1,7 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { suppliersService } from "@/services";
 import { ClientHandler } from "@/lib/client-handler";
-import type { Supplier, CreateSupplierDto, UpdateSupplierDto } from "@/types";
+import type { CreateSupplierDto, UpdateSupplierDto } from "@/types";
 
 interface UseSuppliersParams {
   search?: string;
@@ -11,19 +11,19 @@ export function useSuppliers({ search }: UseSuppliersParams = {}) {
   const queryClient = useQueryClient();
 
   const suppliersQuery = useQuery({
-    queryKey: ['suppliers', search],
+    queryKey: ["suppliers", search],
     queryFn: () => suppliersService.getAll({ search }),
   });
 
   const statsQuery = useQuery({
-    queryKey: ['suppliers', 'stats'],
+    queryKey: ["suppliers", "stats"],
     queryFn: suppliersService.getStats,
   });
 
   const createMutation = useMutation({
     mutationFn: (supplierData: CreateSupplierDto) => suppliersService.create(supplierData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['suppliers'] });
+      queryClient.invalidateQueries({ queryKey: ["suppliers"] });
       ClientHandler.success("Proveedor creado correctamente");
     },
     onError: () => {
@@ -34,7 +34,7 @@ export function useSuppliers({ search }: UseSuppliersParams = {}) {
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateSupplierDto }) => suppliersService.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['suppliers'] });
+      queryClient.invalidateQueries({ queryKey: ["suppliers"] });
       ClientHandler.success("Proveedor actualizado correctamente");
     },
     onError: () => {
@@ -45,7 +45,7 @@ export function useSuppliers({ search }: UseSuppliersParams = {}) {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => suppliersService.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['suppliers'] });
+      queryClient.invalidateQueries({ queryKey: ["suppliers"] });
       ClientHandler.success("Proveedor eliminado correctamente");
     },
     onError: () => {
@@ -69,6 +69,6 @@ export function useSuppliers({ search }: UseSuppliersParams = {}) {
       await deleteMutation.mutateAsync(id);
       return true;
     },
-    refetch: () => queryClient.invalidateQueries({ queryKey: ['suppliers'] }),
+    refetch: () => queryClient.invalidateQueries({ queryKey: ["suppliers"] }),
   };
 }

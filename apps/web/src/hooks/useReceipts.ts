@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { receiptsService } from '@/services/api/receipts.service';
 import { CreateReceiptDto } from '@/types';
-import { toast } from 'sonner';
+import { ClientHandler } from '@/lib/client-handler';
 
 export const useReceipts = () => {
   const queryClient = useQueryClient();
@@ -15,10 +15,10 @@ export const useReceipts = () => {
     mutationFn: (data: CreateReceiptDto) => receiptsService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['receipts'] });
-      toast.success('Comprobante generado exitosamente');
+      ClientHandler.success('Comprobante generado exitosamente');
     },
     onError: () => {
-      toast.error('Error al generar comprobante');
+      ClientHandler.error('Error al generar comprobante');
     },
   });
 
@@ -26,10 +26,10 @@ export const useReceipts = () => {
     mutationFn: (id: string) => receiptsService.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['receipts'] });
-      toast.success('Comprobante eliminado');
+      ClientHandler.success('Comprobante eliminado');
     },
     onError: () => {
-      toast.error('Error al eliminar comprobante');
+      ClientHandler.error('Error al eliminar comprobante');
     },
   });
 

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { usersService } from '@/services/api/users.service';
-import { toast } from 'sonner';
+import { ClientHandler } from '@/lib/client-handler';
 
 interface User {
   id: string | number;
@@ -24,8 +24,8 @@ export const useUsers = (role?: string) => {
       setLoading(true);
       const data = await usersService.getAll(role);
       setUsers(data);
-    } catch (error: unknown) {
-      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al cargar usuarios');
+    } catch {
+      ClientHandler.error('Error al cargar usuarios');
     } finally {
       setLoading(false);
     }
@@ -35,31 +35,31 @@ export const useUsers = (role?: string) => {
     try {
       const data = await usersService.getStats();
       setStats(data);
-    } catch (error: unknown) {
-      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al cargar estadísticas');
+    } catch {
+      ClientHandler.error('Error al cargar estadísticas');
     }
   }, []);
 
   const updateUser = async (id: string, userData: Record<string, unknown>): Promise<User> => {
     try {
       const updatedUser = await usersService.update(id, userData);
-      setUsers((prev) => prev.map((u) => (u.id === id ? updatedUser : u)));
-      toast.success('Usuario actualizado exitosamente');
+      setUsers((prev) => prev.map((user) => (user.id === id ? updatedUser : user)));
+      ClientHandler.success('Usuario actualizado exitosamente');
       return updatedUser as User;
-    } catch (error: unknown) {
-      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al actualizar usuario');
-      throw error;
+    } catch {
+      ClientHandler.error('Error al actualizar usuario');
+      throw new Error('Error al actualizar usuario');
     }
   };
 
   const deleteUser = async (id: string) => {
     try {
       await usersService.delete(id);
-      setUsers((prev) => prev.filter((u) => u.id !== id));
-      toast.success('Usuario eliminado exitosamente');
-    } catch (error: unknown) {
-      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al eliminar usuario');
-      throw error;
+      setUsers((prev) => prev.filter((user) => user.id !== id));
+      ClientHandler.success('Usuario eliminado exitosamente');
+    } catch {
+      ClientHandler.error('Error al eliminar usuario');
+      throw new Error('Error al eliminar usuario');
     }
   };
 
