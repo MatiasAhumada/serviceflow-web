@@ -6,11 +6,6 @@ import { toast } from 'sonner';
 export const usePaymentOrders = () => {
   const queryClient = useQueryClient();
 
-  const ordersQuery = useQuery({
-    queryKey: ['payment-orders'],
-    queryFn: paymentOrdersService.getAll,
-  });
-
   const pendingOrdersQuery = useQuery({
     queryKey: ['payment-orders', 'pending'],
     queryFn: paymentOrdersService.getPending,
@@ -42,9 +37,8 @@ export const usePaymentOrders = () => {
   });
 
   return {
-    orders: ordersQuery.data,
     pendingOrders: pendingOrdersQuery.data,
-    isLoading: ordersQuery.isLoading || pendingOrdersQuery.isLoading,
+    isLoading: pendingOrdersQuery.isLoading,
     completeOrder: completeOrderMutation.mutate,
     cancelOrder: cancelOrderMutation.mutate,
   };

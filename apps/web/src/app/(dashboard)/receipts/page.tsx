@@ -106,7 +106,7 @@ export default function ReceiptsPage() {
         </div>
 
         <GenericTable
-          data={receipts}
+          data={receipts || []}
           columns={columns}
           actions={actions}
           searchable

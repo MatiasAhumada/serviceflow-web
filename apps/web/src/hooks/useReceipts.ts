@@ -41,19 +41,3 @@ export const useReceipts = () => {
     downloadPDF: receiptsService.downloadPDF,
   };
 };
-
-export const useReceipt = (id: string) => {
-  return useQuery({
-    queryKey: ['receipts', id],
-    queryFn: () => receiptsService.getById(id),
-    enabled: !!id,
-  });
-};
-
-export const useReceiptBySale = (saleId: string) => {
-  return useQuery({
-    queryKey: ['receipts', 'sale', saleId],
-    queryFn: () => receiptsService.getBySale(saleId),
-    enabled: !!saleId,
-  });
-};

@@ -1,21 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button, Card, CardContent, Badge } from "@/components/ui";
 import { GenericTable, GenericModal } from "@/components/common";
 import type { TableColumn, TableAction } from "@/components/common";
 import { usePaymentOrders } from "@/hooks/usePaymentOrders";
-import { useCashRegisters } from "@/hooks/useCashRegisters";
+import { useCashRegister } from "@/hooks/useCashRegister";
+import { cashRegistersService } from "@/services/api/cash-registers.service";
 import { PaymentOrder } from "@/types";
 
 export default function PaymentOrdersPage() {
   const { pendingOrders, isLoading, completeOrder, cancelOrder } = usePaymentOrders();
-  const { cashRegisters } = useCashRegisters();
+  const { stats } = useCashRegister();
   const [selectedOrder, setSelectedOrder] = useState<PaymentOrder | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCashRegister, setSelectedCashRegister] = useState<string>("");
+  const [cashRegisters, setCashRegisters] = useState<{id: string; name: string; status: string}[]>([]);
 
-  const openCashRegister = cashRegisters?.find(cr => cr.status === 'open');
+  useEffect(() => {
+    const fetchCashRegisters = async () => {
+      const data = await cashRegistersService.getAll();
+      setCashRegisters(data);
+    };
+    fetchCashRegisters();
+  }, []);
+
+  const openCashRegister = stats?.isOpen && stats.cashRegisterId && stats.cashRegisterName && stats.openTime
+    ? {
+        id: stats.cashRegisterId as string,
+        name: stats.cashRegisterName as string,
+        status: 'open' as const,
+        openTime: stats.openTime as string,
+      }
+    : null;
 
   const columns: TableColumn<PaymentOrder>[] = [
     { key: "orderNumber", header: "N° Orden", sortable: true },
@@ -125,7 +142,7 @@ export default function PaymentOrdersPage() {
                 <div>
                   <p className="text-sm font-medium">Caja Abierta: {openCashRegister.name}</p>
                   <p className="text-xs text-muted-foreground">
-                    Abierta desde: {new Date(openCashRegister.openTime!).toLocaleString('es-AR')}
+                    Abierta desde: {new Date(openCashRegister.openTime).toLocaleString('es-AR')}
                   </p>
                 </div>
                 <Badge variant="success">Activa</Badge>
@@ -135,7 +152,7 @@ export default function PaymentOrdersPage() {
         )}
 
         <GenericTable
-          data={pendingOrders}
+          data={pendingOrders || []}
           columns={columns}
           actions={actions}
           searchable
