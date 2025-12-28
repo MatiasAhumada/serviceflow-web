@@ -1,102 +1,74 @@
-import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { salesService } from '@/services/api/sales.service';
 import { Sale, CreateSaleDto, UpdateSaleDto } from '@/types';
 import { toast } from 'sonner';
 
-interface SalesStats {
-  todayCount: number;
-  todayTotal: number;
-  monthCount: number;
-  monthTotal: number;
-}
-
 export const useSales = () => {
-  const [sales, setSales] = useState<Sale[]>([]);
-  const [stats, setStats] = useState<SalesStats | null>(null);
-  const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
 
-  const fetchSales = async (params?: Record<string, unknown>) => {
-    try {
-      setLoading(true);
-      const data = await salesService.getAll(params);
-      setSales(data);
-    } catch (error: unknown) {
-      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al cargar ventas');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const salesQuery = useQuery({
+    queryKey: ['sales'],
+    queryFn: () => salesService.getAll(),
+  });
 
-  const fetchStats = async () => {
-    try {
-      const data = await salesService.getStats();
-      setStats(data);
-    } catch (error: unknown) {
-      toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al cargar estadísticas');
-    }
-  };
+  const statsQuery = useQuery({
+    queryKey: ['sales', 'stats'],
+    queryFn: salesService.getStats,
+  });
 
-  const createSale = async (saleData: CreateSaleDto) => {
-    try {
-      const newSale = await salesService.create(saleData);
-      setSales((prev) => [newSale, ...prev]);
+  const createMutation = useMutation({
+    mutationFn: (saleData: CreateSaleDto) => salesService.create(saleData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sales'] });
       toast.success('Venta creada exitosamente');
-      return newSale;
-    } catch (error: unknown) {
+    },
+    onError: (error: unknown) => {
       toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al crear venta');
-      throw error;
-    }
-  };
+    },
+  });
 
-  const updateSale = async (id: string, saleData: UpdateSaleDto) => {
-    try {
-      const updatedSale = await salesService.update(id, saleData);
-      setSales((prev) => prev.map((s) => (s.id === id ? updatedSale : s)));
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateSaleDto }) => salesService.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sales'] });
       toast.success('Venta actualizada exitosamente');
-      return updatedSale;
-    } catch (error: unknown) {
+    },
+    onError: (error: unknown) => {
       toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al actualizar venta');
-      throw error;
-    }
-  };
+    },
+  });
 
-  const deleteSale = async (id: string) => {
-    try {
-      await salesService.delete(id);
-      setSales((prev) => prev.filter((s) => s.id !== id));
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => salesService.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sales'] });
       toast.success('Venta eliminada exitosamente');
-    } catch (error: unknown) {
+    },
+    onError: (error: unknown) => {
       toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al eliminar venta');
-      throw error;
-    }
-  };
+    },
+  });
 
-  const cancelSale = async (id: string) => {
-    try {
-      const cancelledSale = await salesService.cancel(id);
-      setSales((prev) => prev.map((s) => (s.id === id ? cancelledSale : s)));
+  const cancelMutation = useMutation({
+    mutationFn: (id: string) => salesService.cancel(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sales'] });
       toast.success('Venta cancelada exitosamente');
-      return cancelledSale;
-    } catch (error: unknown) {
+    },
+    onError: (error: unknown) => {
       toast.error((error as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Error al cancelar venta');
-      throw error;
-    }
-  };
-
-  useEffect(() => {
-    fetchSales();
-    fetchStats();
-  }, []);
+    },
+  });
 
   return {
-    sales,
-    stats,
-    loading,
-    fetchSales,
-    fetchStats,
-    createSale,
-    updateSale,
-    deleteSale,
-    cancelSale,
+    sales: salesQuery.data || [],
+    stats: statsQuery.data || { todayCount: 0, todayTotal: 0, monthCount: 0, monthTotal: 0 },
+    loading: salesQuery.isLoading || statsQuery.isLoading,
+    fetchSales: () => queryClient.invalidateQueries({ queryKey: ['sales'] }),
+    fetchStats: () => queryClient.invalidateQueries({ queryKey: ['sales', 'stats'] }),
+    createSale: createMutation.mutateAsync,
+    updateSale: async (id: string, data: UpdateSaleDto) => updateMutation.mutateAsync({ id, data }),
+    deleteSale: deleteMutation.mutateAsync,
+    cancelSale: cancelMutation.mutateAsync,
   };
 };

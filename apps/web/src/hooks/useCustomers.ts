@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { customersService } from "@/services";
 import { ClientHandler } from "@/lib/client-handler";
 import type { Customer, CreateCustomerDto, UpdateCustomerDto } from "@/types";
@@ -7,80 +7,68 @@ interface UseCustomersParams {
   search?: string;
 }
 
-interface CustomerStats {
-  total: number;
-  active: number;
-  newThisMonth: number;
-}
-
 export function useCustomers({ search }: UseCustomersParams = {}) {
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  const [stats, setStats] = useState<CustomerStats>({ total: 0, active: 0, newThisMonth: 0 });
-  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
 
-  const fetchCustomers = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const [customersData, statsData] = await Promise.all([
-        customersService.getAll({ search }),
-        customersService.getStats(),
-      ]);
-      setCustomers(customersData);
-      setStats(statsData);
-    } catch {
-      ClientHandler.error("Error al cargar clientes");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [search]);
+  const customersQuery = useQuery({
+    queryKey: ['customers', search],
+    queryFn: () => customersService.getAll({ search }),
+  });
 
-  const createCustomer = async (customerData: CreateCustomerDto): Promise<boolean> => {
-    try {
-      await customersService.create(customerData);
+  const statsQuery = useQuery({
+    queryKey: ['customers', 'stats'],
+    queryFn: customersService.getStats,
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (customerData: CreateCustomerDto) => customersService.create(customerData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['customers'] });
       ClientHandler.success("Cliente creado correctamente");
-      await fetchCustomers();
-      return true;
-    } catch {
+    },
+    onError: () => {
       ClientHandler.error("Error al crear cliente");
-      return false;
-    }
-  };
+    },
+  });
 
-  const updateCustomer = async (id: string, customerData: UpdateCustomerDto): Promise<boolean> => {
-    try {
-      await customersService.update(id, customerData);
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateCustomerDto }) => customersService.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['customers'] });
       ClientHandler.success("Cliente actualizado correctamente");
-      await fetchCustomers();
-      return true;
-    } catch {
+    },
+    onError: () => {
       ClientHandler.error("Error al actualizar cliente");
-      return false;
-    }
-  };
+    },
+  });
 
-  const deleteCustomer = async (id: string): Promise<boolean> => {
-    try {
-      await customersService.delete(id);
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => customersService.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['customers'] });
       ClientHandler.success("Cliente eliminado correctamente");
-      await fetchCustomers();
-      return true;
-    } catch {
+    },
+    onError: () => {
       ClientHandler.error("Error al eliminar cliente");
-      return false;
-    }
-  };
-
-  useEffect(() => {
-    fetchCustomers();
-  }, [fetchCustomers]);
+    },
+  });
 
   return {
-    customers,
-    stats,
-    isLoading,
-    createCustomer,
-    updateCustomer,
-    deleteCustomer,
-    refetch: fetchCustomers,
+    customers: customersQuery.data || [],
+    stats: statsQuery.data || { total: 0, active: 0, newThisMonth: 0 },
+    isLoading: customersQuery.isLoading || statsQuery.isLoading,
+    createCustomer: async (data: CreateCustomerDto) => {
+      await createMutation.mutateAsync(data);
+      return true;
+    },
+    updateCustomer: async (id: string, data: UpdateCustomerDto) => {
+      await updateMutation.mutateAsync({ id, data });
+      return true;
+    },
+    deleteCustomer: async (id: string) => {
+      await deleteMutation.mutateAsync(id);
+      return true;
+    },
+    refetch: () => queryClient.invalidateQueries({ queryKey: ['customers'] }),
   };
 }

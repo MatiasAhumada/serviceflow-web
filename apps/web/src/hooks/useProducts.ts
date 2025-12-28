@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { productsService } from "@/services";
 import { ClientHandler } from "@/lib/client-handler";
 import type { Product, CreateProductDto, UpdateProductDto } from "@/types";
@@ -7,81 +7,68 @@ interface UseProductsParams {
   search?: string;
 }
 
-interface ProductStats {
-  total: number;
-  totalStock: number;
-  lowStock: number;
-  inventoryValue: number;
-}
-
 export function useProducts({ search }: UseProductsParams = {}) {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [stats, setStats] = useState<ProductStats>({ total: 0, totalStock: 0, lowStock: 0, inventoryValue: 0 });
-  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
 
-  const fetchProducts = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const [productsData, statsData] = await Promise.all([
-        productsService.getAll({ search }),
-        productsService.getStats(),
-      ]);
-      setProducts(productsData);
-      setStats(statsData);
-    } catch {
-      ClientHandler.error("Error al cargar productos");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [search]);
+  const productsQuery = useQuery({
+    queryKey: ['products', search],
+    queryFn: () => productsService.getAll({ search }),
+  });
 
-  const createProduct = async (productData: CreateProductDto): Promise<boolean> => {
-    try {
-      await productsService.create(productData);
+  const statsQuery = useQuery({
+    queryKey: ['products', 'stats'],
+    queryFn: productsService.getStats,
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (productData: CreateProductDto) => productsService.create(productData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
       ClientHandler.success("Producto creado correctamente");
-      await fetchProducts();
-      return true;
-    } catch {
+    },
+    onError: () => {
       ClientHandler.error("Error al crear producto");
-      return false;
-    }
-  };
+    },
+  });
 
-  const updateProduct = async (id: string, productData: UpdateProductDto): Promise<boolean> => {
-    try {
-      await productsService.update(id, productData);
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateProductDto }) => productsService.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
       ClientHandler.success("Producto actualizado correctamente");
-      await fetchProducts();
-      return true;
-    } catch {
+    },
+    onError: () => {
       ClientHandler.error("Error al actualizar producto");
-      return false;
-    }
-  };
+    },
+  });
 
-  const deleteProduct = async (id: string): Promise<boolean> => {
-    try {
-      await productsService.delete(id);
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => productsService.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
       ClientHandler.success("Producto eliminado correctamente");
-      await fetchProducts();
-      return true;
-    } catch {
+    },
+    onError: () => {
       ClientHandler.error("Error al eliminar producto");
-      return false;
-    }
-  };
-
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+    },
+  });
 
   return {
-    products,
-    stats,
-    isLoading,
-    createProduct,
-    updateProduct,
-    deleteProduct,
-    refetch: fetchProducts,
+    products: productsQuery.data || [],
+    stats: statsQuery.data || { total: 0, totalStock: 0, lowStock: 0, inventoryValue: 0 },
+    isLoading: productsQuery.isLoading || statsQuery.isLoading,
+    createProduct: async (data: CreateProductDto) => {
+      await createMutation.mutateAsync(data);
+      return true;
+    },
+    updateProduct: async (id: string, data: UpdateProductDto) => {
+      await updateMutation.mutateAsync({ id, data });
+      return true;
+    },
+    deleteProduct: async (id: string) => {
+      await deleteMutation.mutateAsync(id);
+      return true;
+    },
+    refetch: () => queryClient.invalidateQueries({ queryKey: ['products'] }),
   };
 }

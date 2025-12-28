@@ -84,6 +84,7 @@ export const viewport = {
 import { AppProvider } from "@/contexts";
 import { Toaster } from "@/components/ui/sonner";
 import { SessionProvider } from "next-auth/react";
+import { ReactQueryProvider } from "@/components/providers/ReactQueryProvider";
 
 export default function RootLayout({
   children,
@@ -103,9 +104,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <SessionProvider>
-          <AppProvider>
-            {children}
-          </AppProvider>
+          <ReactQueryProvider>
+            <AppProvider>
+              {children}
+            </AppProvider>
+          </ReactQueryProvider>
           <Toaster richColors position="top-center" />
         </SessionProvider>
       </body>
