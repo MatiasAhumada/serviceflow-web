@@ -34,6 +34,15 @@ export class Customer extends BaseEntity {
   @Column({ nullable: true })
   notes: string;
 
+  @Column({ name: 'tax_condition', nullable: true })
+  taxCondition: string;
+
+  @Column({ name: 'document_type', nullable: true })
+  documentType: string;
+
+  @Column({ name: 'document_number', nullable: true })
+  documentNumber: string;
+
   @ManyToOne(() => Company, { nullable: true })
   @JoinColumn({ name: 'company_id' })
   company: Company;

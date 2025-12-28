@@ -7,6 +7,9 @@ export interface Customer {
   phone?: string;
   email?: string;
   notes?: string;
+  taxCondition?: string;
+  documentType?: string;
+  documentNumber?: string;
   companyId: string;
   createdAt: string;
   updatedAt: string;
@@ -17,6 +20,9 @@ export interface CreateCustomerDto {
   phone?: string;
   email?: string;
   notes?: string;
+  taxCondition?: string;
+  documentType?: string;
+  documentNumber?: string;
 }
 
 export interface UpdateCustomerDto {
@@ -24,6 +30,9 @@ export interface UpdateCustomerDto {
   phone?: string;
   email?: string;
   notes?: string;
+  taxCondition?: string;
+  documentType?: string;
+  documentNumber?: string;
 }
 
 export interface Product {
