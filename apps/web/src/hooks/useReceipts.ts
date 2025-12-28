@@ -13,9 +13,11 @@ export const useReceipts = () => {
 
   const createReceiptMutation = useMutation({
     mutationFn: (data: CreateReceiptDto) => receiptsService.create(data),
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['receipts'] });
+      queryClient.invalidateQueries({ queryKey: ['sales'] });
       ClientHandler.success('Comprobante generado exitosamente');
+      return data;
     },
     onError: () => {
       ClientHandler.error('Error al generar comprobante');
@@ -36,7 +38,7 @@ export const useReceipts = () => {
   return {
     receipts: receiptsQuery.data,
     isLoading: receiptsQuery.isLoading,
-    createReceipt: createReceiptMutation.mutate,
+    createReceipt: createReceiptMutation.mutateAsync,
     deleteReceipt: deleteReceiptMutation.mutate,
     downloadPDF: receiptsService.downloadPDF,
   };

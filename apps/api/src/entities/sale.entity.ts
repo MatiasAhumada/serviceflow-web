@@ -1,10 +1,11 @@
-import { Entity, Column, ManyToOne, JoinColumn, OneToMany, Index } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, OneToMany, OneToOne, Index } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { User } from './user.entity';
 import { Customer } from './customer.entity';
 import { CashRegister } from './cash-register.entity';
 import { SaleItem } from './sale-item.entity';
+import { Receipt } from './receipt.entity';
 import { SALE_STATUS, PAYMENT_METHOD } from '../constants';
 
 @Entity('sales')
@@ -80,6 +81,9 @@ export class Sale extends BaseEntity {
 
   @OneToMany(() => SaleItem, (saleItem) => saleItem.sale, { cascade: true })
   items: SaleItem[];
+
+  @OneToOne(() => Receipt, (receipt) => receipt.sale)
+  receipt: Receipt;
 
   cardDetail?: any;
 }

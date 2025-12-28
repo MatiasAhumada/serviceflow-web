@@ -18,7 +18,8 @@ import {
 } from "@/components/ui";
 import { GenericTable, GenericModal } from "@/components/common";
 import { formatters } from "@/utils/formatters.util";
-import { ClientHandler } from "@/lib/client-handler";
+import { useConfirm } from "@/hooks/useConfirm";
+import { PAYMENT_METHODS } from "@/constants";
 import { useState } from "react";
 
 interface CashMovement {
@@ -29,6 +30,13 @@ interface CashMovement {
   date: string;
   notes?: string;
   user?: { name: string };
+  saleId?: string;
+  sale?: {
+    id: string;
+    receipt?: {
+      id: string;
+    };
+  };
 }
 
 interface CashRegisterDetailProps {
@@ -45,6 +53,7 @@ interface CashRegisterDetailProps {
   onClose: () => void;
   onCompleteOrder: (orderId: string, cashRegisterId: string) => void;
   onCancelOrder: (orderId: string) => void;
+  onDownloadReceipt?: (receiptId: string) => void;
 }
 
 export function CashRegisterDetail({
@@ -58,9 +67,12 @@ export function CashRegisterDetail({
   onClose,
   onCompleteOrder,
   onCancelOrder,
+  onDownloadReceipt,
 }: CashRegisterDetailProps) {
   const [selectedOrder, setSelectedOrder] = useState<PaymentOrder | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [downloadingReceipts, setDownloadingReceipts] = useState<Record<string, boolean>>({});
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const breadcrumbItems: BreadcrumbItem[] = [{ label: "Cajas", onClick: onBack }, { label: cashRegister.name }];
 
@@ -74,6 +86,7 @@ export function CashRegisterDetail({
 
   return (
     <>
+      <ConfirmDialog />
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div className="space-y-2">
@@ -141,21 +154,11 @@ export function CashRegisterDetail({
                 {
                   key: "paymentMethod",
                   header: "Método",
-                  render: (order: PaymentOrder) => {
-                    const methods: Record<string, string> = {
-                      cash: "Efectivo",
-                      debit_card: "Débito",
-                      credit_card: "Crédito",
-                      transfer: "Transferencia",
-                      qr: "QR",
-                      mercadopago: "MercadoPago",
-                    };
-                    return (
-                      <Badge variant="outline" size="sm">
-                        {methods[order.sale?.paymentMethod || ""] || "-"}
-                      </Badge>
-                    );
-                  },
+                  render: (order: PaymentOrder) => (
+                    <Badge variant="outline" size="sm">
+                      {PAYMENT_METHODS[order.sale?.paymentMethod as keyof typeof PAYMENT_METHODS] || "-"}
+                    </Badge>
+                  ),
                 },
                 {
                   key: "createdAt",
@@ -179,8 +182,9 @@ export function CashRegisterDetail({
                         label: "Cancelar",
                         variant: "destructive" as const,
                         onClick: async (order: PaymentOrder) => {
-                          ClientHandler.confirm("¿Cancelar esta orden?", () => {
-                            onCancelOrder(order.id);
+                          confirm({
+                            message: "¿Cancelar esta orden?",
+                            onConfirm: () => onCancelOrder(order.id),
                           });
                         },
                       },
@@ -209,7 +213,7 @@ export function CashRegisterDetail({
                         key={typeof movement.id === "string" || typeof movement.id === "number" ? movement.id : index}
                         className="flex items-center justify-between p-4 border border-border rounded-lg"
                       >
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-4 flex-1">
                           <div
                             className={`w-10 h-10 rounded-full flex items-center justify-center ${
                               movement.type === "income" ? "bg-green-500/10" : "bg-red-500/10"
@@ -228,7 +232,7 @@ export function CashRegisterDetail({
                               )}
                             </svg>
                           </div>
-                          <div>
+                          <div className="flex-1">
                             <p className="font-medium text-foreground">{movement.concept}</p>
                             <p className="text-sm text-muted-foreground">
                               {formatters.time(movement.date)} • {movement.user?.name || "Usuario"}
@@ -236,10 +240,36 @@ export function CashRegisterDetail({
                             {movement.notes && <p className="text-xs text-muted-foreground mt-1">{movement.notes}</p>}
                           </div>
                         </div>
-                        <p className={`text-lg font-bold ${movement.type === "income" ? "text-green-600" : "text-red-600"}`}>
-                          {movement.type === "income" ? "+" : "-"}
-                          {formatters.currency(movement.amount)}
-                        </p>
+                        <div className="flex items-center gap-3">
+                          <p className={`text-lg font-bold ${movement.type === "income" ? "text-green-600" : "text-red-600"}`}>
+                            {movement.type === "income" ? "+" : "-"}
+                            {formatters.currency(movement.amount)}
+                          </p>
+                          {movement.sale?.receipt?.id && onDownloadReceipt && (
+                            <button
+                              onClick={async () => {
+                                const receiptId = movement.sale!.receipt!.id;
+                                setDownloadingReceipts(prev => ({ ...prev, [receiptId]: true }));
+                                try {
+                                  await onDownloadReceipt(receiptId);
+                                } finally {
+                                  setDownloadingReceipts(prev => ({ ...prev, [receiptId]: false }));
+                                }
+                              }}
+                              disabled={downloadingReceipts[movement.sale.receipt.id]}
+                              className="p-2 hover:bg-accent rounded-lg transition-colors disabled:opacity-50"
+                              title="Descargar factura"
+                            >
+                              {downloadingReceipts[movement.sale.receipt.id] ? (
+                                <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
+                              ) : (
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                              )}
+                            </button>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -265,7 +295,7 @@ export function CashRegisterDetail({
             <p className="text-sm font-medium">N° Orden: {selectedOrder?.orderNumber}</p>
             <p className="text-sm">N° Venta: {selectedOrder?.sale?.saleNumber}</p>
             <p className="text-sm">Cliente: {selectedOrder?.sale?.customer?.name}</p>
-            <p className="text-sm">Método: {selectedOrder?.sale?.paymentMethod}</p>
+            <p className="text-sm">Método: {PAYMENT_METHODS[selectedOrder?.sale?.paymentMethod as keyof typeof PAYMENT_METHODS] || "-"}</p>
           </div>
           <div className="text-center">
             <p className="text-sm text-muted-foreground">Monto a cobrar</p>

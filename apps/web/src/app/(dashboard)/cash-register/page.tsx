@@ -4,17 +4,21 @@ import { useState } from "react";
 import { useCashRegister } from "@/hooks/useCashRegister";
 import { usePaymentOrders } from "@/hooks/usePaymentOrders";
 import { useUsers } from "@/hooks/useUsers";
+import { useReceipts } from "@/hooks/useReceipts";
 import { Button, Label, Input, Select } from "@/components/ui";
 import { GenericModal } from "@/components/common";
 import { CashRegisterList } from "@/components/features/CashRegisterList";
 import { CashRegisterDetail } from "@/components/features/CashRegisterDetail";
 import { ClientHandler } from "@/lib/client-handler";
 import { cashRegistersService } from "@/services/api/cash-registers.service";
+import { useConfirm } from "@/hooks/useConfirm";
 
 export default function CashRegisterPage() {
-  const { stats, movements, loading, cashRegisters, openCashRegister, closeCashRegister, createCashRegister, fetchCashRegisters } = useCashRegister();
+  const { stats, movements, loading, cashRegisters, openCashRegister, closeCashRegister, createCashRegister, fetchCashRegisters, fetchMovements } = useCashRegister();
   const { pendingOrders, isLoading: ordersLoading, completeOrder, cancelOrder } = usePaymentOrders();
   const { users } = useUsers();
+  const { confirm, ConfirmDialog } = useConfirm();
+  const { downloadPDF } = useReceipts();
   const [selectedCashRegisterId, setSelectedCashRegisterId] = useState<string | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [newCashRegisterName, setNewCashRegisterName] = useState("");
@@ -36,9 +40,12 @@ export default function CashRegisterPage() {
     if (!cashReg) return;
     
     if (cashReg.status === 'open') {
-      ClientHandler.confirm(`¿Cerrar ${cashReg.name}?`, async () => {
-        await closeCashRegister(cashRegId);
-        await fetchCashRegisters();
+      confirm({
+        message: `¿Cerrar ${cashReg.name}?`,
+        onConfirm: async () => {
+          await closeCashRegister(cashRegId);
+          await fetchCashRegisters();
+        },
       });
     } else {
       await openCashRegister(cashRegId);
@@ -46,11 +53,12 @@ export default function CashRegisterPage() {
     }
   };
 
-  const handleCompleteOrder = (orderId: string, cashRegisterId: string) => {
+  const handleCompleteOrder = async (orderId: string, cashRegisterId: string) => {
     completeOrder({
       id: orderId,
       dto: { cashRegisterId },
     });
+    await fetchMovements();
   };
 
   const handleDeleteCashRegister = async (cashRegId: string) => {
@@ -132,6 +140,7 @@ export default function CashRegisterPage() {
 
   return (
     <>
+      <ConfirmDialog />
       <header className="bg-background border-b border-border px-4 sm:px-6 py-4 pb-7">
         <div className="flex items-center justify-center">
           <div className="text-center">
@@ -157,6 +166,7 @@ export default function CashRegisterPage() {
             onClose={() => handleOpenClose(selectedCashRegister.id)}
             onCompleteOrder={handleCompleteOrder}
             onCancelOrder={cancelOrder}
+            onDownloadReceipt={downloadPDF}
           />
         ) : (
           <CashRegisterList

@@ -117,6 +117,7 @@ export interface Sale {
   seller?: Record<string, unknown>;
   items: SaleItem[];
   cardDetail?: CardDetail;
+  receipt?: { id: string };
   createdAt: string;
   updatedAt: string;
 }

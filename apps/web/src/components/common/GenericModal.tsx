@@ -36,13 +36,6 @@ const modalTitles: Record<ModalMode, string> = {
   view: "Ver detalles",
 };
 
-const modalDescriptions: Record<ModalMode, string> = {
-  create: "Complete los campos para crear un nuevo registro",
-  update: "Modifique los campos que desea actualizar",
-  delete: "¿Está seguro que desea eliminar este registro? Esta acción no se puede deshacer.",
-  view: "Información del registro",
-};
-
 const confirmTexts: Record<ModalMode, string> = {
   create: "Crear",
   update: "Actualizar",
@@ -86,9 +79,9 @@ export function GenericModal({
       <DialogContent className={cn(sizeClasses[size], className)}>
         <DialogHeader>
           <DialogTitle>{title || modalTitles[mode]}</DialogTitle>
-          {(description || mode === "delete") && (
+          {description && (
             <DialogDescription>
-              {description || modalDescriptions[mode]}
+              {description}
             </DialogDescription>
           )}
         </DialogHeader>

@@ -5,9 +5,12 @@ import { GenericTable } from "@/components/common";
 import type { TableColumn, TableAction } from "@/components/common";
 import { useReceipts } from "@/hooks/useReceipts";
 import { Receipt } from "@/types";
+import { useConfirm } from "@/hooks/useConfirm";
+import { PAYMENT_METHODS } from "@/constants";
 
 export default function ReceiptsPage() {
   const { receipts, isLoading, downloadPDF, deleteReceipt } = useReceipts();
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const columns: TableColumn<Receipt>[] = [
     { key: "receiptNumber", header: "N° Factura", sortable: true },
@@ -39,15 +42,11 @@ export default function ReceiptsPage() {
       key: "paymentMethod",
       header: "Pago",
       align: "center",
-      render: (receipt) => {
-        const methods: Record<string, string> = {
-          cash: 'Efectivo',
-          debit_card: 'Débito',
-          credit_card: 'Crédito',
-          transfer: 'Transferencia',
-        };
-        return <Badge variant="outline" size="sm">{methods[receipt.paymentMethod] || receipt.paymentMethod}</Badge>;
-      },
+      render: (receipt) => (
+        <Badge variant="outline" size="sm">
+          {PAYMENT_METHODS[receipt.paymentMethod as keyof typeof PAYMENT_METHODS] || receipt.paymentMethod}
+        </Badge>
+      ),
     },
   ];
 
@@ -61,15 +60,17 @@ export default function ReceiptsPage() {
       label: "Eliminar",
       variant: "destructive",
       onClick: async (receipt) => {
-        if (confirm('¿Eliminar este comprobante?')) {
-          deleteReceipt(receipt.id);
-        }
+        confirm({
+          message: "¿Eliminar este comprobante?",
+          onConfirm: () => deleteReceipt(receipt.id),
+        });
       },
     },
   ];
 
   return (
     <>
+      <ConfirmDialog />
       <header className="bg-background border-b border-border px-4 sm:px-6 py-4 pb-7">
         <div className="flex items-center justify-center">
           <div className="text-center">

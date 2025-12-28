@@ -1,24 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Button, Input, Label, Select } from "@/components/ui";
 import { useProducts } from "@/hooks/useProducts";
 import { useCustomers } from "@/hooks/useCustomers";
 import { CreateSaleDto, CreateSaleItemDto } from "@/types";
+import { PAYMENT_METHOD_OPTIONS } from "@/constants";
 
 interface SaleFormProps {
   onSubmit?: (data: CreateSaleDto) => void;
   defaultValue?: Record<string, unknown>;
 }
-
-const PAYMENT_METHODS = [
-  { value: "cash", label: "Efectivo" },
-  { value: "debit_card", label: "Tarjeta de Débito" },
-  { value: "credit_card", label: "Tarjeta de Crédito" },
-  { value: "transfer", label: "Transferencia" },
-  { value: "qr", label: "QR" },
-  { value: "mercadopago", label: "MercadoPago" },
-];
 
 const CARD_BRANDS = [
   { value: "visa", label: "Visa" },
@@ -47,6 +39,7 @@ export function SaleForm({ onSubmit }: SaleFormProps) {
   const [cardBrand, setCardBrand] = useState<string | number>("");
   const [cardType, setCardType] = useState<string | number>("");
   const showCardDetails = paymentMethod === "debit_card" || paymentMethod === "credit_card";
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handleAddItem = () => {
     const product = products.find((p) => p.id === selectedProduct);
@@ -81,9 +74,12 @@ export function SaleForm({ onSubmit }: SaleFormProps) {
     return items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+  const handleSubmit = useCallback((e?: React.FormEvent<HTMLFormElement>) => {
+    e?.preventDefault();
+    const form = e?.currentTarget || formRef.current;
+    if (!form) return;
+
+    const formData = new FormData(form);
 
     const saleData: CreateSaleDto = {
       customerId: String(customerId),
@@ -102,10 +98,16 @@ export function SaleForm({ onSubmit }: SaleFormProps) {
     }
 
     onSubmit?.(saleData);
-  };
+  }, [customerId, paymentMethod, items, showCardDetails, cardBrand, cardType, onSubmit]);
+
+  useEffect(() => {
+    if (onSubmit) {
+      (window as unknown as Record<string, unknown>).__saleFormSubmit = handleSubmit;
+    }
+  }, [onSubmit, handleSubmit]);
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
       <div>
         <Label htmlFor="customerId">Cliente *</Label>
         <Select
@@ -118,7 +120,7 @@ export function SaleForm({ onSubmit }: SaleFormProps) {
 
       <div>
         <Label htmlFor="paymentMethod">Método de Pago *</Label>
-        <Select options={PAYMENT_METHODS} value={paymentMethod} onValueChange={setPaymentMethod} placeholder="Seleccionar método" />
+        <Select options={PAYMENT_METHOD_OPTIONS} value={paymentMethod} onValueChange={setPaymentMethod} placeholder="Seleccionar método" />
       </div>
 
       {showCardDetails && (
@@ -186,10 +188,6 @@ export function SaleForm({ onSubmit }: SaleFormProps) {
       <div className="border-t pt-4">
         <div className="text-xl font-bold">Total: ${calculateTotal().toFixed(2)}</div>
       </div>
-
-      <Button type="submit" className="w-full" disabled={items.length === 0}>
-        Crear Venta
-      </Button>
     </form>
   );
 }

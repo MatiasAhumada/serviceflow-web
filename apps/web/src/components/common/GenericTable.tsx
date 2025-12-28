@@ -17,7 +17,7 @@ export interface TableColumn<T> {
 export interface TableAction<T> {
   label: string;
   icon?: React.ReactNode;
-  onClick: (item: T) => void;
+  onClick: (item: T) => void | Promise<void>;
   variant?: "default" | "outline" | "destructive" | "ghost";
   show?: (item: T) => boolean;
 }
@@ -54,6 +54,7 @@ export function GenericTable<T = Record<string, unknown>>({
     key: string;
     direction: "asc" | "desc";
   } | null>(null);
+  const [loadingActions, setLoadingActions] = React.useState<Record<string, boolean>>({});
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
@@ -191,20 +192,35 @@ export function GenericTable<T = Record<string, unknown>>({
                             const shouldShow = action.show ? action.show(item) : true;
                             if (!shouldShow) return null;
 
+                            const actionKey = `${rowIndex}-${actionIndex}`;
+                            const isLoading = loadingActions[actionKey];
+
                             return (
                               <Button
                                 key={actionIndex}
                                 variant={action.variant || "outline"}
                                 size="sm"
-                                onClick={(e) => {
+                                disabled={isLoading}
+                                onClick={async (e) => {
                                   e.stopPropagation();
-                                  action.onClick(item);
+                                  setLoadingActions(prev => ({ ...prev, [actionKey]: true }));
+                                  try {
+                                    await action.onClick(item);
+                                  } finally {
+                                    setLoadingActions(prev => ({ ...prev, [actionKey]: false }));
+                                  }
                                 }}
                               >
-                                {action.icon && (
-                                  <span className="mr-1">{action.icon}</span>
+                                {isLoading ? (
+                                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
+                                ) : (
+                                  <>
+                                    {action.icon && (
+                                      <span className="mr-1">{action.icon}</span>
+                                    )}
+                                    {action.label}
+                                  </>
                                 )}
-                                {action.label}
                               </Button>
                             );
                           })}

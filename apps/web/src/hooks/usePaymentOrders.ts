@@ -17,6 +17,8 @@ export const usePaymentOrders = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payment-orders'] });
       queryClient.invalidateQueries({ queryKey: ['sales'] });
+      queryClient.invalidateQueries({ queryKey: ['cash-register-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['cash-register-movements'] });
       ClientHandler.success('Pago completado exitosamente');
     },
     onError: () => {

@@ -3,7 +3,7 @@
 import { CashRegister } from "@/types";
 import { Button, Card, CardContent, Badge } from "@/components/ui";
 import { formatters } from "@/utils/formatters.util";
-import { ClientHandler } from "@/lib/client-handler";
+import { useConfirm } from "@/hooks/useConfirm";
 
 interface CashRegisterWithStats extends CashRegister {
   totalIncome?: number;
@@ -19,8 +19,11 @@ interface CashRegisterListProps {
 }
 
 export function CashRegisterList({ cashRegisters, onSelectCashRegister, onCreateCashRegister, onDeleteCashRegister }: CashRegisterListProps) {
+  const { confirm, ConfirmDialog } = useConfirm();
+
   return (
     <div className="space-y-6">
+      <ConfirmDialog />
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-foreground">Cajas Registradas</h2>
@@ -41,8 +44,9 @@ export function CashRegisterList({ cashRegisters, onSelectCashRegister, onCreate
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  ClientHandler.confirm(`¿Eliminar ${cashReg.name}?`, () => {
-                    onDeleteCashRegister(cashReg.id);
+                  confirm({
+                    message: `¿Eliminar ${cashReg.name}?`,
+                    onConfirm: () => onDeleteCashRegister(cashReg.id),
                   });
                 }}
                 className="absolute top-4 right-4 p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"

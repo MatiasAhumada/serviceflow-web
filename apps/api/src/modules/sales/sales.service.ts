@@ -67,6 +67,7 @@ export class SalesService {
       .leftJoinAndSelect('sale.seller', 'seller')
       .leftJoinAndSelect('sale.items', 'items')
       .leftJoinAndSelect('items.product', 'product')
+      .leftJoinAndSelect('sale.receipt', 'receipt')
       .where('sale.companyId = :companyId', { companyId });
 
     if (search) {
