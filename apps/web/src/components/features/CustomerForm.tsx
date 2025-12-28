@@ -1,12 +1,16 @@
-import { Input, Label, Textarea } from "@/components/ui";
+import { Input, Label, Textarea, Select } from "@/components/ui";
 import { TAX_CONDITIONS, DOCUMENT_TYPES } from "@/constants/fiscal.constants";
 import type { Customer } from "@/types";
+import { useState } from "react";
 
 interface CustomerFormProps {
   customer?: Customer | null;
 }
 
 export function CustomerForm({ customer }: CustomerFormProps) {
+  const [taxCondition, setTaxCondition] = useState(customer?.taxCondition || "CONSUMIDOR_FINAL");
+  const [documentType, setDocumentType] = useState(customer?.documentType || "DNI");
+
   return (
     <div className="space-y-4">
       <div>
@@ -23,34 +27,24 @@ export function CustomerForm({ customer }: CustomerFormProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="taxCondition">Condición Fiscal</Label>
-          <select
-            id="taxCondition"
-            name="taxCondition"
-            defaultValue={customer?.taxCondition || "CONSUMIDOR_FINAL"}
-            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {TAX_CONDITIONS.map((condition) => (
-              <option key={condition.value} value={condition.value}>
-                {condition.label}
-              </option>
-            ))}
-          </select>
+          <input type="hidden" name="taxCondition" value={taxCondition} />
+          <Select
+            options={TAX_CONDITIONS}
+            value={taxCondition}
+            onValueChange={setTaxCondition}
+            placeholder="Seleccionar condición fiscal"
+          />
         </div>
 
         <div>
           <Label htmlFor="documentType">Tipo de Documento</Label>
-          <select
-            id="documentType"
-            name="documentType"
-            defaultValue={customer?.documentType || "DNI"}
-            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {DOCUMENT_TYPES.map((docType) => (
-              <option key={docType.value} value={docType.value}>
-                {docType.label}
-              </option>
-            ))}
-          </select>
+          <input type="hidden" name="documentType" value={documentType} />
+          <Select
+            options={DOCUMENT_TYPES}
+            value={documentType}
+            onValueChange={setDocumentType}
+            placeholder="Seleccionar tipo de documento"
+          />
         </div>
       </div>
 

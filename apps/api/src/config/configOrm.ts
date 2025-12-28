@@ -12,6 +12,9 @@ const db_config = {
   port: Number(process.env.DB_PORT),
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
+  extra: {
+    timezone: 'UTC',
+  },
   autoLoadEntities: true,
   synchronize: false,
   dropSchema: false,

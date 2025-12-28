@@ -62,7 +62,7 @@ export class PaymentOrdersService {
 
     order.status = 'completed';
     order.cashierId = cashierId;
-    order.completedAt = new Date();
+    order.completedAt = new Date(new Date().toISOString());
     if (dto.cashRegisterId) {
       order.cashRegisterId = dto.cashRegisterId;
     }
@@ -86,7 +86,7 @@ export class PaymentOrdersService {
         amount: sale.total - (sale.discount || 0),
         concept: `Venta ${sale.saleNumber}`,
         notes: `Cobro - ${sale.paymentMethod}`,
-        date: new Date(),
+        date: new Date(new Date().toISOString()),
       });
     }
 

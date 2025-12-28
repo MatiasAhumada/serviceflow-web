@@ -3,6 +3,9 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 
+// Forzar timezone UTC para Node.js
+process.env.TZ = 'UTC';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 

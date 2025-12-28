@@ -165,6 +165,8 @@ export interface CashRegister {
   name: string;
   currentBalance: number;
   status: string;
+  assignedUserId?: string;
+  assignedUser?: { id: string; name: string };
   openedBy?: string;
   closedBy?: string;
   openTime?: string;

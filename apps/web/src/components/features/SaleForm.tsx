@@ -165,7 +165,7 @@ export function SaleForm({ onSubmit }: SaleFormProps) {
         {items.length > 0 && (
           <div className="mt-4 space-y-2">
             {items.map((item) => (
-              <div key={item.productId} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+              <div key={item.productId} className="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-800 rounded">
                 <span>{getProductName(item.productId)}</span>
                 <span>x{item.quantity}</span>
                 <span>${(item.quantity * item.unitPrice).toFixed(2)}</span>

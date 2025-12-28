@@ -116,7 +116,7 @@ export class CashRegistersService {
 
     cashRegister.status = CASH_REGISTER_STATUS.OPEN;
     cashRegister.openedBy = userId;
-    cashRegister.openTime = new Date();
+    cashRegister.openTime = new Date(new Date().toISOString());
     cashRegister.closeTime = undefined;
     cashRegister.closedBy = undefined;
 
@@ -132,7 +132,7 @@ export class CashRegistersService {
 
     cashRegister.status = CASH_REGISTER_STATUS.CLOSED;
     cashRegister.closedBy = userId;
-    cashRegister.closeTime = new Date();
+    cashRegister.closeTime = new Date(new Date().toISOString());
 
     return this.cashRegistersRepository.save(cashRegister);
   }
