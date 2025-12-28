@@ -102,17 +102,6 @@ export function GenericTable<T = Record<string, unknown>>({
     return String(item[column.key as keyof T] ?? "");
   };
 
-  const getAlignClass = (align?: "left" | "center" | "right") => {
-    switch (align) {
-      case "center":
-        return "text-center";
-      case "right":
-        return "text-right";
-      default:
-        return "text-left";
-    }
-  };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">

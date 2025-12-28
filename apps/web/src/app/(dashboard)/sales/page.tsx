@@ -11,7 +11,7 @@ import { Sale, CreateSaleDto } from "@/types";
 
 export default function SalesPage() {
   const { sales, stats, loading, createSale, cancelSale } = useSales();
-  const { createReceipt, downloadPDF } = useReceipts();
+  const { createReceipt } = useReceipts();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<"create" | "view">("create");
   const [selectedSale, setSelectedSale] = useState<Sale | null>(null);

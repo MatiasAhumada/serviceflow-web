@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Card, CardContent, Badge } from "@/components/ui";
+import { Card, CardContent, Badge } from "@/components/ui";
 import { GenericTable } from "@/components/common";
 import type { TableColumn, TableAction } from "@/components/common";
 import { useReceipts } from "@/hooks/useReceipts";
