@@ -5,13 +5,18 @@ import { CashRegister } from '@/types';
 
 interface CashMovement {
   id: string | number;
-  type: string;
+  type: "income" | "expense";
   concept: string;
-  date: string;
   amount: number;
+  date: string;
   notes?: string;
-  user?: {
-    name?: string;
+  user?: { name: string };
+  saleId?: string;
+  sale?: {
+    id: string;
+    receipt?: {
+      id: string;
+    };
   };
 }
 

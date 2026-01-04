@@ -14,8 +14,8 @@ export function CustomerForm({ customer }: CustomerFormProps) {
   return (
     <div className="space-y-4">
       <div>
-        <Label htmlFor="name">Nombre *</Label>
         <Input
+          label="Nombre"
           id="name"
           name="name"
           defaultValue={customer?.name || ""}
@@ -27,30 +27,30 @@ export function CustomerForm({ customer }: CustomerFormProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="taxCondition">Condición Fiscal</Label>
-          <input type="hidden" name="taxCondition" value={taxCondition} />
+          <Input type="hidden" name="taxCondition" value={taxCondition} />
           <Select
             options={TAX_CONDITIONS}
             value={taxCondition}
-            onValueChange={setTaxCondition}
+            onValueChange={(value) => setTaxCondition(String(value))}
             placeholder="Seleccionar condición fiscal"
           />
         </div>
 
         <div>
           <Label htmlFor="documentType">Tipo de Documento</Label>
-          <input type="hidden" name="documentType" value={documentType} />
+          <Input type="hidden" name="documentType" value={documentType} />
           <Select
             options={DOCUMENT_TYPES}
             value={documentType}
-            onValueChange={setDocumentType}
+            onValueChange={(value) => setDocumentType(String(value))}
             placeholder="Seleccionar tipo de documento"
           />
         </div>
       </div>
 
       <div>
-        <Label htmlFor="documentNumber">Número de Documento</Label>
         <Input
+          label="Número de Documento"
           id="documentNumber"
           name="documentNumber"
           defaultValue={customer?.documentNumber || ""}
@@ -60,8 +60,8 @@ export function CustomerForm({ customer }: CustomerFormProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="phone">Teléfono</Label>
           <Input
+            label="Teléfono"
             id="phone"
             name="phone"
             defaultValue={customer?.phone || ""}
@@ -70,8 +70,8 @@ export function CustomerForm({ customer }: CustomerFormProps) {
         </div>
 
         <div>
-          <Label htmlFor="email">Email</Label>
           <Input
+            label="Email"
             id="email"
             name="email"
             type="email"
@@ -82,8 +82,8 @@ export function CustomerForm({ customer }: CustomerFormProps) {
       </div>
 
       <div>
-        <Label htmlFor="notes">Notas</Label>
         <Textarea
+          label="Notas"
           id="notes"
           name="notes"
           defaultValue={customer?.notes || ""}
