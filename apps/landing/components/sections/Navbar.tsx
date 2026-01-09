@@ -2,39 +2,76 @@
 
 import { Button } from "@/components/ui/Button";
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+      setIsOpen(false);
+    }
+  };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "bg-background/95 backdrop-blur-xl border-b border-border shadow-lg"
+          : "bg-transparent"
+      }`}
+    >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-2">
-            <Image src="/logo-principal.png" alt="ServiceFlow" width={200} height={46} className="h-auto" />
-          </div>
+        <div className="flex items-center justify-between h-20">
+          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <Image src="/logo-principal.png" alt="ServiceFlow" width={180} height={42} className="h-auto" />
+          </Link>
 
           <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-foreground hover:text-primary transition-colors">
+            <button
+              onClick={() => scrollToSection("features")}
+              className="text-foreground hover:text-[#10B981] transition-colors font-medium"
+            >
               Características
-            </a>
-            <a href="#pricing" className="text-foreground hover:text-primary transition-colors">
+            </button>
+            <button
+              onClick={() => scrollToSection("pricing")}
+              className="text-foreground hover:text-[#10B981] transition-colors font-medium"
+            >
               Precios
-            </a>
-            <a href="#contact" className="text-foreground hover:text-primary transition-colors">
-              Contacto
-            </a>
+            </button>
+            <Link
+              href="/app"
+              className="text-foreground hover:text-[#10B981] transition-colors font-medium"
+            >
+              Ingresar al Sistema
+            </Link>
           </div>
 
           <div className="hidden md:flex items-center gap-4">
-            <Button variant="ghost">Iniciar sesión</Button>
-            <Button variant="gradient">Comenzar gratis</Button>
+            <Link href="/app">
+              <Button variant="ghost" className="font-medium">Iniciar sesión</Button>
+            </Link>
+            <Link href="/app">
+              <Button variant="gradient" className="shadow-lg shadow-[#10B981]/20">Comenzar gratis</Button>
+            </Link>
           </div>
 
           <button
-            className="md:hidden"
+            className="md:hidden p-2 hover:bg-accent rounded-lg transition-colors"
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -42,19 +79,32 @@ export function Navbar() {
         </div>
 
         {isOpen && (
-          <div className="md:hidden py-4 space-y-4 border-t border-border">
-            <a href="#features" className="block py-2 text-foreground hover:text-primary transition-colors">
+          <div className="md:hidden py-6 space-y-4 border-t border-border animate-slide-down">
+            <button
+              onClick={() => scrollToSection("features")}
+              className="block w-full text-left py-3 px-4 text-foreground hover:text-[#10B981] hover:bg-accent rounded-lg transition-all font-medium"
+            >
               Características
-            </a>
-            <a href="#pricing" className="block py-2 text-foreground hover:text-primary transition-colors">
+            </button>
+            <button
+              onClick={() => scrollToSection("pricing")}
+              className="block w-full text-left py-3 px-4 text-foreground hover:text-[#10B981] hover:bg-accent rounded-lg transition-all font-medium"
+            >
               Precios
-            </a>
-            <a href="#contact" className="block py-2 text-foreground hover:text-primary transition-colors">
-              Contacto
-            </a>
-            <div className="pt-4 space-y-2">
-              <Button variant="ghost" className="w-full">Iniciar sesión</Button>
-              <Button variant="gradient" className="w-full">Comenzar gratis</Button>
+            </button>
+            <Link
+              href="/app"
+              className="block w-full text-left py-3 px-4 text-foreground hover:text-[#10B981] hover:bg-accent rounded-lg transition-all font-medium"
+            >
+              Ingresar al Sistema
+            </Link>
+            <div className="pt-4 space-y-3">
+              <Link href="/app" className="block">
+                <Button variant="ghost" className="w-full">Iniciar sesión</Button>
+              </Link>
+              <Link href="/app" className="block">
+                <Button variant="gradient" className="w-full">Comenzar gratis</Button>
+              </Link>
             </div>
           </div>
         )}
