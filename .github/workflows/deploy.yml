@@ -28,7 +28,10 @@ jobs:
             pnpm install
             cd apps/api
             pnpm build
-            pm2 restart serviceflow-api
+            pm2 restart serviceflow-api || pm2 start ../../ecosystem.config.js --only serviceflow-api
             cd ../web
             pnpm build
-            pm2 restart serviceflow-web
+            pm2 restart serviceflow-web || pm2 start ../../ecosystem.config.js --only serviceflow-web
+            cd ../landing
+            pnpm build
+            pm2 restart serviceflow-landing || pm2 start ../../ecosystem.config.js --only serviceflow-landing

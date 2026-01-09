@@ -9,6 +9,7 @@
   },
   "scripts": {
     "dev:web": "pnpm --filter ./apps/web dev",
+    "dev:landing": "pnpm --filter ./apps/landing dev",
     "dev:api": "pnpm --filter ./apps/api start:dev",
     "dev": "concurrently \"pnpm dev:api\" \"pnpm dev:web\"",
     "build": "pnpm -r --filter ./apps/* build",
