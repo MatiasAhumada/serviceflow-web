@@ -21,6 +21,7 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
             cd serviceflow-web/
             git fetch origin dev
+            git checkout .
             git reset --hard origin/dev
             git clean -fd
             corepack enable
