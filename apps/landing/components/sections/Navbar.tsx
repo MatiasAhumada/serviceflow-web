@@ -13,10 +13,7 @@ export function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-2">
-            <Image src="/favicon.ico" alt="ServiceFlow" width={40} height={40} className="rounded-lg" />
-            <span className="text-xl font-bold">
-              Service<span className="text-primary">Flow</span>
-            </span>
+            <Image src="/logo-principal.png" alt="ServiceFlow" width={200} height={46} className="h-auto" />
           </div>
 
           <div className="hidden md:flex items-center gap-8">
