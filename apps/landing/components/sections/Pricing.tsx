@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Check } from "lucide-react";
+import { Check, Zap } from "lucide-react";
 
 const plans = [
   {
@@ -54,15 +54,19 @@ const plans = [
 
 export function Pricing() {
   return (
-    <section className="py-20">
-      <div className="container mx-auto px-4">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
+    <section className="py-24 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-[#10B981]/5 to-background" />
+      
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="text-center max-w-3xl mx-auto mb-20">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
             Planes que se adaptan a{" "}
-            <span className="gradient-text">tu negocio</span>
+            <span className="bg-gradient-to-r from-[#10B981] to-[#2563EB] bg-clip-text text-transparent">
+              tu negocio
+            </span>
           </h2>
           <p className="text-xl text-muted-foreground">
-            Comienza gratis y escala cuando lo necesites
+            Comienza gratis y escala cuando lo necesites. Sin sorpresas.
           </p>
         </div>
 
@@ -71,31 +75,32 @@ export function Pricing() {
             <Card
               key={index}
               hover
-              className={plan.popular ? "border-primary border-2 relative" : ""}
+              className={plan.popular ? "border-2 border-[#10B981] relative shadow-2xl shadow-[#10B981]/20 scale-105" : "border-2"}
             >
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <span className="gradient-primary text-white px-4 py-1 rounded-full text-sm font-medium">
+                <div className="absolute -top-5 left-1/2 -translate-x-1/2">
+                  <div className="bg-gradient-to-r from-[#10B981] to-[#2563EB] text-white px-6 py-2 rounded-full text-sm font-semibold flex items-center gap-2 shadow-lg">
+                    <Zap className="w-4 h-4" />
                     Más popular
-                  </span>
+                  </div>
                 </div>
               )}
-              <CardHeader>
+              <CardHeader className="pt-8">
                 <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                <CardDescription>{plan.description}</CardDescription>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold">{plan.price}</span>
-                  <span className="text-muted-foreground">{plan.period}</span>
+                <CardDescription className="text-base">{plan.description}</CardDescription>
+                <div className="mt-6">
+                  <span className="text-5xl font-bold bg-gradient-to-r from-[#10B981] to-[#2563EB] bg-clip-text text-transparent">{plan.price}</span>
+                  <span className="text-muted-foreground text-lg">{plan.period}</span>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <ul className="space-y-3">
+              <CardContent className="space-y-6">
+                <ul className="space-y-4">
                   {plan.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-center gap-2">
-                      <div className="w-5 h-5 rounded-full bg-success/10 flex items-center justify-center flex-shrink-0">
-                        <Check className="w-3 h-3 text-success" />
+                    <li key={idx} className="flex items-start gap-3">
+                      <div className="w-5 h-5 rounded-full bg-[#10B981]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Check className="w-3 h-3 text-[#10B981]" />
                       </div>
-                      <span className="text-sm">{feature}</span>
+                      <span className="text-sm leading-relaxed">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -104,11 +109,16 @@ export function Pricing() {
                   className="w-full"
                   size="lg"
                 >
-                  Comenzar ahora
+                  {plan.popular ? "Comenzar ahora" : "Seleccionar plan"}
                 </Button>
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        <div className="text-center mt-16">
+          <p className="text-muted-foreground mb-4">Todos los planes incluyen 14 días de prueba gratis</p>
+          <p className="text-sm text-muted-foreground">Sin tarjeta de crédito requerida • Cancela cuando quieras</p>
         </div>
       </div>
     </section>
