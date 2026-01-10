@@ -65,7 +65,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="usuario@serviceflow.com"
-              className="placeholder:text-[#111827]"
+              className="!text-[#111827] !border-[#CBD5E1] !bg-[#F8FAFC] focus:!border-[#3B82F6] focus:!ring-[#3B82F6]"
               required
             />
             <Input
@@ -74,7 +74,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••"
-              className="placeholder:text-[#111827]"
+              className="!text-[#111827] !border-[#CBD5E1] !bg-[#F8FAFC] focus:!border-[#3B82F6] focus:!ring-[#3B82F6] [&_button]:!text-[#64748B] [&_button:hover]:!text-[#111827]"
               required
             />
             <Button type="submit" className="w-full" disabled={isLoading}>
