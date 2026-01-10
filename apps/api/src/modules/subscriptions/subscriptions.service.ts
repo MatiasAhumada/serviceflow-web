@@ -29,7 +29,7 @@ export class SubscriptionsService {
   }
 
   async update(id: string, subscriptionData: Partial<Subscription>): Promise<Subscription | null> {
-    await this.subscriptionsRepository.update(id, subscriptionData);
+    await this.subscriptionsRepository.update(id, subscriptionData as any);
     return this.findOne(id);
   }
 

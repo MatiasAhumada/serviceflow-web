@@ -28,7 +28,7 @@ export class PlansService {
   }
 
   async update(id: string, planData: Partial<Plan>): Promise<Plan | null> {
-    await this.plansRepository.update(id, planData);
+    await this.plansRepository.update(id, planData as any);
     return this.findOne(id);
   }
 

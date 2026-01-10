@@ -2,18 +2,21 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { PlansService } from './plans.service';
 import { Plan } from '../../entities';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('Plans & Subscriptions')
 @Controller('plans')
 export class PlansController {
   constructor(private readonly plansService: PlansService) {}
 
+  @Public()
   @Get()
   @ApiOperation({ summary: 'Get all plans' })
   findAll(): Promise<Plan[]> {
     return this.plansService.findAll();
   }
 
+  @Public()
   @Get(':id')
   @ApiOperation({ summary: 'Get plan by id' })
   findOne(@Param('id') id: string): Promise<Plan | null> {

@@ -20,7 +20,13 @@ export class Plan extends BaseEntity {
   baseUserSeats: number;
 
   @Column('jsonb', { default: {} })
-  features: Record<string, any>;
+  features: Record<string, unknown>;
+
+  @Column({ default: false })
+  popular: boolean;
+
+  @Column({ name: 'feature_list', type: 'jsonb', default: [] })
+  featureList: string[];
 
   @OneToMany(() => Subscription, (subscription) => subscription.plan)
   subscriptions: Subscription[];

@@ -1,79 +1,70 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Check, Zap } from "lucide-react";
+import { plansService } from "@/services/plans.service";
+import { formatPlanForDisplay } from "@/utils/formatters";
 
-const plans = [
-  {
-    name: "Básico",
-    price: "$9.990",
-    period: "/mes",
-    description: "Perfecto para emprendedores",
-    features: [
-      "1 usuario",
-      "Hasta 100 productos",
-      "Ventas ilimitadas",
-      "Reportes básicos",
-      "Soporte por email",
-    ],
-    popular: false,
-  },
-  {
-    name: "Profesional",
-    price: "$19.990",
-    period: "/mes",
-    description: "Ideal para negocios en crecimiento",
-    features: [
-      "5 usuarios",
-      "Productos ilimitados",
-      "Ventas ilimitadas",
-      "Órdenes de servicio",
-      "Reportes avanzados",
-      "Soporte prioritario",
-      "Múltiples cajas",
-    ],
-    popular: true,
-  },
-  {
-    name: "Empresarial",
-    price: "$39.990",
-    period: "/mes",
-    description: "Para empresas establecidas",
-    features: [
-      "Usuarios ilimitados",
-      "Todo lo del plan Profesional",
-      "API personalizada",
-      "Soporte 24/7",
-      "Capacitación incluida",
-      "Múltiples sucursales",
-    ],
-    popular: false,
-  },
-];
+interface DisplayPlan {
+  id: string;
+  name: string;
+  price: string;
+  period: string;
+  description: string;
+  features: string[];
+  popular: boolean;
+}
 
 export function Pricing() {
+  const [plans, setPlans] = useState<DisplayPlan[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        const data = await plansService.getAll();
+        const formattedPlans = data.map(formatPlanForDisplay);
+        setPlans(formattedPlans);
+      } catch (error) {
+        console.error("Error al cargar planes:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPlans();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-24 relative overflow-hidden">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#10B981] mx-auto"></div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-24 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-background via-[#10B981]/5 to-background" />
-      
+
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-20">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Planes que se adaptan a{" "}
-            <span className="bg-gradient-to-r from-[#10B981] to-[#2563EB] bg-clip-text text-transparent">
-              tu negocio
-            </span>
+            Planes que se adaptan a <span className="bg-gradient-to-r from-[#10B981] to-[#2563EB] bg-clip-text text-transparent">tu negocio</span>
           </h2>
-          <p className="text-xl text-muted-foreground">
-            Comienza gratis y escala cuando lo necesites. Sin sorpresas.
-          </p>
+          <p className="text-xl text-muted-foreground">Comienza gratis y escala cuando lo necesites. Sin sorpresas.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {plans.map((plan, index) => (
+          {plans.map((plan) => (
             <Card
-              key={index}
+              key={plan.id}
               hover
               className={plan.popular ? "border-2 border-[#10B981] relative shadow-2xl shadow-[#10B981]/20 scale-105" : "border-2"}
             >
@@ -104,11 +95,7 @@ export function Pricing() {
                     </li>
                   ))}
                 </ul>
-                <Button
-                  variant={plan.popular ? "gradient" : "outline"}
-                  className="w-full"
-                  size="lg"
-                >
+                <Button variant={plan.popular ? "gradient" : "outline"} className="w-full" size="lg">
                   {plan.popular ? "Comenzar ahora" : "Seleccionar plan"}
                 </Button>
               </CardContent>
