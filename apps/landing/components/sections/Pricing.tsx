@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Check, Zap } from "lucide-react";
 import { plansService } from "@/services/plans.service";
 import { formatPlanForDisplay } from "@/utils/formatters";
+import { motion } from "framer-motion";
 
 interface DisplayPlan {
   id: string;
@@ -54,19 +55,25 @@ export function Pricing() {
       <div className="absolute inset-0 bg-gradient-to-b from-background via-[#10B981]/5 to-background" />
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-20">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-3xl mx-auto mb-20"
+        >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             Planes que se adaptan a <span className="bg-gradient-to-r from-[#10B981] to-[#2563EB] bg-clip-text text-transparent">tu negocio</span>
           </h2>
           <p className="text-xl text-muted-foreground">Comienza gratis y escala cuando lo necesites. Sin sorpresas.</p>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {plans.map((plan) => (
             <Card
               key={plan.id}
               hover
-              className={plan.popular ? "border-2 border-[#10B981] relative shadow-2xl shadow-[#10B981]/20 scale-105" : "border-2"}
+              className={`h-full flex flex-col ${plan.popular ? "border-2 border-[#10B981] relative shadow-2xl shadow-[#10B981]/20 md:-translate-y-4" : "border-2"}`}
             >
               {plan.popular && (
                 <div className="absolute -top-5 left-1/2 -translate-x-1/2">
@@ -84,8 +91,8 @@ export function Pricing() {
                   <span className="text-muted-foreground text-lg">{plan.period}</span>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <ul className="space-y-4">
+              <CardContent className="space-y-6 flex flex-col flex-1">
+                <ul className="space-y-4 flex-1">
                   {plan.features.map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-3">
                       <div className="w-5 h-5 rounded-full bg-[#10B981]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -104,7 +111,7 @@ export function Pricing() {
         </div>
 
         <div className="text-center mt-16">
-          <p className="text-muted-foreground mb-4">Todos los planes incluyen 14 días de prueba gratis</p>
+          <p className="text-muted-foreground mb-4">Todos los planes incluyen 5 días de prueba gratis</p>
           <p className="text-sm text-muted-foreground">Sin tarjeta de crédito requerida • Cancela cuando quieras</p>
         </div>
       </div>
