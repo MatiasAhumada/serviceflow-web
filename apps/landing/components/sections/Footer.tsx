@@ -91,11 +91,11 @@ export function Footer() {
               </li>
               <li className="flex items-start gap-2 text-sm text-muted-foreground">
                 <Phone className="w-4 h-4 text-[#10B981] mt-0.5 flex-shrink-0" />
-                <span>+54 9 11 1234-5678</span>
+                <span>+54 9 381 352-8658</span>
               </li>
               <li className="flex items-start gap-2 text-sm text-muted-foreground">
                 <MapPin className="w-4 h-4 text-[#10B981] mt-0.5 flex-shrink-0" />
-                <span>Buenos Aires, Argentina</span>
+                <span>Tucumán, Argentina</span>
               </li>
             </ul>
           </div>

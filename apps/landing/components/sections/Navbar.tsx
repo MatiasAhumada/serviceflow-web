@@ -18,6 +18,10 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -36,9 +40,9 @@ export function Navbar() {
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <button onClick={scrollToTop} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <Image src="/logo-principal.png" alt="ServiceFlow" width={180} height={42} className="h-auto" />
-          </Link>
+          </button>
 
           <div className="hidden md:flex items-center gap-8">
             <button

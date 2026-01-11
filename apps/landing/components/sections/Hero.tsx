@@ -70,11 +70,11 @@ export function Hero() {
           >
             <div className="flex items-center gap-2">
               <Zap className="w-4 h-4 text-[#10B981]" />
-              <span>Sin tarjeta de crédito</span>
+              <span>5 días de prueba gratis</span>
             </div>
             <div className="flex items-center gap-2">
               <Zap className="w-4 h-4 text-[#10B981]" />
-              <span>Configuración instantánea</span>
+              <span>Múltiples métodos de pago</span>
             </div>
             <div className="flex items-center gap-2">
               <Zap className="w-4 h-4 text-[#10B981]" />
