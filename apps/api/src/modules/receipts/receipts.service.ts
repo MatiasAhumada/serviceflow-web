@@ -1,11 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Receipt, Sale, Company, Customer, User } from '../../entities';
+import { Receipt, Sale, Customer, User } from '../../entities';
 import { CreateReceiptDto } from './dto';
 import PDFDocument from 'pdfkit';
-import * as fs from 'fs';
-import * as path from 'path';
 
 @Injectable()
 export class ReceiptsService {
@@ -14,8 +12,6 @@ export class ReceiptsService {
     private receiptsRepository: Repository<Receipt>,
     @InjectRepository(Sale)
     private salesRepository: Repository<Sale>,
-    @InjectRepository(Company)
-    private companiesRepository: Repository<Company>,
     @InjectRepository(Customer)
     private customersRepository: Repository<Customer>,
     @InjectRepository(User)
@@ -68,11 +64,6 @@ export class ReceiptsService {
       throw new NotFoundException('Venta no encontrada');
     }
 
-    const company = await this.companiesRepository.findOne({
-      where: { id: companyId },
-      relations: ['address'],
-    });
-
     const lastReceipt = await this.receiptsRepository.findOne({
       where: { companyId },
       order: { createdAt: 'DESC' },
@@ -96,31 +87,20 @@ export class ReceiptsService {
 
     const savedReceipt = await this.receiptsRepository.save(receipt);
 
-    const pdfPath = await this.generatePDF(savedReceipt.id, companyId);
-    savedReceipt.pdfPath = pdfPath;
-    await this.receiptsRepository.save(savedReceipt);
-
     return this.findOne(savedReceipt.id, companyId);
   }
 
-  async generatePDF(receiptId: string, companyId: string): Promise<string> {
+  async generatePDF(receiptId: string, companyId: string): Promise<Buffer> {
     const receipt = await this.findOne(receiptId, companyId);
-
-    const uploadsDir = path.join(process.cwd(), 'uploads', 'receipts');
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true });
-    }
-
-    const fileName = `receipt-${receipt.receiptNumber}-${Date.now()}.pdf`;
-    const filePath = path.join(uploadsDir, fileName);
 
     return new Promise((resolve, reject) => {
       const doc = new PDFDocument({ margin: 50 });
-      const stream = fs.createWriteStream(filePath);
+      const chunks: Buffer[] = [];
 
-      doc.pipe(stream);
+      doc.on('data', (chunk) => chunks.push(chunk));
+      doc.on('end', () => resolve(Buffer.concat(chunks)));
+      doc.on('error', reject);
 
-      // Header - Datos de la empresa
       doc.fontSize(20).text('FACTURA', { align: 'center' });
       doc.moveDown();
       doc.fontSize(12).text(receipt.company.name, { align: 'center' });
@@ -145,13 +125,11 @@ export class ReceiptsService {
       doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
       doc.moveDown();
 
-      // Datos del comprobante
       doc.fontSize(10);
       doc.text(`Comprobante N°: ${receipt.receiptNumber}`, 50, doc.y);
       doc.text(`Fecha: ${new Date(receipt.date).toLocaleDateString()}`, 350, doc.y - 12);
       doc.moveDown();
 
-      // Datos del cliente
       doc.fontSize(12).text('CLIENTE', { underline: true });
       doc.fontSize(10);
       doc.text(`Nombre: ${receipt.customer.name}`);
@@ -163,7 +141,6 @@ export class ReceiptsService {
       }
       doc.moveDown();
 
-      // Datos del vendedor
       doc.fontSize(10).text(`Vendedor: ${receipt.seller.name}`);
       if (receipt.technician) {
         doc.text(`Técnico: ${receipt.technician.name}`);
@@ -173,7 +150,6 @@ export class ReceiptsService {
       doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
       doc.moveDown();
 
-      // Tabla de items
       doc.fontSize(12).text('DETALLE', { underline: true });
       doc.moveDown(0.5);
 
@@ -205,7 +181,6 @@ export class ReceiptsService {
       doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
       doc.moveDown();
 
-      // Totales
       const totalsX = 400;
       doc.fontSize(10);
       doc.text('Subtotal:', totalsX, doc.y);
@@ -227,25 +202,11 @@ export class ReceiptsService {
       doc.text(`Método de pago: ${this.formatPaymentMethod(receipt.paymentMethod)}`);
 
       doc.end();
-
-      stream.on('finish', () => {
-        resolve(`/uploads/receipts/${fileName}`);
-      });
-
-      stream.on('error', reject);
     });
   }
 
   async remove(id: string, companyId: string): Promise<void> {
     const receipt = await this.findOne(id, companyId);
-
-    if (receipt.pdfPath) {
-      const fullPath = path.join(process.cwd(), receipt.pdfPath);
-      if (fs.existsSync(fullPath)) {
-        fs.unlinkSync(fullPath);
-      }
-    }
-
     await this.receiptsRepository.remove(receipt);
   }
 

@@ -5,7 +5,6 @@ import { ReceiptsService } from './receipts.service';
 import { CreateReceiptDto } from './dto';
 import { Receipt } from '../../entities';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import * as path from 'path';
 
 @ApiTags('Receipts')
 @Controller('receipts')
@@ -51,8 +50,15 @@ export class ReceiptsController {
     @Res() res: Response,
   ) {
     const receipt = await this.receiptsService.findOne(id, user.companyId);
-    const filePath = path.join(process.cwd(), receipt.pdfPath);
-    res.download(filePath, `factura-${receipt.receiptNumber}.pdf`);
+    const pdfBuffer = await this.receiptsService.generatePDF(id, user.companyId);
+    
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename="factura-${receipt.receiptNumber}.pdf"`,
+      'Content-Length': pdfBuffer.length,
+    });
+    
+    res.send(pdfBuffer);
   }
 
   @Post()

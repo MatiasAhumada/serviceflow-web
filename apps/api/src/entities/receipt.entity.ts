@@ -40,9 +40,6 @@ export class Receipt extends BaseEntity {
   @Column({ name: 'payment_method' })
   paymentMethod: string;
 
-  @Column({ name: 'pdf_path', nullable: true })
-  pdfPath: string;
-
   @ManyToOne(() => Company)
   @JoinColumn({ name: 'company_id' })
   company: Company;
