@@ -53,10 +53,12 @@ export function Hero() {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4"
           >
-            <Button variant="gradient" size="lg" className="group shadow-2xl shadow-[#10B981]/20">
-              Comenzar gratis
-              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            <a href={process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}>
+              <Button variant="gradient" size="lg" className="group shadow-2xl shadow-[#10B981]/20">
+                Comenzar gratis
+                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </a>
             <Button variant="outline" size="lg" className="border-2">
               Ver demo en vivo
             </Button>
