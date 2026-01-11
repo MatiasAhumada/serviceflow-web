@@ -7,10 +7,12 @@ export async function POST(request: NextRequest) {
     const response = await authApiService.register(body);
     return NextResponse.json(response);
   } catch (error: unknown) {
-    const err = error as { response?: { data?: { message?: string }; status?: number } };
+    const err = error as {
+      response?: { data?: { message?: string }; status?: number };
+    };
     return NextResponse.json(
       { error: err.response?.data?.message || "Registration failed" },
-      { status: err.response?.status || 400 }
+      { status: err.response?.status || 400 },
     );
   }
 }

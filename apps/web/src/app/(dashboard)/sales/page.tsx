@@ -44,7 +44,8 @@ export default function SalesPage() {
       header: "Total",
       align: "right",
       sortable: true,
-      render: (sale) => `$${(sale.total - sale.discount).toLocaleString("es-AR", { minimumFractionDigits: 2 })}`,
+      render: (sale) =>
+        `$${(sale.total - sale.discount).toLocaleString("es-AR", { minimumFractionDigits: 2 })}`,
     },
     {
       key: "paymentMethod",
@@ -52,7 +53,9 @@ export default function SalesPage() {
       align: "center",
       render: (sale) => (
         <Badge variant="outline" size="sm">
-          {PAYMENT_METHODS[sale.paymentMethod as keyof typeof PAYMENT_METHODS] || sale.paymentMethod}
+          {PAYMENT_METHODS[
+            sale.paymentMethod as keyof typeof PAYMENT_METHODS
+          ] || sale.paymentMethod}
         </Badge>
       ),
     },
@@ -61,12 +64,18 @@ export default function SalesPage() {
       header: "Estado",
       align: "center",
       render: (sale) => {
-        const statuses: Record<string, { label: string; variant: "success" | "outline" | "destructive" }> = {
+        const statuses: Record<
+          string,
+          { label: string; variant: "success" | "outline" | "destructive" }
+        > = {
           completed: { label: "Completada", variant: "success" },
           pending: { label: "Pendiente", variant: "outline" },
           cancelled: { label: "Cancelada", variant: "destructive" },
         };
-        const status = statuses[sale.status] || { label: sale.status, variant: "outline" };
+        const status = statuses[sale.status] || {
+          label: sale.status,
+          variant: "outline",
+        };
         return (
           <Badge variant={status.variant} size="sm">
             {status.label}
@@ -80,8 +89,18 @@ export default function SalesPage() {
     {
       label: "",
       icon: (
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+          />
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -100,7 +119,12 @@ export default function SalesPage() {
     {
       label: "",
       icon: (
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -125,8 +149,18 @@ export default function SalesPage() {
     {
       label: "",
       icon: (
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M6 18L18 6M6 6l12 12"
+          />
         </svg>
       ),
       variant: "destructive",
@@ -138,13 +172,15 @@ export default function SalesPage() {
           },
         });
       },
-      show: (sale) => sale.status !== "cancelled" && sale.status !== "completed",
+      show: (sale) =>
+        sale.status !== "cancelled" && sale.status !== "completed",
     },
   ];
 
   const handleModalConfirm = async () => {
     if (modalMode === "create") {
-      const submitFn = (window as unknown as Record<string, unknown>).__saleFormSubmit as (() => void) | undefined;
+      const submitFn = (window as unknown as Record<string, unknown>)
+        .__saleFormSubmit as (() => void) | undefined;
       if (submitFn) {
         submitFn();
       }
@@ -157,8 +193,12 @@ export default function SalesPage() {
       <header className="bg-background border-b border-border px-4 sm:px-6 py-4 pb-7">
         <div className="flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-xl sm:text-2xl font-bold text-[#111827] dark:text-white">Ventas</h1>
-            <p className="text-xs sm:text-sm text-[#10B981] font-medium">Registra y gestiona tus ventas</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-[#111827] dark:text-white">
+              Ventas
+            </h1>
+            <p className="text-xs sm:text-sm text-[#10B981] font-medium">
+              Registra y gestiona tus ventas
+            </p>
           </div>
         </div>
         <div className="flex items-center justify-end gap-3 -mt-12">
@@ -168,8 +208,18 @@ export default function SalesPage() {
               setIsModalOpen(true);
             }}
           >
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            <svg
+              className="w-4 h-4 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
+              />
             </svg>
             Nueva Venta
           </Button>
@@ -181,25 +231,39 @@ export default function SalesPage() {
           <Card variant="stats">
             <CardContent className="p-4">
               <p className="text-sm text-muted-foreground">Ventas Hoy</p>
-              <p className="text-2xl font-bold text-foreground">{stats?.todayCount || 0}</p>
+              <p className="text-2xl font-bold text-foreground">
+                {stats?.todayCount || 0}
+              </p>
             </CardContent>
           </Card>
           <Card variant="stats">
             <CardContent className="p-4">
               <p className="text-sm text-muted-foreground">Total Hoy</p>
-              <p className="text-2xl font-bold text-foreground">${(stats?.todayTotal || 0).toLocaleString("es-AR", { minimumFractionDigits: 2 })}</p>
+              <p className="text-2xl font-bold text-foreground">
+                $
+                {(stats?.todayTotal || 0).toLocaleString("es-AR", {
+                  minimumFractionDigits: 2,
+                })}
+              </p>
             </CardContent>
           </Card>
           <Card variant="stats">
             <CardContent className="p-4">
               <p className="text-sm text-muted-foreground">Ventas Mes</p>
-              <p className="text-2xl font-bold text-foreground">{stats?.monthCount || 0}</p>
+              <p className="text-2xl font-bold text-foreground">
+                {stats?.monthCount || 0}
+              </p>
             </CardContent>
           </Card>
           <Card variant="stats">
             <CardContent className="p-4">
               <p className="text-sm text-muted-foreground">Total Mes</p>
-              <p className="text-2xl font-bold text-foreground">${(stats?.monthTotal || 0).toLocaleString("es-AR", { minimumFractionDigits: 2 })}</p>
+              <p className="text-2xl font-bold text-foreground">
+                $
+                {(stats?.monthTotal || 0).toLocaleString("es-AR", {
+                  minimumFractionDigits: 2,
+                })}
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -222,7 +286,9 @@ export default function SalesPage() {
           }}
           onConfirm={handleModalConfirm}
           mode={modalMode}
-          title={modalMode === "create" ? "Nueva Venta" : "Detalles de la Venta"}
+          title={
+            modalMode === "create" ? "Nueva Venta" : "Detalles de la Venta"
+          }
         >
           {modalMode === "create" ? (
             <SaleForm
@@ -234,9 +300,15 @@ export default function SalesPage() {
           ) : (
             <div className="space-y-4">
               <div>
-                <p className="text-sm font-medium">N° Venta: {selectedSale?.saleNumber}</p>
-                <p className="text-sm">Cliente: {selectedSale?.customer?.name}</p>
-                <p className="text-sm">Total: ${(selectedSale?.total || 0).toLocaleString("es-AR")}</p>
+                <p className="text-sm font-medium">
+                  N° Venta: {selectedSale?.saleNumber}
+                </p>
+                <p className="text-sm">
+                  Cliente: {selectedSale?.customer?.name}
+                </p>
+                <p className="text-sm">
+                  Total: ${(selectedSale?.total || 0).toLocaleString("es-AR")}
+                </p>
               </div>
               <div>
                 <p className="text-sm font-medium mb-2">Items:</p>
@@ -244,7 +316,8 @@ export default function SalesPage() {
                   <div key={item.id} className="text-sm flex justify-between">
                     <span>{item.product?.name}</span>
                     <span>
-                      x{item.quantity} - ${item.subtotal.toLocaleString("es-AR")}
+                      x{item.quantity} - $
+                      {item.subtotal.toLocaleString("es-AR")}
                     </span>
                   </div>
                 ))}

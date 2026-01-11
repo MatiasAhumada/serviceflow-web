@@ -12,7 +12,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Credentials({
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -31,23 +31,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             plan: response.user.userType.code,
             permissions: [],
             userType: response.user.userType,
-            company: response.user.company ? {
-              id: response.user.company.id as string,
-              name: response.user.company.name as string,
-            } : null,
-            companyId: response.user.company?.id as string || null,
-            role: response.user.role ? {
-              id: response.user.role.id as string,
-              name: response.user.role.name as string,
-            } : null,
+            company: response.user.company
+              ? {
+                  id: response.user.company.id as string,
+                  name: response.user.company.name as string,
+                }
+              : null,
+            companyId: (response.user.company?.id as string) || null,
+            role: response.user.role
+              ? {
+                  id: response.user.role.id as string,
+                  name: response.user.role.name as string,
+                }
+              : null,
             accessToken: response.access_token,
           };
         } catch (error) {
           console.error("Auth error:", error);
           return null;
         }
-      }
-    })
+      },
+    }),
   ],
   pages: {
     signIn: APP_ROUTES.LOGIN,
@@ -82,11 +86,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.accessToken = token.accessToken;
       }
       return session;
-    }
+    },
   },
   events: {
     async signOut() {
       console.log("Session closed");
-    }
-  }
+    },
+  },
 });

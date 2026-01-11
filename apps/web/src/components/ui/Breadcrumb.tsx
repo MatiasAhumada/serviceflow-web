@@ -17,7 +17,7 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
     <nav className={cn("flex items-center space-x-2 text-sm", className)}>
       {items.map((item, index) => {
         const isLast = index === items.length - 1;
-        
+
         return (
           <div key={index} className="flex items-center">
             {index > 0 && (
@@ -27,7 +27,12 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             )}
             {isLast ? (

@@ -42,6 +42,12 @@ export class Subscription extends BaseEntity {
   @Column({ name: 'auto_renew', default: true })
   autoRenew: boolean;
 
+  @Column({ name: 'is_trial', default: false })
+  isTrial: boolean;
+
+  @Column({ name: 'trial_end_date', nullable: true })
+  trialEndDate: Date;
+
   @Column({ name: 'created_by' })
   createdById: string;
 

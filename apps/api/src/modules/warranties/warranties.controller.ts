@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { WarrantiesService } from './warranties.service';
 import { Warranty } from '../../entities';
@@ -28,7 +36,10 @@ export class WarrantiesController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update warranty' })
-  update(@Param('id') id: string, @Body() warrantyData: Partial<Warranty>): Promise<Warranty | null> {
+  update(
+    @Param('id') id: string,
+    @Body() warrantyData: Partial<Warranty>,
+  ): Promise<Warranty | null> {
     return this.warrantiesService.update(id, warrantyData);
   }
 

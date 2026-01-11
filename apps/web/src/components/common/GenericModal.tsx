@@ -79,11 +79,7 @@ export function GenericModal({
       <DialogContent className={cn(sizeClasses[size], className)}>
         <DialogHeader>
           <DialogTitle>{title || modalTitles[mode]}</DialogTitle>
-          {description && (
-            <DialogDescription>
-              {description}
-            </DialogDescription>
-          )}
+          {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
 
         {children && <div className="py-4">{children}</div>}
@@ -91,7 +87,13 @@ export function GenericModal({
         <DialogFooter>
           <Button
             type="button"
-            variant={mode === "view" ? "outline" : mode === "delete" ? "destructive" : "default"}
+            variant={
+              mode === "view"
+                ? "outline"
+                : mode === "delete"
+                  ? "destructive"
+                  : "default"
+            }
             onClick={handleConfirm}
             disabled={isLoading}
           >

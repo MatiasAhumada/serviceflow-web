@@ -38,7 +38,9 @@ export async function seedUserTypes(dataSource: DataSource) {
   ];
 
   for (const userType of userTypes) {
-    const exists = await userTypeRepo.findOne({ where: { code: userType.code } });
+    const exists = await userTypeRepo.findOne({
+      where: { code: userType.code },
+    });
     if (!exists) {
       await userTypeRepo.save(userType);
       console.log(`✅ UserType created: ${userType.name}`);

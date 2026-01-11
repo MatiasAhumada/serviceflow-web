@@ -11,7 +11,8 @@ const jsonLd = {
     price: "0",
     priceCurrency: "USD",
   },
-  description: "Sistema completo de gestión para talleres de reparación, servicios técnicos y comercios. Administra clientes, productos, inventario, órdenes de trabajo, ventas y caja.",
+  description:
+    "Sistema completo de gestión para talleres de reparación, servicios técnicos y comercios. Administra clientes, productos, inventario, órdenes de trabajo, ventas y caja.",
   featureList: [
     "Gestión de clientes",
     "Control de inventario",
@@ -37,8 +38,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ServiceFlow - Software para Venta y Reparación de Electrónica | Servicio Técnico",
-  description: "Sistema integral para negocios de electrónica: vendedores, service técnico y talleres de reparación. Gestiona ventas, reparaciones, inventario, clientes y facturación. Ideal para celulares, computadoras, electrodomésticos y electrónica en general.",
+  title:
+    "ServiceFlow - Software para Venta y Reparación de Electrónica | Servicio Técnico",
+  description:
+    "Sistema integral para negocios de electrónica: vendedores, service técnico y talleres de reparación. Gestiona ventas, reparaciones, inventario, clientes y facturación. Ideal para celulares, computadoras, electrodomésticos y electrónica en general.",
   keywords: [
     "software service electrónica",
     "sistema taller reparación celulares",
@@ -65,13 +68,15 @@ export const metadata: Metadata = {
     locale: "es_ES",
     url: "https://serviceflow.app",
     title: "ServiceFlow - Software para Venta y Reparación de Electrónica",
-    description: "Sistema integral para negocios de electrónica: vendedores, service técnico y talleres. Gestiona ventas, reparaciones, inventario y facturación. Ideal para celulares, computadoras y electrodomésticos.",
+    description:
+      "Sistema integral para negocios de electrónica: vendedores, service técnico y talleres. Gestiona ventas, reparaciones, inventario y facturación. Ideal para celulares, computadoras y electrodomésticos.",
     siteName: "ServiceFlow",
   },
   twitter: {
     card: "summary_large_image",
     title: "ServiceFlow - Software para Negocios de Electrónica",
-    description: "Sistema integral para vendedores y service técnico de electrónica. Gestiona ventas, reparaciones e inventario desde la nube.",
+    description:
+      "Sistema integral para vendedores y service técnico de electrónica. Gestiona ventas, reparaciones e inventario desde la nube.",
   },
 };
 
@@ -105,9 +110,7 @@ export default function RootLayout({
       >
         <SessionProvider>
           <ReactQueryProvider>
-            <AppProvider>
-              {children}
-            </AppProvider>
+            <AppProvider>{children}</AppProvider>
           </ReactQueryProvider>
           <Toaster richColors position="top-center" />
         </SessionProvider>

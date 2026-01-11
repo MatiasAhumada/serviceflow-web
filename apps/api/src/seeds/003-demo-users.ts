@@ -1,5 +1,13 @@
 import { DataSource } from 'typeorm';
-import { User, UserType, Company, Subscription, Plan, SystemAdmin, Address } from '../entities';
+import {
+  User,
+  UserType,
+  Company,
+  Subscription,
+  Plan,
+  SystemAdmin,
+  Address,
+} from '../entities';
 import * as bcrypt from 'bcrypt';
 import { SUBSCRIPTION_STATUS, SUBSCRIBER_TYPE } from '../constants';
 
@@ -12,15 +20,21 @@ export async function seedDemoUsers(dataSource: DataSource) {
   const systemAdminRepo = dataSource.getRepository(SystemAdmin);
   const addressRepo = dataSource.getRepository(Address);
 
-  const systemAdmin = await systemAdminRepo.findOne({ where: { email: 'admin@serviceflow.com' } });
+  const systemAdmin = await systemAdminRepo.findOne({
+    where: { email: 'admin@serviceflow.com' },
+  });
   if (!systemAdmin) {
     console.error('❌ System Admin not found');
     return;
   }
 
   const adminType = await userTypeRepo.findOne({ where: { code: 'admin' } });
-  const vendedorType = await userTypeRepo.findOne({ where: { code: 'vendedor' } });
-  const tecnicoType = await userTypeRepo.findOne({ where: { code: 'tecnico' } });
+  const vendedorType = await userTypeRepo.findOne({
+    where: { code: 'vendedor' },
+  });
+  const tecnicoType = await userTypeRepo.findOne({
+    where: { code: 'tecnico' },
+  });
   const cajeroType = await userTypeRepo.findOne({ where: { code: 'cajero' } });
 
   if (!adminType || !vendedorType || !tecnicoType || !cajeroType) {
@@ -28,9 +42,15 @@ export async function seedDemoUsers(dataSource: DataSource) {
     return;
   }
 
-  const companyPlan = await planRepo.findOne({ where: { slug: 'company-standard' } });
-  const vendorPlan = await planRepo.findOne({ where: { slug: 'vendor-basic' } });
-  const techPlan = await planRepo.findOne({ where: { slug: 'technician-basic' } });
+  const companyPlan = await planRepo.findOne({
+    where: { slug: 'company-standard' },
+  });
+  const vendorPlan = await planRepo.findOne({
+    where: { slug: 'vendor-basic' },
+  });
+  const techPlan = await planRepo.findOne({
+    where: { slug: 'technician-basic' },
+  });
 
   if (!companyPlan || !vendorPlan || !techPlan) {
     console.error('❌ Plans not found');
@@ -38,7 +58,9 @@ export async function seedDemoUsers(dataSource: DataSource) {
   }
 
   // 1. Crear Admin de Compañía
-  let adminUser = await userRepo.findOne({ where: { email: 'admin@empresa.com' } });
+  let adminUser = await userRepo.findOne({
+    where: { email: 'admin@empresa.com' },
+  });
   if (!adminUser) {
     adminUser = userRepo.create({
       email: 'admin@empresa.com',
@@ -51,7 +73,9 @@ export async function seedDemoUsers(dataSource: DataSource) {
   }
 
   // 2. Crear Dirección de Compañía
-  let companyAddress = await addressRepo.findOne({ where: { street: 'Av. Principal 123' } });
+  let companyAddress = await addressRepo.findOne({
+    where: { street: 'Av. Principal 123' },
+  });
   if (!companyAddress) {
     companyAddress = addressRepo.create({
       street: 'Av. Principal 123',
@@ -80,7 +104,9 @@ export async function seedDemoUsers(dataSource: DataSource) {
   }
 
   // 4. Crear Suscripción de Compañía
-  const companySubExists = await subscriptionRepo.findOne({ where: { companyId: company.id } });
+  const companySubExists = await subscriptionRepo.findOne({
+    where: { companyId: company.id },
+  });
   if (!companySubExists) {
     const companySub = subscriptionRepo.create({
       subscriberType: SUBSCRIBER_TYPE.COMPANY,
@@ -107,7 +133,9 @@ export async function seedDemoUsers(dataSource: DataSource) {
   ];
 
   for (const vendedorData of vendedores) {
-    const exists = await userRepo.findOne({ where: { email: vendedorData.email } });
+    const exists = await userRepo.findOne({
+      where: { email: vendedorData.email },
+    });
     if (!exists) {
       const vendedor = userRepo.create({
         email: vendedorData.email,
@@ -129,7 +157,9 @@ export async function seedDemoUsers(dataSource: DataSource) {
   ];
 
   for (const tecnicoData of tecnicos) {
-    const exists = await userRepo.findOne({ where: { email: tecnicoData.email } });
+    const exists = await userRepo.findOne({
+      where: { email: tecnicoData.email },
+    });
     if (!exists) {
       const tecnico = userRepo.create({
         email: tecnicoData.email,
@@ -144,7 +174,9 @@ export async function seedDemoUsers(dataSource: DataSource) {
   }
 
   // 8. Crear Cajero de Compañía
-  const cajeroExists = await userRepo.findOne({ where: { email: 'cajero@empresa.com' } });
+  const cajeroExists = await userRepo.findOne({
+    where: { email: 'cajero@empresa.com' },
+  });
   if (!cajeroExists) {
     const cajero = userRepo.create({
       email: 'cajero@empresa.com',
@@ -158,7 +190,9 @@ export async function seedDemoUsers(dataSource: DataSource) {
   }
 
   // 9. Crear Vendedor Individual
-  let vendedorIndividual = await userRepo.findOne({ where: { email: 'vendedor.individual@gmail.com' } });
+  let vendedorIndividual = await userRepo.findOne({
+    where: { email: 'vendedor.individual@gmail.com' },
+  });
   if (!vendedorIndividual) {
     vendedorIndividual = userRepo.create({
       email: 'vendedor.individual@gmail.com',
@@ -184,7 +218,9 @@ export async function seedDemoUsers(dataSource: DataSource) {
   }
 
   // 10. Crear Técnico Individual
-  let tecnicoIndividual = await userRepo.findOne({ where: { email: 'tecnico.individual@gmail.com' } });
+  let tecnicoIndividual = await userRepo.findOne({
+    where: { email: 'tecnico.individual@gmail.com' },
+  });
   if (!tecnicoIndividual) {
     tecnicoIndividual = userRepo.create({
       email: 'tecnico.individual@gmail.com',

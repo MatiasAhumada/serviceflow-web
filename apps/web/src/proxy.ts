@@ -5,19 +5,18 @@ import { NextResponse } from "next/server";
 export default auth((req) => {
   const isLoggedIn = !!req.auth;
   const isLoginPage = req.nextUrl.pathname === APP_ROUTES.LOGIN;
+  const isRegisterTrialPage =
+    req.nextUrl.pathname === APP_ROUTES.REGISTER_TRIAL;
   const isPublicRoute = req.nextUrl.pathname.startsWith("/api/auth");
 
-  // Permitir rutas públicas
-  if (isPublicRoute) {
+  if (isPublicRoute || isRegisterTrialPage) {
     return NextResponse.next();
   }
 
-  // Si está logueado y trata de ir al login, redirigir al dashboard
   if (isLoggedIn && isLoginPage) {
     return NextResponse.redirect(new URL(APP_ROUTES.HOME, req.url));
   }
 
-  // Si no está logueado y no está en login, redirigir al login
   if (!isLoggedIn && !isLoginPage) {
     return NextResponse.redirect(new URL(APP_ROUTES.LOGIN, req.url));
   }

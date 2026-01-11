@@ -1,4 +1,13 @@
-import { IsString, IsEnum, IsArray, ValidateNested, IsOptional, IsDateString, IsNumber, Min } from 'class-validator';
+import {
+  IsString,
+  IsEnum,
+  IsArray,
+  ValidateNested,
+  IsOptional,
+  IsDateString,
+  IsNumber,
+  Min,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { PAYMENT_METHOD } from '../../../constants';

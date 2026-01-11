@@ -8,13 +8,27 @@ import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { RolesGuard } from './guards/roles.guard';
 import { UsersModule } from '../users/users.module';
-import { Role } from '../../entities';
+import {
+  Role,
+  Plan,
+  Subscription,
+  SystemAdmin,
+  User,
+  UserType,
+} from '../../entities';
 
 @Module({
   imports: [
     UsersModule,
     PassportModule,
-    TypeOrmModule.forFeature([Role]),
+    TypeOrmModule.forFeature([
+      Role,
+      Plan,
+      Subscription,
+      SystemAdmin,
+      User,
+      UserType,
+    ]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

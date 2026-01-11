@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dtos/login.dto';
 import { Public } from './decorators/public.decorator';
 import { RegisterDto } from './dtos/register.dto';
+import { RegisterTrialDto } from './dtos/register-trial.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -12,9 +13,9 @@ export class AuthController {
 
   @Public()
   @Post('login')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'User login',
-    description: 'Authenticate user and return JWT token'
+    description: 'Authenticate user and return JWT token',
   })
   @ApiResponse({ status: 200, description: 'Login successful' })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
@@ -24,13 +25,28 @@ export class AuthController {
 
   @Public()
   @Post('register')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Register new user',
-    description: 'Create new user account and return JWT token'
+    description: 'Create new user account and return JWT token',
   })
   @ApiResponse({ status: 201, description: 'User registered successfully' })
   @ApiResponse({ status: 400, description: 'Invalid data' })
   async register(@Body() body: RegisterDto) {
     return this.authService.register(body);
+  }
+
+  @Public()
+  @Post('register-trial')
+  @ApiOperation({
+    summary: 'Register with free trial',
+    description: 'Create new user with 5-day free trial',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Trial account created successfully',
+  })
+  @ApiResponse({ status: 400, description: 'Invalid data' })
+  async registerTrial(@Body() body: RegisterTrialDto) {
+    return this.authService.registerTrial(body);
   }
 }

@@ -8,17 +8,25 @@ export const formatPrice = (price: number): string => {
   }).format(price);
 };
 
-export const formatPlanFeatures = (features: Record<string, unknown>): string[] => {
+export const formatPlanFeatures = (
+  features: Record<string, unknown>,
+): string[] => {
   const featuresList: string[] = [];
 
   if (features.users) {
     const users = features.users as number;
-    featuresList.push(users === -1 ? "Usuarios ilimitados" : `${users} usuario${users > 1 ? "s" : ""}`);
+    featuresList.push(
+      users === -1
+        ? "Usuarios ilimitados"
+        : `${users} usuario${users > 1 ? "s" : ""}`,
+    );
   }
 
   if (features.products) {
     const products = features.products as number;
-    featuresList.push(products === -1 ? "Productos ilimitados" : `Hasta ${products} productos`);
+    featuresList.push(
+      products === -1 ? "Productos ilimitados" : `Hasta ${products} productos`,
+    );
   }
 
   if (features.sales) {
@@ -31,7 +39,9 @@ export const formatPlanFeatures = (features: Record<string, unknown>): string[] 
 
   if (features.reports) {
     const reportType = features.reports as string;
-    featuresList.push(reportType === "advanced" ? "Reportes avanzados" : "Reportes básicos");
+    featuresList.push(
+      reportType === "advanced" ? "Reportes avanzados" : "Reportes básicos",
+    );
   }
 
   if (features.support) {
@@ -68,9 +78,10 @@ export const isPopularPlan = (slug: string): boolean => {
 };
 
 export const formatPlanForDisplay = (plan: Plan) => {
-  const features = plan.featureList && plan.featureList.length > 0 
-    ? plan.featureList 
-    : formatPlanFeatures(plan.features);
+  const features =
+    plan.featureList && plan.featureList.length > 0
+      ? plan.featureList
+      : formatPlanFeatures(plan.features);
 
   return {
     id: plan.id,

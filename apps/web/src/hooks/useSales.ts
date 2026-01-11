@@ -28,7 +28,8 @@ export const useSales = () => {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateSaleDto }) => salesService.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateSaleDto }) =>
+      salesService.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["sales"] });
       ClientHandler.success("Venta actualizada exitosamente");
@@ -62,12 +63,19 @@ export const useSales = () => {
 
   return {
     sales: salesQuery.data || [],
-    stats: statsQuery.data || { todayCount: 0, todayTotal: 0, monthCount: 0, monthTotal: 0 },
+    stats: statsQuery.data || {
+      todayCount: 0,
+      todayTotal: 0,
+      monthCount: 0,
+      monthTotal: 0,
+    },
     loading: salesQuery.isLoading || statsQuery.isLoading,
     fetchSales: () => queryClient.invalidateQueries({ queryKey: ["sales"] }),
-    fetchStats: () => queryClient.invalidateQueries({ queryKey: ["sales", "stats"] }),
+    fetchStats: () =>
+      queryClient.invalidateQueries({ queryKey: ["sales", "stats"] }),
     createSale: createMutation.mutateAsync,
-    updateSale: async (id: string, data: UpdateSaleDto) => updateMutation.mutateAsync({ id, data }),
+    updateSale: async (id: string, data: UpdateSaleDto) =>
+      updateMutation.mutateAsync({ id, data }),
     deleteSale: deleteMutation.mutateAsync,
     cancelSale: cancelMutation.mutateAsync,
   };

@@ -1,7 +1,13 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./Select"
+import * as React from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./Select";
 
 export interface SelectOption {
   value: string | number;

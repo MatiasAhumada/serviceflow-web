@@ -31,7 +31,10 @@ export class CompaniesService {
     return this.companiesRepository.save(company);
   }
 
-  async update(id: string, companyData: UpdateCompanyDto): Promise<Company | null> {
+  async update(
+    id: string,
+    companyData: UpdateCompanyDto,
+  ): Promise<Company | null> {
     const company = await this.findOne(id);
     if (!company) {
       return null;

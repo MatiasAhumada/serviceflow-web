@@ -19,7 +19,9 @@ export default function WorkOrdersPage() {
       header: "N° Orden",
       sortable: true,
       render: (order) => (
-        <span className="font-mono font-bold text-primary">{order.serviceNumber}</span>
+        <span className="font-mono font-bold text-primary">
+          {order.serviceNumber}
+        </span>
       ),
     },
     {
@@ -44,14 +46,20 @@ export default function WorkOrdersPage() {
       key: "expectedDelivery",
       header: "Entrega Est.",
       sortable: true,
-      render: (order) => order.expectedDelivery ? formatters.date(order.expectedDelivery) : "N/A",
+      render: (order) =>
+        order.expectedDelivery
+          ? formatters.date(order.expectedDelivery)
+          : "N/A",
     },
     {
       key: "status",
       header: "Estado",
       align: "center",
       render: (order) => {
-        const config = STATUS_CONFIGS.service[order.status as keyof typeof STATUS_CONFIGS.service];
+        const config =
+          STATUS_CONFIGS.service[
+            order.status as keyof typeof STATUS_CONFIGS.service
+          ];
         return <Badge variant={config.variant}>{config.label}</Badge>;
       },
     },
@@ -61,9 +69,24 @@ export default function WorkOrdersPage() {
     {
       label: "",
       icon: (
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+          />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+          />
         </svg>
       ),
       variant: "outline",
@@ -88,8 +111,12 @@ export default function WorkOrdersPage() {
       <header className="bg-background border-b border-border px-4 sm:px-6 py-4 pb-7">
         <div className="flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-xl sm:text-2xl font-bold text-[#111827] dark:text-white">Servicio Técnico</h1>
-            <p className="text-xs sm:text-sm text-[#10B981] font-medium">Gestiona las órdenes de servicio</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-[#111827] dark:text-white">
+              Servicio Técnico
+            </h1>
+            <p className="text-xs sm:text-sm text-[#10B981] font-medium">
+              Gestiona las órdenes de servicio
+            </p>
           </div>
         </div>
       </header>
@@ -102,7 +129,9 @@ export default function WorkOrdersPage() {
                 <div className="w-3 h-3 rounded-full bg-blue-500"></div>
                 <p className="text-sm text-muted-foreground">Recibidas</p>
               </div>
-              <p className="text-2xl font-bold text-foreground">{stats?.received || 0}</p>
+              <p className="text-2xl font-bold text-foreground">
+                {stats?.received || 0}
+              </p>
             </CardContent>
           </Card>
           <Card variant="stats">
@@ -111,7 +140,9 @@ export default function WorkOrdersPage() {
                 <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                 <p className="text-sm text-muted-foreground">En Progreso</p>
               </div>
-              <p className="text-2xl font-bold text-foreground">{stats?.inProgress || 0}</p>
+              <p className="text-2xl font-bold text-foreground">
+                {stats?.inProgress || 0}
+              </p>
             </CardContent>
           </Card>
           <Card variant="stats">
@@ -120,7 +151,9 @@ export default function WorkOrdersPage() {
                 <div className="w-3 h-3 rounded-full bg-green-500"></div>
                 <p className="text-sm text-muted-foreground">Completadas</p>
               </div>
-              <p className="text-2xl font-bold text-foreground">{stats?.completed || 0}</p>
+              <p className="text-2xl font-bold text-foreground">
+                {stats?.completed || 0}
+              </p>
             </CardContent>
           </Card>
           <Card variant="stats">
@@ -129,7 +162,9 @@ export default function WorkOrdersPage() {
                 <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
                 <p className="text-sm text-muted-foreground">Entregadas</p>
               </div>
-              <p className="text-2xl font-bold text-foreground">{stats?.delivered || 0}</p>
+              <p className="text-2xl font-bold text-foreground">
+                {stats?.delivered || 0}
+              </p>
             </CardContent>
           </Card>
           <Card variant="stats">
@@ -138,7 +173,9 @@ export default function WorkOrdersPage() {
                 <div className="w-3 h-3 rounded-full bg-gray-500"></div>
                 <p className="text-sm text-muted-foreground">Total</p>
               </div>
-              <p className="text-2xl font-bold text-foreground">{stats?.total || 0}</p>
+              <p className="text-2xl font-bold text-foreground">
+                {stats?.total || 0}
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -156,10 +193,26 @@ export default function WorkOrdersPage() {
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold">Orden {selectedOrder.serviceNumber}</h3>
-                <Button variant="ghost" size="sm" onClick={() => setSelectedOrder(null)}>
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <h3 className="text-lg font-bold">
+                  Orden {selectedOrder.serviceNumber}
+                </h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSelectedOrder(null)}
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </Button>
               </div>
@@ -170,32 +223,58 @@ export default function WorkOrdersPage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Técnico</p>
-                  <p className="font-medium">{selectedOrder.technician?.name}</p>
+                  <p className="font-medium">
+                    {selectedOrder.technician?.name}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Estado Actual</p>
-                  <Badge variant={STATUS_CONFIGS.service[selectedOrder.status as keyof typeof STATUS_CONFIGS.service].variant}>
-                    {STATUS_CONFIGS.service[selectedOrder.status as keyof typeof STATUS_CONFIGS.service].label}
+                  <Badge
+                    variant={
+                      STATUS_CONFIGS.service[
+                        selectedOrder.status as keyof typeof STATUS_CONFIGS.service
+                      ].variant
+                    }
+                  >
+                    {
+                      STATUS_CONFIGS.service[
+                        selectedOrder.status as keyof typeof STATUS_CONFIGS.service
+                      ].label
+                    }
                   </Badge>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Fecha Ingreso</p>
-                  <p className="font-medium">{formatters.date(selectedOrder.entryDate)}</p>
+                  <p className="font-medium">
+                    {formatters.date(selectedOrder.entryDate)}
+                  </p>
                 </div>
               </div>
               <div className="flex gap-2">
-                {selectedOrder.status === 'received' && (
-                  <Button onClick={() => handleStatusChange(selectedOrder.id, 'in_progress')}>
+                {selectedOrder.status === "received" && (
+                  <Button
+                    onClick={() =>
+                      handleStatusChange(selectedOrder.id, "in_progress")
+                    }
+                  >
                     Iniciar Reparación
                   </Button>
                 )}
-                {selectedOrder.status === 'in_progress' && (
-                  <Button onClick={() => handleStatusChange(selectedOrder.id, 'completed')}>
+                {selectedOrder.status === "in_progress" && (
+                  <Button
+                    onClick={() =>
+                      handleStatusChange(selectedOrder.id, "completed")
+                    }
+                  >
                     Marcar Completada
                   </Button>
                 )}
-                {selectedOrder.status === 'completed' && (
-                  <Button onClick={() => handleStatusChange(selectedOrder.id, 'delivered')}>
+                {selectedOrder.status === "completed" && (
+                  <Button
+                    onClick={() =>
+                      handleStatusChange(selectedOrder.id, "delivered")
+                    }
+                  >
                     Entregar al Cliente
                   </Button>
                 )}

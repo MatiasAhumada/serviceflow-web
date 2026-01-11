@@ -12,13 +12,16 @@ import { useConfirm } from "@/hooks/useConfirm";
 import { PAYMENT_METHODS } from "@/constants";
 
 export default function PaymentOrdersPage() {
-  const { pendingOrders, isLoading, completeOrder, cancelOrder } = usePaymentOrders();
+  const { pendingOrders, isLoading, completeOrder, cancelOrder } =
+    usePaymentOrders();
   const { stats } = useCashRegister();
   const { confirm, ConfirmDialog } = useConfirm();
   const [selectedOrder, setSelectedOrder] = useState<PaymentOrder | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCashRegister, setSelectedCashRegister] = useState<string>("");
-  const [cashRegisters, setCashRegisters] = useState<{ id: string; name: string; status: string }[]>([]);
+  const [cashRegisters, setCashRegisters] = useState<
+    { id: string; name: string; status: string }[]
+  >([]);
 
   useEffect(() => {
     const fetchCashRegisters = async () => {
@@ -29,7 +32,10 @@ export default function PaymentOrdersPage() {
   }, []);
 
   const openCashRegister =
-    stats?.isOpen && stats.cashRegisterId && stats.cashRegisterName && stats.openTime
+    stats?.isOpen &&
+    stats.cashRegisterId &&
+    stats.cashRegisterName &&
+    stats.openTime
       ? {
           id: stats.cashRegisterId as string,
           name: stats.cashRegisterName as string,
@@ -55,12 +61,16 @@ export default function PaymentOrdersPage() {
       header: "Monto",
       align: "right",
       sortable: true,
-      render: (order) => `$${order.amount.toLocaleString("es-AR", { minimumFractionDigits: 2 })}`,
+      render: (order) =>
+        `$${order.amount.toLocaleString("es-AR", { minimumFractionDigits: 2 })}`,
     },
     {
       key: "paymentMethod",
       header: "Método",
-      render: (order) => PAYMENT_METHODS[order.sale?.paymentMethod as keyof typeof PAYMENT_METHODS] || "-",
+      render: (order) =>
+        PAYMENT_METHODS[
+          order.sale?.paymentMethod as keyof typeof PAYMENT_METHODS
+        ] || "-",
     },
     {
       key: "createdAt",
@@ -109,8 +119,12 @@ export default function PaymentOrdersPage() {
       <header className="bg-background border-b border-border px-4 sm:px-6 py-4 pb-7">
         <div className="flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-xl sm:text-2xl font-bold text-[#111827] dark:text-white">Órdenes de Pago</h1>
-            <p className="text-xs sm:text-sm text-[#10B981] font-medium">Gestiona los cobros pendientes</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-[#111827] dark:text-white">
+              Órdenes de Pago
+            </h1>
+            <p className="text-xs sm:text-sm text-[#10B981] font-medium">
+              Gestiona los cobros pendientes
+            </p>
           </div>
         </div>
       </header>
@@ -119,15 +133,22 @@ export default function PaymentOrdersPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Card variant="stats">
             <CardContent className="p-4">
-              <p className="text-sm text-muted-foreground">Órdenes Pendientes</p>
-              <p className="text-2xl font-bold text-foreground">{pendingOrders?.length || 0}</p>
+              <p className="text-sm text-muted-foreground">
+                Órdenes Pendientes
+              </p>
+              <p className="text-2xl font-bold text-foreground">
+                {pendingOrders?.length || 0}
+              </p>
             </CardContent>
           </Card>
           <Card variant="stats">
             <CardContent className="p-4">
               <p className="text-sm text-muted-foreground">Total a Cobrar</p>
               <p className="text-2xl font-bold text-foreground">
-                ${(pendingOrders?.reduce((sum, o) => sum + o.amount, 0) || 0).toLocaleString("es-AR", { minimumFractionDigits: 2 })}
+                $
+                {(
+                  pendingOrders?.reduce((sum, o) => sum + o.amount, 0) || 0
+                ).toLocaleString("es-AR", { minimumFractionDigits: 2 })}
               </p>
             </CardContent>
           </Card>
@@ -138,8 +159,15 @@ export default function PaymentOrdersPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium">Caja Abierta: {openCashRegister.name}</p>
-                  <p className="text-xs text-muted-foreground">Abierta desde: {new Date(openCashRegister.openTime).toLocaleString("es-AR")}</p>
+                  <p className="text-sm font-medium">
+                    Caja Abierta: {openCashRegister.name}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Abierta desde:{" "}
+                    {new Date(openCashRegister.openTime).toLocaleString(
+                      "es-AR",
+                    )}
+                  </p>
                 </div>
                 <Badge variant="success">Activa</Badge>
               </div>
@@ -169,10 +197,25 @@ export default function PaymentOrdersPage() {
         >
           <div className="space-y-4">
             <div>
-              <p className="text-sm font-medium">Orden: {selectedOrder?.orderNumber}</p>
-              <p className="text-sm">Cliente: {selectedOrder?.sale?.customer?.name}</p>
-              <p className="text-sm">Método: {PAYMENT_METHODS[selectedOrder?.sale?.paymentMethod as keyof typeof PAYMENT_METHODS] || "-"}</p>
-              <p className="text-lg font-bold mt-2">Monto: ${selectedOrder?.amount.toLocaleString("es-AR", { minimumFractionDigits: 2 })}</p>
+              <p className="text-sm font-medium">
+                Orden: {selectedOrder?.orderNumber}
+              </p>
+              <p className="text-sm">
+                Cliente: {selectedOrder?.sale?.customer?.name}
+              </p>
+              <p className="text-sm">
+                Método:{" "}
+                {PAYMENT_METHODS[
+                  selectedOrder?.sale
+                    ?.paymentMethod as keyof typeof PAYMENT_METHODS
+                ] || "-"}
+              </p>
+              <p className="text-lg font-bold mt-2">
+                Monto: $
+                {selectedOrder?.amount.toLocaleString("es-AR", {
+                  minimumFractionDigits: 2,
+                })}
+              </p>
             </div>
             {cashRegisters && cashRegisters.length > 0 && (
               <div>

@@ -19,7 +19,7 @@ export function Pagination({
   itemsPerPage,
   onPageChange,
   onItemsPerPageChange,
-  className
+  className,
 }: PaginationProps) {
   const startItem = (currentPage - 1) * itemsPerPage + 1;
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
@@ -29,7 +29,11 @@ export function Pagination({
     const range = [];
     const rangeWithDots = [];
 
-    for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
+    for (
+      let i = Math.max(2, currentPage - delta);
+      i <= Math.min(totalPages - 1, currentPage + delta);
+      i++
+    ) {
       range.push(i);
     }
 
@@ -69,7 +73,7 @@ export function Pagination({
           </select>
         )}
       </div>
-      
+
       <div className="flex items-center gap-1">
         <Button
           variant="outline"
@@ -79,7 +83,7 @@ export function Pagination({
         >
           Anterior
         </Button>
-        
+
         {getVisiblePages().map((page, index) => (
           <React.Fragment key={index}>
             {page === "..." ? (
@@ -95,7 +99,7 @@ export function Pagination({
             )}
           </React.Fragment>
         ))}
-        
+
         <Button
           variant="outline"
           onClick={() => onPageChange(currentPage + 1)}

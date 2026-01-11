@@ -43,7 +43,7 @@ declare module "next-auth" {
 
 declare module "next-auth/jwt" {
   import { DefaultJWT } from "next-auth/jwt";
-  
+
   interface JWT extends DefaultJWT {
     plan: string;
     permissions: string[];

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CashRegister, CashMovement } from '../../entities';
@@ -127,7 +131,11 @@ export class CashRegistersService {
     return this.cashRegistersRepository.save(cashRegister);
   }
 
-  async open(id: string, companyId: string, userId: string): Promise<CashRegister> {
+  async open(
+    id: string,
+    companyId: string,
+    userId: string,
+  ): Promise<CashRegister> {
     const cashRegister = await this.findOne(id, companyId);
 
     if (cashRegister.status === CASH_REGISTER_STATUS.OPEN) {
@@ -151,7 +159,11 @@ export class CashRegistersService {
     return this.cashRegistersRepository.save(cashRegister);
   }
 
-  async close(id: string, companyId: string, userId: string): Promise<CashRegister> {
+  async close(
+    id: string,
+    companyId: string,
+    userId: string,
+  ): Promise<CashRegister> {
     const cashRegister = await this.findOne(id, companyId);
 
     if (cashRegister.status === CASH_REGISTER_STATUS.CLOSED) {
@@ -165,7 +177,11 @@ export class CashRegistersService {
     return this.cashRegistersRepository.save(cashRegister);
   }
 
-  async update(id: string, cashRegisterData: Partial<CashRegister>, companyId: string): Promise<CashRegister> {
+  async update(
+    id: string,
+    cashRegisterData: Partial<CashRegister>,
+    companyId: string,
+  ): Promise<CashRegister> {
     const cashRegister = await this.findOne(id, companyId);
     Object.assign(cashRegister, cashRegisterData);
     return this.cashRegistersRepository.save(cashRegister);

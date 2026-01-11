@@ -45,7 +45,13 @@ export function UserMenu({ user, options, className }: UserMenuProps) {
       >
         <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium overflow-hidden">
           {user.avatar ? (
-            <Image src={user.avatar} alt={user.name} width={32} height={32} className="w-full h-full object-cover" />
+            <Image
+              src={user.avatar}
+              alt={user.name}
+              width={32}
+              height={32}
+              className="w-full h-full object-cover"
+            />
           ) : (
             user.name.charAt(0).toUpperCase()
           )}
@@ -72,13 +78,12 @@ export function UserMenu({ user, options, className }: UserMenuProps) {
               }}
               className={cn(
                 "w-full flex items-center gap-3 px-3 py-2 text-sm hover:bg-accent transition-colors",
-                option.variant === "destructive" && "text-destructive hover:bg-destructive/10"
+                option.variant === "destructive" &&
+                  "text-destructive hover:bg-destructive/10",
               )}
             >
               {option.icon && (
-                <span className="w-4 h-4 flex-shrink-0">
-                  {option.icon}
-                </span>
+                <span className="w-4 h-4 flex-shrink-0">{option.icon}</span>
               )}
               {option.label}
             </button>

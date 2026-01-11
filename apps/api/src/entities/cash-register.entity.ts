@@ -17,7 +17,12 @@ export class CashRegister extends BaseEntity {
   @Column()
   name: string;
 
-  @Column('decimal', { name: 'current_balance', precision: 10, scale: 2, default: 0 })
+  @Column('decimal', {
+    name: 'current_balance',
+    precision: 10,
+    scale: 2,
+    default: 0,
+  })
   currentBalance: number;
 
   @Column({

@@ -8,8 +8,12 @@ interface CustomerFormProps {
 }
 
 export function CustomerForm({ customer }: CustomerFormProps) {
-  const [taxCondition, setTaxCondition] = useState(customer?.taxCondition || "CONSUMIDOR_FINAL");
-  const [documentType, setDocumentType] = useState(customer?.documentType || "DNI");
+  const [taxCondition, setTaxCondition] = useState(
+    customer?.taxCondition || "CONSUMIDOR_FINAL",
+  );
+  const [documentType, setDocumentType] = useState(
+    customer?.documentType || "DNI",
+  );
 
   return (
     <div className="space-y-4">

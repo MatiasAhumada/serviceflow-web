@@ -54,7 +54,9 @@ export function GenericTable<T = Record<string, unknown>>({
     key: string;
     direction: "asc" | "desc";
   } | null>(null);
-  const [loadingActions, setLoadingActions] = React.useState<Record<string, boolean>>({});
+  const [loadingActions, setLoadingActions] = React.useState<
+    Record<string, boolean>
+  >({});
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
@@ -64,9 +66,7 @@ export function GenericTable<T = Record<string, unknown>>({
   const handleSort = (key: string) => {
     setSortConfig((current) => {
       if (current?.key === key) {
-        return current.direction === "asc"
-          ? { key, direction: "desc" }
-          : null;
+        return current.direction === "asc" ? { key, direction: "desc" } : null;
       }
       return { key, direction: "asc" };
     });
@@ -93,8 +93,8 @@ export function GenericTable<T = Record<string, unknown>>({
 
     return sortedData.filter((item) =>
       Object.values(item as Record<string, unknown>).some((value) =>
-        String(value).toLowerCase().includes(searchTerm.toLowerCase())
-      )
+        String(value).toLowerCase().includes(searchTerm.toLowerCase()),
+      ),
     );
   }, [sortedData, searchTerm, onSearch]);
 
@@ -134,10 +134,13 @@ export function GenericTable<T = Record<string, unknown>>({
                     key={index}
                     className={cn(
                       "px-4 py-3 text-sm font-medium text-muted-foreground text-center",
-                      column.sortable && "cursor-pointer hover:text-foreground select-none"
+                      column.sortable &&
+                        "cursor-pointer hover:text-foreground select-none",
                     )}
                     style={{ width: column.width }}
-                    onClick={() => column.sortable && handleSort(column.key as string)}
+                    onClick={() =>
+                      column.sortable && handleSort(column.key as string)
+                    }
                   >
                     <div className="flex items-center justify-center gap-2">
                       {column.header}
@@ -173,7 +176,7 @@ export function GenericTable<T = Record<string, unknown>>({
                     className={cn(
                       "border-b border-border transition-colors",
                       onRowClick && "cursor-pointer hover:bg-muted/50",
-                      rowClassName?.(item)
+                      rowClassName?.(item),
                     )}
                     onClick={() => onRowClick?.(item)}
                   >
@@ -189,7 +192,9 @@ export function GenericTable<T = Record<string, unknown>>({
                       <td className="px-4 py-3 text-center">
                         <div className="flex items-center justify-center gap-2">
                           {actions.map((action, actionIndex) => {
-                            const shouldShow = action.show ? action.show(item) : true;
+                            const shouldShow = action.show
+                              ? action.show(item)
+                              : true;
                             if (!shouldShow) return null;
 
                             const actionKey = `${rowIndex}-${actionIndex}`;
@@ -203,11 +208,17 @@ export function GenericTable<T = Record<string, unknown>>({
                                 disabled={isLoading}
                                 onClick={async (e) => {
                                   e.stopPropagation();
-                                  setLoadingActions(prev => ({ ...prev, [actionKey]: true }));
+                                  setLoadingActions((prev) => ({
+                                    ...prev,
+                                    [actionKey]: true,
+                                  }));
                                   try {
                                     await action.onClick(item);
                                   } finally {
-                                    setLoadingActions(prev => ({ ...prev, [actionKey]: false }));
+                                    setLoadingActions((prev) => ({
+                                      ...prev,
+                                      [actionKey]: false,
+                                    }));
                                   }
                                 }}
                               >
@@ -216,7 +227,9 @@ export function GenericTable<T = Record<string, unknown>>({
                                 ) : (
                                   <>
                                     {action.icon && (
-                                      <span className="mr-1">{action.icon}</span>
+                                      <span className="mr-1">
+                                        {action.icon}
+                                      </span>
                                     )}
                                     {action.label}
                                   </>

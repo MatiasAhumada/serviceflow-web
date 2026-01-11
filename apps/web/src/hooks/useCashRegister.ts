@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { cashRegistersService } from '@/services/api/cash-registers.service';
-import { ClientHandler } from '@/lib/client-handler';
-import { CashRegister } from '@/types';
+import { useState, useEffect } from "react";
+import { cashRegistersService } from "@/services/api/cash-registers.service";
+import { ClientHandler } from "@/lib/client-handler";
+import { CashRegister } from "@/types";
 
 interface CashMovement {
   id: string | number;
@@ -42,7 +42,7 @@ export const useCashRegister = () => {
       const data = await cashRegistersService.getAll();
       setCashRegisters(data);
     } catch {
-      ClientHandler.error('Error al cargar cajas');
+      ClientHandler.error("Error al cargar cajas");
     }
   };
 
@@ -52,7 +52,7 @@ export const useCashRegister = () => {
       const data = await cashRegistersService.getStats();
       setStats(data);
     } catch {
-      ClientHandler.error('Error al cargar estadísticas');
+      ClientHandler.error("Error al cargar estadísticas");
     } finally {
       setLoading(false);
     }
@@ -61,15 +61,15 @@ export const useCashRegister = () => {
   const createCashRegister = async (name: string, userId?: string) => {
     try {
       await cashRegistersService.create({ name, userId });
-      ClientHandler.success('Caja creada exitosamente');
+      ClientHandler.success("Caja creada exitosamente");
       await fetchCashRegisters();
     } catch {
-      ClientHandler.error('Error al crear caja');
+      ClientHandler.error("Error al crear caja");
     }
   };
 
   const createDefaultCashRegister = async () => {
-    await createCashRegister('Caja Principal');
+    await createCashRegister("Caja Principal");
   };
 
   const fetchMovements = async () => {
@@ -77,31 +77,31 @@ export const useCashRegister = () => {
       const data = await cashRegistersService.getMovements();
       setMovements(data);
     } catch {
-      ClientHandler.error('Error al cargar movimientos');
+      ClientHandler.error("Error al cargar movimientos");
     }
   };
 
   const openCashRegister = async (id: string) => {
     try {
       await cashRegistersService.open(id);
-      ClientHandler.success('Caja abierta exitosamente');
+      ClientHandler.success("Caja abierta exitosamente");
       await fetchStats();
       await fetchMovements();
     } catch {
-      ClientHandler.error('Error al abrir caja');
-      throw new Error('Error al abrir caja');
+      ClientHandler.error("Error al abrir caja");
+      throw new Error("Error al abrir caja");
     }
   };
 
   const closeCashRegister = async (id: string) => {
     try {
       await cashRegistersService.close(id);
-      ClientHandler.success('Caja cerrada exitosamente');
+      ClientHandler.success("Caja cerrada exitosamente");
       await fetchStats();
       setMovements([]);
     } catch {
-      ClientHandler.error('Error al cerrar caja');
-      throw new Error('Error al cerrar caja');
+      ClientHandler.error("Error al cerrar caja");
+      throw new Error("Error al cerrar caja");
     }
   };
 

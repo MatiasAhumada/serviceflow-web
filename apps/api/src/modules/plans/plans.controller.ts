@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { PlansService } from './plans.service';
 import { Plan } from '../../entities';
@@ -31,7 +39,10 @@ export class PlansController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update plan' })
-  update(@Param('id') id: string, @Body() planData: Partial<Plan>): Promise<Plan | null> {
+  update(
+    @Param('id') id: string,
+    @Body() planData: Partial<Plan>,
+  ): Promise<Plan | null> {
     return this.plansService.update(id, planData);
   }
 

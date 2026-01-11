@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { customersService } from "@/services";
 import { ClientHandler } from "@/lib/client-handler";
 import type { CreateCustomerDto, UpdateCustomerDto } from "@/types";
@@ -11,19 +11,20 @@ export function useCustomers({ search }: UseCustomersParams = {}) {
   const queryClient = useQueryClient();
 
   const customersQuery = useQuery({
-    queryKey: ['customers', search],
+    queryKey: ["customers", search],
     queryFn: () => customersService.getAll({ search }),
   });
 
   const statsQuery = useQuery({
-    queryKey: ['customers', 'stats'],
+    queryKey: ["customers", "stats"],
     queryFn: customersService.getStats,
   });
 
   const createMutation = useMutation({
-    mutationFn: (customerData: CreateCustomerDto) => customersService.create(customerData),
+    mutationFn: (customerData: CreateCustomerDto) =>
+      customersService.create(customerData),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['customers'] });
+      queryClient.invalidateQueries({ queryKey: ["customers"] });
       ClientHandler.success("Cliente creado correctamente");
     },
     onError: () => {
@@ -32,9 +33,10 @@ export function useCustomers({ search }: UseCustomersParams = {}) {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateCustomerDto }) => customersService.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateCustomerDto }) =>
+      customersService.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['customers'] });
+      queryClient.invalidateQueries({ queryKey: ["customers"] });
       ClientHandler.success("Cliente actualizado correctamente");
     },
     onError: () => {
@@ -45,7 +47,7 @@ export function useCustomers({ search }: UseCustomersParams = {}) {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => customersService.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['customers'] });
+      queryClient.invalidateQueries({ queryKey: ["customers"] });
       ClientHandler.success("Cliente eliminado correctamente");
     },
     onError: () => {
@@ -69,6 +71,6 @@ export function useCustomers({ search }: UseCustomersParams = {}) {
       await deleteMutation.mutateAsync(id);
       return true;
     },
-    refetch: () => queryClient.invalidateQueries({ queryKey: ['customers'] }),
+    refetch: () => queryClient.invalidateQueries({ queryKey: ["customers"] }),
   };
 }

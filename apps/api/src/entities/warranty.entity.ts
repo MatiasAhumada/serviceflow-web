@@ -19,7 +19,9 @@ export class Warranty extends BaseEntity {
   @Column({ nullable: true })
   notes: string;
 
-  @OneToOne(() => ServiceOrder, (serviceOrder) => serviceOrder.warranty, { onDelete: 'CASCADE' })
+  @OneToOne(() => ServiceOrder, (serviceOrder) => serviceOrder.warranty, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'service_order_id' })
   serviceOrder: ServiceOrder;
 }

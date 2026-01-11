@@ -5,6 +5,7 @@ import { Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { APP_ROUTES } from "@/constants/routes";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,7 +30,6 @@ export function Navbar() {
       setIsOpen(false);
     }
   };
-
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -63,7 +63,7 @@ export function Navbar() {
                 Iniciar sesión
               </Button>
             </a>
-            <a href={process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}>
+            <a href={APP_ROUTES.REGISTER_TRIAL}>
               <Button variant="gradient" className="shadow-lg shadow-[#10B981]/20">
                 Comenzar gratis
               </Button>
@@ -101,7 +101,7 @@ export function Navbar() {
                   Iniciar sesión
                 </Button>
               </a>
-              <a href={process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"} className="block">
+              <a href={APP_ROUTES.REGISTER_TRIAL} className="block">
                 <Button variant="gradient" className="w-full">
                   Comenzar gratis
                 </Button>

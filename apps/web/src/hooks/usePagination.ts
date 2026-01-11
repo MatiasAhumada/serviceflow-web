@@ -8,7 +8,11 @@ interface UsePaginationProps {
   initialPage?: number;
 }
 
-export function usePagination({ totalItems, itemsPerPage, initialPage = 1 }: UsePaginationProps) {
+export function usePagination({
+  totalItems,
+  itemsPerPage,
+  initialPage = 1,
+}: UsePaginationProps) {
   const [currentPage, setCurrentPage] = useState(initialPage);
 
   const totalPages = Math.ceil(totalItems / itemsPerPage);

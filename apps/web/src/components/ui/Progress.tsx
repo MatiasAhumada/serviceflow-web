@@ -8,13 +8,13 @@ interface ProgressProps extends React.HTMLAttributes<HTMLDivElement> {
   size?: "sm" | "md" | "lg";
 }
 
-export function Progress({ 
-  className, 
-  value, 
-  max = 100, 
+export function Progress({
+  className,
+  value,
+  max = 100,
   showLabel = false,
   size = "md",
-  ...props 
+  ...props
 }: ProgressProps) {
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
 
@@ -27,14 +27,11 @@ export function Progress({
         </div>
       )}
       <div
-        className={cn(
-          "w-full bg-secondary rounded-full overflow-hidden",
-          {
-            "h-1": size === "sm",
-            "h-2": size === "md", 
-            "h-3": size === "lg"
-          }
-        )}
+        className={cn("w-full bg-secondary rounded-full overflow-hidden", {
+          "h-1": size === "sm",
+          "h-2": size === "md",
+          "h-3": size === "lg",
+        })}
       >
         <div
           className="h-full bg-primary transition-all duration-300 ease-in-out"

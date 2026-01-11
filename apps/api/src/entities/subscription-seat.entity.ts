@@ -16,7 +16,9 @@ export class SubscriptionSeat extends BaseEntity {
   @Column('decimal', { name: 'price_per_seat', precision: 10, scale: 2 })
   pricePerSeat: number;
 
-  @ManyToOne(() => Subscription, (subscription) => subscription.seats, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Subscription, (subscription) => subscription.seats, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'subscription_id' })
   subscription: Subscription;
 }

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ServiceOrder } from '../../entities';
@@ -16,10 +20,13 @@ export class ServiceOrdersService {
       where: { company: { id: companyId } },
     });
 
-    const byStatus = orders.reduce((acc, order) => {
-      acc[order.status] = (acc[order.status] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const byStatus = orders.reduce(
+      (acc, order) => {
+        acc[order.status] = (acc[order.status] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
     return {
       total: orders.length,
@@ -73,19 +80,32 @@ export class ServiceOrdersService {
     return this.serviceOrdersRepository.save(serviceOrder);
   }
 
-  async updateStatus(id: string, status: string, companyId: string, notes?: string): Promise<ServiceOrder> {
+  async updateStatus(
+    id: string,
+    status: string,
+    companyId: string,
+    notes?: string,
+  ): Promise<ServiceOrder> {
     const order = await this.findOne(id, companyId);
 
     const validTransitions: Record<string, string[]> = {
-      [SERVICE_STATUS.RECEIVED]: [SERVICE_STATUS.IN_PROGRESS, SERVICE_STATUS.CANCELLED],
-      [SERVICE_STATUS.IN_PROGRESS]: [SERVICE_STATUS.COMPLETED, SERVICE_STATUS.CANCELLED],
+      [SERVICE_STATUS.RECEIVED]: [
+        SERVICE_STATUS.IN_PROGRESS,
+        SERVICE_STATUS.CANCELLED,
+      ],
+      [SERVICE_STATUS.IN_PROGRESS]: [
+        SERVICE_STATUS.COMPLETED,
+        SERVICE_STATUS.CANCELLED,
+      ],
       [SERVICE_STATUS.COMPLETED]: [SERVICE_STATUS.DELIVERED],
       [SERVICE_STATUS.DELIVERED]: [],
       [SERVICE_STATUS.CANCELLED]: [],
     };
 
     if (!validTransitions[order.status]?.includes(status)) {
-      throw new BadRequestException(`No se puede cambiar de ${order.status} a ${status}`);
+      throw new BadRequestException(
+        `No se puede cambiar de ${order.status} a ${status}`,
+      );
     }
 
     order.status = status;
@@ -100,7 +120,11 @@ export class ServiceOrdersService {
     return this.serviceOrdersRepository.save(order);
   }
 
-  async update(id: string, serviceOrderData: Partial<ServiceOrder>, companyId: string): Promise<ServiceOrder> {
+  async update(
+    id: string,
+    serviceOrderData: Partial<ServiceOrder>,
+    companyId: string,
+  ): Promise<ServiceOrder> {
     const order = await this.findOne(id, companyId);
     Object.assign(order, serviceOrderData);
     return this.serviceOrdersRepository.save(order);

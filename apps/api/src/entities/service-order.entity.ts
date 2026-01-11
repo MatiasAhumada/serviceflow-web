@@ -1,4 +1,12 @@
-import { Entity, Column, ManyToOne, JoinColumn, OneToMany, OneToOne, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  Index,
+} from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { User } from './user.entity';
@@ -44,7 +52,12 @@ export class ServiceOrder extends BaseEntity {
   @Column({ name: 'delivery_date', nullable: true })
   deliveryDate: Date;
 
-  @Column('decimal', { name: 'total_cost', precision: 10, scale: 2, nullable: true })
+  @Column('decimal', {
+    name: 'total_cost',
+    precision: 10,
+    scale: 2,
+    nullable: true,
+  })
   totalCost: number;
 
   @Column({
@@ -78,9 +91,13 @@ export class ServiceOrder extends BaseEntity {
   @JoinColumn({ name: 'received_by' })
   receivedBy: User;
 
-  @OneToMany(() => ServiceItem, (serviceItem) => serviceItem.serviceOrder, { cascade: true })
+  @OneToMany(() => ServiceItem, (serviceItem) => serviceItem.serviceOrder, {
+    cascade: true,
+  })
   items: ServiceItem[];
 
-  @OneToOne(() => Warranty, (warranty) => warranty.serviceOrder, { cascade: true })
+  @OneToOne(() => Warranty, (warranty) => warranty.serviceOrder, {
+    cascade: true,
+  })
   warranty: Warranty;
 }

@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'vendedor' | 'tecnico' | 'cajero';
+export type UserRole = "admin" | "vendedor" | "tecnico" | "cajero";
 
 export interface RoleFeatures {
   products: boolean;
@@ -58,6 +58,9 @@ export function getRoleFeatures(role: UserRole): RoleFeatures {
   return roleFeatures[role] || roleFeatures.vendedor;
 }
 
-export function hasRoleFeature(role: UserRole, feature: keyof RoleFeatures): boolean {
+export function hasRoleFeature(
+  role: UserRole,
+  feature: keyof RoleFeatures,
+): boolean {
   return getRoleFeatures(role)[feature];
 }

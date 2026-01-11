@@ -1,4 +1,11 @@
-import { Entity, Column, ManyToOne, JoinColumn, OneToMany, OneToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { Role } from './role.entity';
@@ -8,8 +15,6 @@ import { USER_STATUS } from '../constants';
 
 @Entity('users')
 export class User extends BaseEntity {
-
-
   @Column()
   name: string;
 

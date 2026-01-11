@@ -16,22 +16,26 @@ export class UsersService {
       relations: ['userType'],
     });
 
-    const roleCount = users.reduce((acc, user) => {
-      const roleName = user.userType?.name || 'Sin rol';
-      acc[roleName] = (acc[roleName] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const roleCount = users.reduce(
+      (acc, user) => {
+        const roleName = user.userType?.name || 'Sin rol';
+        acc[roleName] = (acc[roleName] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
     return {
       total: users.length,
-      active: users.filter(u => u.status === 'active').length,
-      inactive: users.filter(u => u.status === 'inactive').length,
+      active: users.filter((u) => u.status === 'active').length,
+      inactive: users.filter((u) => u.status === 'inactive').length,
       byRole: roleCount,
     };
   }
 
   async findAll(companyId: string, role?: string): Promise<User[]> {
-    const query = this.usersRepository.createQueryBuilder('user')
+    const query = this.usersRepository
+      .createQueryBuilder('user')
       .leftJoinAndSelect('user.company', 'company')
       .leftJoinAndSelect('user.userType', 'userType')
       .where('company.id = :companyId', { companyId });
@@ -87,13 +91,17 @@ export class UsersService {
       name: userData.name,
       passwordHash: userData.passwordHash,
       userType,
-      company: userData.companyId ? { id: userData.companyId } as any : null,
+      company: userData.companyId ? ({ id: userData.companyId } as any) : null,
     });
 
     return this.usersRepository.save(user);
   }
 
-  async update(id: string, userData: Partial<User>, companyId: string): Promise<User> {
+  async update(
+    id: string,
+    userData: Partial<User>,
+    companyId: string,
+  ): Promise<User> {
     const user = await this.findOne(id, companyId);
     Object.assign(user, userData);
     return this.usersRepository.save(user);

@@ -5,13 +5,14 @@ import { SpotlightBackground } from "@/components/ui/SpotlightBackground";
 import { GridBackground } from "@/components/ui/GridBackground";
 import { ArrowRight, Zap, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+import { APP_ROUTES } from "@/constants/routes";
 
 export function Hero() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <GridBackground />
       <SpotlightBackground />
-      
+
       <div className="container mx-auto px-4 py-20 relative z-10">
         <div className="max-w-5xl mx-auto text-center space-y-8">
           <motion.div
@@ -44,7 +45,8 @@ export function Hero() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed"
           >
-            Gestiona ventas, inventario, órdenes de servicio y más desde una plataforma intuitiva y poderosa.
+            Gestiona ventas, inventario, órdenes de servicio y más desde una
+            plataforma intuitiva y poderosa.
           </motion.p>
 
           <motion.div
@@ -53,15 +55,16 @@ export function Hero() {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4"
           >
-            <a href={process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}>
-              <Button variant="gradient" size="lg" className="group shadow-2xl shadow-[#10B981]/20">
+            <a href={APP_ROUTES.REGISTER_TRIAL}>
+              <Button
+                variant="gradient"
+                size="lg"
+                className="group shadow-2xl shadow-[#10B981]/20"
+              >
                 Comenzar gratis
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </a>
-            <Button variant="outline" size="lg" className="border-2">
-              Ver demo en vivo
-            </Button>
           </motion.div>
 
           <motion.div

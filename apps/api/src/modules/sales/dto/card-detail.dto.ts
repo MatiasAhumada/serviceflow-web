@@ -1,4 +1,12 @@
-import { IsString, IsEnum, IsOptional, IsNumber, Min, Max, Length } from 'class-validator';
+import {
+  IsString,
+  IsEnum,
+  IsOptional,
+  IsNumber,
+  Min,
+  Max,
+  Length,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { CARD_BRAND, CARD_TYPE } from '../../../constants';
 

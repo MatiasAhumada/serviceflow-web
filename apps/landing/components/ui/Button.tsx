@@ -32,7 +32,7 @@ export function Button({
           "h-11 px-6 text-base": size === "md",
           "h-14 px-8 text-lg": size === "lg",
         },
-        className
+        className,
       )}
       {...props}
     />

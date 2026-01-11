@@ -1,6 +1,6 @@
-import * as React from "react"
-import { cn } from "@/lib/utils"
-import { Eye, EyeOff } from "lucide-react"
+import * as React from "react";
+import { cn } from "@/lib/utils";
+import { Eye, EyeOff } from "lucide-react";
 
 interface InputProps extends React.ComponentProps<"input"> {
   label?: string;
@@ -19,7 +19,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     if (label) {
       return (
         <div className="space-y-2">
-          <label htmlFor={inputId} className="text-sm font-medium text-foreground">
+          <label
+            htmlFor={inputId}
+            className="text-sm font-medium text-foreground"
+          >
             {label}
           </label>
           <div className="relative">
@@ -30,7 +33,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
                 error && "border-destructive focus-visible:ring-destructive",
                 isPassword && "pr-10",
-                className
+                className,
               )}
               ref={ref}
               {...props}
@@ -41,12 +44,18 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
               >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
               </button>
             )}
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
-          {helperText && !error && <p className="text-sm text-muted-foreground">{helperText}</p>}
+          {helperText && !error && (
+            <p className="text-sm text-muted-foreground">{helperText}</p>
+          )}
         </div>
       );
     }
@@ -59,7 +68,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           className={cn(
             "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
             isPassword && "pr-10",
-            className
+            className,
           )}
           ref={ref}
           {...props}
@@ -70,13 +79,17 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
           >
-            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
           </button>
         )}
       </div>
-    )
-  }
-)
-Input.displayName = "Input"
+    );
+  },
+);
+Input.displayName = "Input";
 
-export { Input }
+export { Input };

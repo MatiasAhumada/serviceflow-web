@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Param, Patch, Query, HttpCode, HttpStatus, Delete, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Patch,
+  Query,
+  HttpCode,
+  HttpStatus,
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { SalesService } from './sales.service';
 import { CreateSaleDto, QuerySaleDto, UpdateSaleDto } from './dto';
@@ -12,14 +24,20 @@ export class SalesController {
 
   @Get('stats')
   @ApiOperation({ summary: 'Get sales statistics' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Statistics retrieved successfully' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Statistics retrieved successfully',
+  })
   getStats(@CurrentUser() user: { companyId: string; userId: string }) {
     return this.salesService.getStats(user.companyId);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all sales with filters' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Sales retrieved successfully' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Sales retrieved successfully',
+  })
   findAll(
     @CurrentUser() user: { companyId: string },
     @Query() query: QuerySaleDto,
@@ -29,7 +47,10 @@ export class SalesController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get sale by id' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Sale retrieved successfully' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Sale retrieved successfully',
+  })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Sale not found' })
   findOne(
     @CurrentUser() user: { companyId: string },
@@ -40,7 +61,10 @@ export class SalesController {
 
   @Post()
   @ApiOperation({ summary: 'Create sale' })
-  @ApiResponse({ status: HttpStatus.CREATED, description: 'Sale created successfully' })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Sale created successfully',
+  })
   create(
     @CurrentUser() user: { companyId: string; userId: string },
     @Body() createSaleDto: CreateSaleDto,
@@ -54,7 +78,10 @@ export class SalesController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update sale' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Sale updated successfully' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Sale updated successfully',
+  })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Sale not found' })
   update(
     @CurrentUser() user: { companyId: string },
@@ -67,7 +94,10 @@ export class SalesController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete sale' })
-  @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Sale deleted successfully' })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'Sale deleted successfully',
+  })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Sale not found' })
   remove(
     @CurrentUser() user: { companyId: string },
@@ -78,7 +108,10 @@ export class SalesController {
 
   @Patch(':id/cancel')
   @ApiOperation({ summary: 'Cancel sale' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Sale cancelled successfully' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Sale cancelled successfully',
+  })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Sale not found' })
   cancel(
     @CurrentUser() user: { companyId: string },

@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpCode } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpStatus,
+  HttpCode,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ServiceOrdersService } from './service-orders.service';
 import { ServiceOrder } from '../../entities';
@@ -11,22 +21,34 @@ export class ServiceOrdersController {
 
   @Get('stats')
   @ApiOperation({ summary: 'Get service orders statistics' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Statistics retrieved successfully' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Statistics retrieved successfully',
+  })
   getStats(@CurrentUser() user: { companyId: string }) {
     return this.serviceOrdersService.getStats(user.companyId);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all service orders' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Service orders retrieved successfully' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Service orders retrieved successfully',
+  })
   findAll(@CurrentUser() user: { companyId: string }): Promise<ServiceOrder[]> {
     return this.serviceOrdersService.findAll(user.companyId);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get service order by id' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Service order retrieved successfully' })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Service order not found' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Service order retrieved successfully',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Service order not found',
+  })
   findOne(
     @CurrentUser() user: { companyId: string },
     @Param('id') id: string,
@@ -36,7 +58,10 @@ export class ServiceOrdersController {
 
   @Post()
   @ApiOperation({ summary: 'Create service order' })
-  @ApiResponse({ status: HttpStatus.CREATED, description: 'Service order created successfully' })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Service order created successfully',
+  })
   create(
     @CurrentUser() user: { companyId: string; userId: string },
     @Body() serviceOrderData: Partial<ServiceOrder>,
@@ -51,32 +76,56 @@ export class ServiceOrdersController {
 
   @Patch(':id/status')
   @ApiOperation({ summary: 'Update service order status' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Status updated successfully' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Status updated successfully',
+  })
   updateStatus(
     @CurrentUser() user: { companyId: string },
     @Param('id') id: string,
     @Body() body: { status: string; notes?: string },
   ): Promise<ServiceOrder> {
-    return this.serviceOrdersService.updateStatus(id, body.status, user.companyId, body.notes);
+    return this.serviceOrdersService.updateStatus(
+      id,
+      body.status,
+      user.companyId,
+      body.notes,
+    );
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update service order' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Service order updated successfully' })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Service order not found' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Service order updated successfully',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Service order not found',
+  })
   update(
     @CurrentUser() user: { companyId: string },
     @Param('id') id: string,
     @Body() serviceOrderData: Partial<ServiceOrder>,
   ): Promise<ServiceOrder> {
-    return this.serviceOrdersService.update(id, serviceOrderData, user.companyId);
+    return this.serviceOrdersService.update(
+      id,
+      serviceOrderData,
+      user.companyId,
+    );
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete service order' })
-  @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Service order deleted successfully' })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Service order not found' })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'Service order deleted successfully',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Service order not found',
+  })
   remove(
     @CurrentUser() user: { companyId: string },
     @Param('id') id: string,

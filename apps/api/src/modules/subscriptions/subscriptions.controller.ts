@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { SubscriptionsService } from './subscriptions.service';
 import { Subscription } from '../../entities';
@@ -22,13 +30,18 @@ export class SubscriptionsController {
 
   @Post()
   @ApiOperation({ summary: 'Create subscription' })
-  create(@Body() subscriptionData: Partial<Subscription>): Promise<Subscription> {
+  create(
+    @Body() subscriptionData: Partial<Subscription>,
+  ): Promise<Subscription> {
     return this.subscriptionsService.create(subscriptionData);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update subscription' })
-  update(@Param('id') id: string, @Body() subscriptionData: Partial<Subscription>): Promise<Subscription | null> {
+  update(
+    @Param('id') id: string,
+    @Body() subscriptionData: Partial<Subscription>,
+  ): Promise<Subscription | null> {
     return this.subscriptionsService.update(id, subscriptionData);
   }
 

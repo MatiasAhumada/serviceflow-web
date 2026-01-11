@@ -19,7 +19,7 @@ clientAxios.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Response interceptor para manejar errores globalmente
@@ -34,7 +34,7 @@ clientAxios.interceptors.response.use(
       console.warn("Unauthorized access");
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default clientAxios;

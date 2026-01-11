@@ -1,4 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
 
 export class RegisterDto {
   @ApiProperty({ example: 'user@example.com' })
@@ -10,7 +10,10 @@ export class RegisterDto {
   @ApiProperty({ example: 'John Doe' })
   name: string;
 
-  @ApiProperty({ example: 'vendedor', enum: ['super_admin', 'admin', 'vendedor', 'cajero', 'tecnico'] })
+  @ApiProperty({
+    example: 'vendedor',
+    enum: ['super_admin', 'admin', 'vendedor', 'cajero', 'tecnico'],
+  })
   userTypeCode: string;
 
   @ApiProperty({ required: false })

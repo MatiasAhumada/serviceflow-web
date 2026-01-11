@@ -1,14 +1,14 @@
-import { clientAxios } from '@/lib/axios';
-import { Sale, CreateSaleDto, UpdateSaleDto } from '@/types';
+import { clientAxios } from "@/lib/axios";
+import { Sale, CreateSaleDto, UpdateSaleDto } from "@/types";
 
 export const salesService = {
   getStats: async () => {
-    const { data } = await clientAxios.get('/sales/stats');
+    const { data } = await clientAxios.get("/sales/stats");
     return data;
   },
 
   getAll: async (params?: Record<string, unknown>) => {
-    const { data } = await clientAxios.get<Sale[]>('/sales', { params });
+    const { data } = await clientAxios.get<Sale[]>("/sales", { params });
     return data;
   },
 
@@ -18,7 +18,7 @@ export const salesService = {
   },
 
   create: async (saleData: CreateSaleDto) => {
-    const { data } = await clientAxios.post<Sale>('/sales', saleData);
+    const { data } = await clientAxios.post<Sale>("/sales", saleData);
     return data;
   },
 

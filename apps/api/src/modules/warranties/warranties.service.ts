@@ -26,7 +26,10 @@ export class WarrantiesService {
     return this.warrantiesRepository.save(warranty);
   }
 
-  async update(id: string, warrantyData: Partial<Warranty>): Promise<Warranty | null> {
+  async update(
+    id: string,
+    warrantyData: Partial<Warranty>,
+  ): Promise<Warranty | null> {
     await this.warrantiesRepository.update(id, warrantyData as any);
     return this.findOne(id);
   }

@@ -2,7 +2,13 @@
 
 import { toast } from "sonner";
 
-export type NotificationType = "success" | "error" | "warning" | "info" | "loading" | "promise";
+export type NotificationType =
+  | "success"
+  | "error"
+  | "warning"
+  | "info"
+  | "loading"
+  | "promise";
 
 export interface NotificationOptions {
   title: string;
@@ -73,7 +79,7 @@ export class ClientHandler {
       loading: string;
       success: string | ((data: T) => string);
       error: string | ((error: unknown) => string);
-    }
+    },
   ) {
     return toast.promise(promise, messages);
   }
@@ -82,7 +88,10 @@ export class ClientHandler {
     toast.dismiss(toastId);
   }
 
-  static custom(jsx: (id: string | number) => React.ReactElement, options?: { duration?: number }) {
+  static custom(
+    jsx: (id: string | number) => React.ReactElement,
+    options?: { duration?: number },
+  ) {
     return toast.custom(jsx, options);
   }
 }

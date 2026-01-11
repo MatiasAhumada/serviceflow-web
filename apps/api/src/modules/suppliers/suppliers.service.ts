@@ -12,7 +12,9 @@ export class SuppliersService {
   ) {}
 
   async getStats(companyId: string) {
-    const total = await this.suppliersRepository.count({ where: { companyId } });
+    const total = await this.suppliersRepository.count({
+      where: { companyId },
+    });
     return { total };
   }
 
@@ -31,7 +33,7 @@ export class SuppliersService {
         .where('supplier.companyId = :companyId', { companyId })
         .andWhere(
           '(supplier.name ILIKE :search OR supplier.email ILIKE :search OR supplier.phone ILIKE :search)',
-          { search: `%${search}%` }
+          { search: `%${search}%` },
         )
         .orderBy('supplier.createdAt', 'DESC')
         .getMany();
@@ -62,7 +64,11 @@ export class SuppliersService {
     return this.suppliersRepository.save(supplier);
   }
 
-  async update(id: string, companyId: string, updateSupplierDto: UpdateSupplierDto): Promise<Supplier> {
+  async update(
+    id: string,
+    companyId: string,
+    updateSupplierDto: UpdateSupplierDto,
+  ): Promise<Supplier> {
     const supplier = await this.findOne(id, companyId);
     Object.assign(supplier, updateSupplierDto);
     return this.suppliersRepository.save(supplier);

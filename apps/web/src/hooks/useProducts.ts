@@ -21,7 +21,8 @@ export function useProducts({ search }: UseProductsParams = {}) {
   });
 
   const createMutation = useMutation({
-    mutationFn: (productData: CreateProductDto) => productsService.create(productData),
+    mutationFn: (productData: CreateProductDto) =>
+      productsService.create(productData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       ClientHandler.success("Producto creado correctamente");
@@ -32,7 +33,8 @@ export function useProducts({ search }: UseProductsParams = {}) {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateProductDto }) => productsService.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateProductDto }) =>
+      productsService.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       ClientHandler.success("Producto actualizado correctamente");
@@ -55,7 +57,12 @@ export function useProducts({ search }: UseProductsParams = {}) {
 
   return {
     products: productsQuery.data || [],
-    stats: statsQuery.data || { total: 0, totalStock: 0, lowStock: 0, inventoryValue: 0 },
+    stats: statsQuery.data || {
+      total: 0,
+      totalStock: 0,
+      lowStock: 0,
+      inventoryValue: 0,
+    },
     isLoading: productsQuery.isLoading || statsQuery.isLoading,
     createProduct: async (data: CreateProductDto) => {
       await createMutation.mutateAsync(data);

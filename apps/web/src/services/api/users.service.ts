@@ -1,13 +1,13 @@
-import { clientAxios } from '@/lib/axios';
+import { clientAxios } from "@/lib/axios";
 
 export const usersService = {
   getStats: async () => {
-    const { data } = await clientAxios.get('/users/stats');
+    const { data } = await clientAxios.get("/users/stats");
     return data;
   },
 
   getAll: async (role?: string) => {
-    const { data } = await clientAxios.get('/users', { params: { role } });
+    const { data } = await clientAxios.get("/users", { params: { role } });
     return data;
   },
 

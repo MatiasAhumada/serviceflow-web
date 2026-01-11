@@ -13,7 +13,12 @@ interface AddressSelectorProps {
   triggerValidation?: number;
 }
 
-export function AddressSelector({ value, onChange, disabled = false, triggerValidation = 0 }: AddressSelectorProps) {
+export function AddressSelector({
+  value,
+  onChange,
+  disabled = false,
+  triggerValidation = 0,
+}: AddressSelectorProps) {
   const {
     control,
     watch,
@@ -36,15 +41,32 @@ export function AddressSelector({ value, onChange, disabled = false, triggerVali
   const formData = watch();
 
   const countries = Country.getAllCountries();
-  const states = formData.countryCode ? State.getStatesOfCountry(formData.countryCode) : [];
-  const cities = formData.countryCode && formData.stateCode ? City.getCitiesOfState(formData.countryCode, formData.stateCode) : [];
+  const states = formData.countryCode
+    ? State.getStatesOfCountry(formData.countryCode)
+    : [];
+  const cities =
+    formData.countryCode && formData.stateCode
+      ? City.getCitiesOfState(formData.countryCode, formData.stateCode)
+      : [];
 
   useEffect(() => {
     const handleChange = () => {
       onChange(formData, !errors.street && !!formData.street?.trim());
     };
     handleChange();
-  }, [formData.street, formData.city, formData.state, formData.stateCode, formData.country, formData.countryCode, formData.postalCode, formData.notes, errors.street, formData, onChange]);
+  }, [
+    formData.street,
+    formData.city,
+    formData.state,
+    formData.stateCode,
+    formData.country,
+    formData.countryCode,
+    formData.postalCode,
+    formData.notes,
+    errors.street,
+    formData,
+    onChange,
+  ]);
 
   useEffect(() => {
     if (triggerValidation) {
@@ -84,7 +106,11 @@ export function AddressSelector({ value, onChange, disabled = false, triggerVali
                 placeholder="Ej: Av. Principal 123"
                 className={errors.street ? "border-destructive" : ""}
               />
-              {errors.street && <p className="text-sm text-destructive mt-1">{errors.street.message}</p>}
+              {errors.street && (
+                <p className="text-sm text-destructive mt-1">
+                  {errors.street.message}
+                </p>
+              )}
             </>
           )}
         />
@@ -98,7 +124,10 @@ export function AddressSelector({ value, onChange, disabled = false, triggerVali
             control={control}
             render={({ field }) => (
               <Select
-                options={countries.map((c) => ({ value: c.isoCode, label: c.name }))}
+                options={countries.map((c) => ({
+                  value: c.isoCode,
+                  label: c.name,
+                }))}
                 value={field.value}
                 onValueChange={(value) => handleCountryChange(value as string)}
                 placeholder="Seleccionar país"
@@ -116,7 +145,10 @@ export function AddressSelector({ value, onChange, disabled = false, triggerVali
             control={control}
             render={({ field }) => (
               <Select
-                options={states.map((s) => ({ value: s.isoCode, label: s.name }))}
+                options={states.map((s) => ({
+                  value: s.isoCode,
+                  label: s.name,
+                }))}
                 value={field.value}
                 onValueChange={(value) => handleStateChange(value as string)}
                 placeholder="Seleccionar provincia"
@@ -152,7 +184,14 @@ export function AddressSelector({ value, onChange, disabled = false, triggerVali
           <Controller
             name="postalCode"
             control={control}
-            render={({ field }) => <Input {...field} value={field.value || ""} disabled={disabled} placeholder="Ej: 4000" />}
+            render={({ field }) => (
+              <Input
+                {...field}
+                value={field.value || ""}
+                disabled={disabled}
+                placeholder="Ej: 4000"
+              />
+            )}
           />
         </div>
 
@@ -161,7 +200,14 @@ export function AddressSelector({ value, onChange, disabled = false, triggerVali
           <Controller
             name="notes"
             control={control}
-            render={({ field }) => <Input {...field} value={field.value || ""} disabled={disabled} placeholder="Ej: Entre calles X e Y" />}
+            render={({ field }) => (
+              <Input
+                {...field}
+                value={field.value || ""}
+                disabled={disabled}
+                placeholder="Ej: Entre calles X e Y"
+              />
+            )}
           />
         </div>
       </div>

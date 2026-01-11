@@ -19,8 +19,13 @@ export class ProductsService {
 
     const total = products.length;
     const totalStock = products.reduce((sum, p) => sum + p.stockQuantity, 0);
-    const lowStock = products.filter(p => p.stockQuantity <= (p.reorderLevel || 0)).length;
-    const inventoryValue = products.reduce((sum, p) => sum + (p.cost || 0) * p.stockQuantity, 0);
+    const lowStock = products.filter(
+      (p) => p.stockQuantity <= (p.reorderLevel || 0),
+    ).length;
+    const inventoryValue = products.reduce(
+      (sum, p) => sum + (p.cost || 0) * p.stockQuantity,
+      0,
+    );
 
     return { total, totalStock, lowStock, inventoryValue };
   }
@@ -68,29 +73,37 @@ export class ProductsService {
   async create(createProductDto: CreateProductDto): Promise<Product> {
     const { supplierId, ...productData } = createProductDto;
     const product = this.productsRepository.create(productData);
-    
+
     if (supplierId) {
-      const supplier = await this.productsRepository.manager.findOne(Supplier, { where: { id: supplierId } });
+      const supplier = await this.productsRepository.manager.findOne(Supplier, {
+        where: { id: supplierId },
+      });
       if (supplier) {
         product.suppliers = [supplier];
       }
     }
-    
+
     return this.productsRepository.save(product);
   }
 
-  async update(id: string, companyId: string, updateProductDto: UpdateProductDto): Promise<Product> {
+  async update(
+    id: string,
+    companyId: string,
+    updateProductDto: UpdateProductDto,
+  ): Promise<Product> {
     const { supplierId, ...productData } = updateProductDto;
     const product = await this.findOne(id, companyId);
     Object.assign(product, productData);
-    
+
     if (supplierId) {
-      const supplier = await this.productsRepository.manager.findOne(Supplier, { where: { id: supplierId } });
+      const supplier = await this.productsRepository.manager.findOne(Supplier, {
+        where: { id: supplierId },
+      });
       if (supplier) {
         product.suppliers = [supplier];
       }
     }
-    
+
     return this.productsRepository.save(product);
   }
 

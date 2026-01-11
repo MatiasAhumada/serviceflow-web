@@ -29,19 +29,33 @@ interface AuthContextType extends AuthState {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [storedUser, setStoredUser] = useLocalStorage<User | null>("user", null);
+  const [storedUser, setStoredUser] = useLocalStorage<User | null>(
+    "user",
+    null,
+  );
   const [isPending, startTransition] = useTransition();
-  
+
   const [optimisticState, setOptimisticState] = useOptimistic(
     { user: storedUser, isLoading: false, error: null },
-    (state: AuthState, action: { type: string; payload?: User | string | null }): AuthState => {
+    (
+      state: AuthState,
+      action: { type: string; payload?: User | string | null },
+    ): AuthState => {
       switch (action.type) {
         case "LOGIN_START":
           return { ...state, isLoading: true, error: null };
         case "LOGIN_SUCCESS":
-          return { user: action.payload as User, isLoading: false, error: null };
+          return {
+            user: action.payload as User,
+            isLoading: false,
+            error: null,
+          };
         case "LOGIN_ERROR":
-          return { ...state, isLoading: false, error: action.payload as string };
+          return {
+            ...state,
+            isLoading: false,
+            error: action.payload as string,
+          };
         case "LOGOUT":
           return { user: null, isLoading: false, error: null };
         case "UPDATE_USER":
@@ -49,13 +63,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         default:
           return state;
       }
-    }
+    },
   );
 
   const login = async (email: string, password: string) => {
     startTransition(async () => {
       setOptimisticState({ type: "LOGIN_START" });
-      
+
       try {
         const response = await fetch("/api/auth/login", {
           method: "POST",
@@ -100,21 +114,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!optimisticState.user) return;
 
     const updatedUser = { ...optimisticState.user, ...userData };
-    
+
     startTransition(async () => {
       setOptimisticState({ type: "UPDATE_USER", payload: updatedUser });
-      
+
       try {
         await fetch("/api/user/update", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(userData),
         });
-        
+
         setStoredUser(updatedUser);
         ClientHandler.success("Usuario actualizado correctamente");
       } catch {
-        setOptimisticState({ type: "UPDATE_USER", payload: optimisticState.user });
+        setOptimisticState({
+          type: "UPDATE_USER",
+          payload: optimisticState.user,
+        });
         ClientHandler.error("Error al actualizar usuario");
       }
     });
@@ -134,9 +151,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 }
 

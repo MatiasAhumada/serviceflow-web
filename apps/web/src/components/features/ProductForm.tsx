@@ -9,9 +9,11 @@ interface ProductFormProps {
 
 export function ProductForm({ product }: ProductFormProps) {
   const { suppliers } = useSuppliers();
-  const [selectedSupplierId, setSelectedSupplierId] = useState<string | number>(product?.suppliers?.[0]?.id || "");
+  const [selectedSupplierId, setSelectedSupplierId] = useState<string | number>(
+    product?.suppliers?.[0]?.id || "",
+  );
 
-  const supplierOptions = suppliers.map(supplier => ({
+  const supplierOptions = suppliers.map((supplier) => ({
     value: supplier.id,
     label: supplier.name,
   }));
@@ -19,7 +21,7 @@ export function ProductForm({ product }: ProductFormProps) {
   return (
     <div className="space-y-4">
       <input type="hidden" name="supplierId" value={selectedSupplierId} />
-      
+
       <div>
         <Label htmlFor="name">Nombre *</Label>
         <Input

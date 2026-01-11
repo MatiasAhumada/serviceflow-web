@@ -1,4 +1,10 @@
-import { IsArray, ValidateNested, IsOptional, IsNumber, Min } from 'class-validator';
+import {
+  IsArray,
+  ValidateNested,
+  IsOptional,
+  IsNumber,
+  Min,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { CreateSaleItemDto } from './create-sale-item.dto';

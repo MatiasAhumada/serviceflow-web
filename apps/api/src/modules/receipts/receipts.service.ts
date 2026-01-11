@@ -29,7 +29,15 @@ export class ReceiptsService {
   async findOne(id: string, companyId: string): Promise<Receipt> {
     const receipt = await this.receiptsRepository.findOne({
       where: { id, companyId },
-      relations: ['sale', 'sale.items', 'sale.items.product', 'customer', 'seller', 'technician', 'company'],
+      relations: [
+        'sale',
+        'sale.items',
+        'sale.items.product',
+        'customer',
+        'seller',
+        'technician',
+        'company',
+      ],
     });
 
     if (!receipt) {
@@ -42,7 +50,15 @@ export class ReceiptsService {
   async findBySale(saleId: string, companyId: string): Promise<Receipt> {
     const receipt = await this.receiptsRepository.findOne({
       where: { saleId, companyId },
-      relations: ['sale', 'sale.items', 'sale.items.product', 'customer', 'seller', 'technician', 'company'],
+      relations: [
+        'sale',
+        'sale.items',
+        'sale.items.product',
+        'customer',
+        'seller',
+        'technician',
+        'company',
+      ],
     });
 
     if (!receipt) {
@@ -69,7 +85,9 @@ export class ReceiptsService {
       order: { createdAt: 'DESC' },
     });
 
-    const receiptNumber = this.generateReceiptNumber(lastReceipt?.receiptNumber);
+    const receiptNumber = this.generateReceiptNumber(
+      lastReceipt?.receiptNumber,
+    );
 
     const receipt = this.receiptsRepository.create({
       companyId,
@@ -105,20 +123,28 @@ export class ReceiptsService {
       doc.moveDown();
       doc.fontSize(12).text(receipt.company.name, { align: 'center' });
       if (receipt.company.cuit) {
-        doc.fontSize(10).text(`CUIT: ${receipt.company.cuit}`, { align: 'center' });
+        doc
+          .fontSize(10)
+          .text(`CUIT: ${receipt.company.cuit}`, { align: 'center' });
       }
       if (receipt.company.address) {
         const address = receipt.company.address;
-        doc.fontSize(10).text(
-          `${address.street || ''}, ${address.city || ''}, ${address.state || ''}`,
-          { align: 'center' }
-        );
+        doc
+          .fontSize(10)
+          .text(
+            `${address.street || ''}, ${address.city || ''}, ${address.state || ''}`,
+            { align: 'center' },
+          );
       }
       if (receipt.company.phone) {
-        doc.fontSize(10).text(`Tel: ${receipt.company.phone}`, { align: 'center' });
+        doc
+          .fontSize(10)
+          .text(`Tel: ${receipt.company.phone}`, { align: 'center' });
       }
       if (receipt.company.email) {
-        doc.fontSize(10).text(`Email: ${receipt.company.email}`, { align: 'center' });
+        doc
+          .fontSize(10)
+          .text(`Email: ${receipt.company.email}`, { align: 'center' });
       }
 
       doc.moveDown();
@@ -127,7 +153,11 @@ export class ReceiptsService {
 
       doc.fontSize(10);
       doc.text(`Comprobante N°: ${receipt.receiptNumber}`, 50, doc.y);
-      doc.text(`Fecha: ${new Date(receipt.date).toLocaleDateString()}`, 350, doc.y - 12);
+      doc.text(
+        `Fecha: ${new Date(receipt.date).toLocaleDateString()}`,
+        350,
+        doc.y - 12,
+      );
       doc.moveDown();
 
       doc.fontSize(12).text('CLIENTE', { underline: true });
@@ -165,7 +195,10 @@ export class ReceiptsService {
       doc.text('Precio', priceX, tableTop);
       doc.text('Total', totalX, tableTop);
 
-      doc.moveTo(50, doc.y + 5).lineTo(550, doc.y + 5).stroke();
+      doc
+        .moveTo(50, doc.y + 5)
+        .lineTo(550, doc.y + 5)
+        .stroke();
       doc.moveDown();
 
       doc.font('Helvetica');
@@ -189,7 +222,11 @@ export class ReceiptsService {
 
       if (receipt.discount > 0) {
         doc.text('Descuento:', totalsX, doc.y);
-        doc.text(`-$${Number(receipt.discount).toFixed(2)}`, totalX, doc.y - 12);
+        doc.text(
+          `-$${Number(receipt.discount).toFixed(2)}`,
+          totalX,
+          doc.y - 12,
+        );
         doc.moveDown(0.5);
       }
 
@@ -199,7 +236,9 @@ export class ReceiptsService {
 
       doc.moveDown();
       doc.font('Helvetica').fontSize(10);
-      doc.text(`Método de pago: ${this.formatPaymentMethod(receipt.paymentMethod)}`);
+      doc.text(
+        `Método de pago: ${this.formatPaymentMethod(receipt.paymentMethod)}`,
+      );
 
       doc.end();
     });

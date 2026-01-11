@@ -1,4 +1,12 @@
-import { Entity, Column, ManyToOne, JoinColumn, OneToMany, OneToOne, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  Index,
+} from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Company } from './company.entity';
 import { User } from './user.entity';
@@ -75,7 +83,9 @@ export class Sale extends BaseEntity {
   @JoinColumn({ name: 'cashier_id' })
   cashier: User;
 
-  @ManyToOne(() => CashRegister, (cashRegister) => cashRegister.sales, { nullable: true })
+  @ManyToOne(() => CashRegister, (cashRegister) => cashRegister.sales, {
+    nullable: true,
+  })
   @JoinColumn({ name: 'cash_register_id' })
   cashRegister: CashRegister;
 

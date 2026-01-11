@@ -37,7 +37,10 @@ export const companyService = {
     return data;
   },
 
-  update: async (id: string, companyData: UpdateCompanyDto): Promise<Company> => {
+  update: async (
+    id: string,
+    companyData: UpdateCompanyDto,
+  ): Promise<Company> => {
     const { data } = await clientAxios.patch(`/companies/${id}`, companyData);
     return data;
   },

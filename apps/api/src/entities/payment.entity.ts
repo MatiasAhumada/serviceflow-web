@@ -30,7 +30,9 @@ export class Payment extends BaseEntity {
   @Column({ name: 'paid_at', nullable: true })
   paidAt: Date;
 
-  @ManyToOne(() => Subscription, (subscription) => subscription.payments, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Subscription, (subscription) => subscription.payments, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'subscription_id' })
   subscription: Subscription;
 }

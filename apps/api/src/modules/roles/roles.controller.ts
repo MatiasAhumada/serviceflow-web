@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { RolesService } from './roles.service';
 import { Role } from '../../entities';
@@ -11,7 +20,9 @@ export class RolesController {
   @Get()
   @ApiOperation({ summary: 'Get all roles' })
   findAll(@Query('companyId') companyId?: string): Promise<Role[]> {
-    return companyId ? this.rolesService.findByCompany(companyId) : this.rolesService.findAll();
+    return companyId
+      ? this.rolesService.findByCompany(companyId)
+      : this.rolesService.findAll();
   }
 
   @Get(':id')
@@ -28,7 +39,10 @@ export class RolesController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update role' })
-  update(@Param('id') id: string, @Body() roleData: Partial<Role>): Promise<Role | null> {
+  update(
+    @Param('id') id: string,
+    @Body() roleData: Partial<Role>,
+  ): Promise<Role | null> {
     return this.rolesService.update(id, roleData);
   }
 

@@ -10,16 +10,28 @@ export class ServiceItem extends BaseEntity {
   @Column()
   description: string;
 
-  @Column('decimal', { name: 'labor_cost', precision: 10, scale: 2, nullable: true })
+  @Column('decimal', {
+    name: 'labor_cost',
+    precision: 10,
+    scale: 2,
+    nullable: true,
+  })
   laborCost: number;
 
-  @Column('decimal', { name: 'part_cost', precision: 10, scale: 2, nullable: true })
+  @Column('decimal', {
+    name: 'part_cost',
+    precision: 10,
+    scale: 2,
+    nullable: true,
+  })
   partCost: number;
 
   @Column('decimal', { precision: 10, scale: 2 })
   total: number;
 
-  @ManyToOne(() => ServiceOrder, (serviceOrder) => serviceOrder.items, { onDelete: 'CASCADE' })
+  @ManyToOne(() => ServiceOrder, (serviceOrder) => serviceOrder.items, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'service_order_id' })
   serviceOrder: ServiceOrder;
 }

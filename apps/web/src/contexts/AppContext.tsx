@@ -31,30 +31,42 @@ const defaultSettings: AppSettings = {
 };
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [storedSettings, setStoredSettings] = useLocalStorage<AppSettings>("appSettings", defaultSettings);
+  const [storedSettings, setStoredSettings] = useLocalStorage<AppSettings>(
+    "appSettings",
+    defaultSettings,
+  );
   const [isPending, startTransition] = useTransition();
-  
+
   // Apply theme on mount
   React.useEffect(() => {
     if (typeof document !== "undefined") {
-      document.documentElement.classList.toggle("dark", storedSettings.theme === "dark");
+      document.documentElement.classList.toggle(
+        "dark",
+        storedSettings.theme === "dark",
+      );
     }
   }, [storedSettings.theme]);
-  
+
   const [optimisticState, setOptimisticState] = useOptimistic(
     { ...storedSettings, isLoading: false },
-    (state: AppState, action: { type: string; payload?: Partial<AppSettings> }): AppState => {
+    (
+      state: AppState,
+      action: { type: string; payload?: Partial<AppSettings> },
+    ): AppState => {
       switch (action.type) {
         case "UPDATE_SETTINGS":
           return { ...state, ...(action.payload || {}) } as AppState;
         case "TOGGLE_SIDEBAR":
           return { ...state, sidebarOpen: !state.sidebarOpen };
         case "TOGGLE_THEME":
-          return { ...state, theme: state.theme === "light" ? "dark" : "light" };
+          return {
+            ...state,
+            theme: state.theme === "light" ? "dark" : "light",
+          };
         default:
           return state;
       }
-    }
+    },
   );
 
   const updateSettings = (settings: Partial<AppSettings>) => {
@@ -68,7 +80,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const toggleSidebar = () => {
     startTransition(() => {
       setOptimisticState({ type: "TOGGLE_SIDEBAR" });
-      setStoredSettings({ ...optimisticState, sidebarOpen: !optimisticState.sidebarOpen });
+      setStoredSettings({
+        ...optimisticState,
+        sidebarOpen: !optimisticState.sidebarOpen,
+      });
     });
   };
 
@@ -77,11 +92,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const newTheme = optimisticState.theme === "light" ? "dark" : "light";
       setOptimisticState({ type: "TOGGLE_THEME" });
       setStoredSettings({ ...optimisticState, theme: newTheme });
-      
+
       if (typeof document !== "undefined") {
         document.documentElement.classList.toggle("dark", newTheme === "dark");
       }
-      ClientHandler.success(`Tema ${newTheme === "dark" ? "oscuro" : "claro"} activado`);
+      ClientHandler.success(
+        `Tema ${newTheme === "dark" ? "oscuro" : "claro"} activado`,
+      );
     });
   };
 
@@ -94,9 +111,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AppContext.Provider value={contextValue}>
-      {children}
-    </AppContext.Provider>
+    <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>
   );
 }
 

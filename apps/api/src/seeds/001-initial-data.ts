@@ -8,7 +8,9 @@ export async function seedInitialData(dataSource: DataSource) {
   const permissionRepo = dataSource.getRepository(Permission);
 
   // Create System Admin
-  const adminExists = await systemAdminRepo.findOne({ where: { email: 'admin@serviceflow.com' } });
+  const adminExists = await systemAdminRepo.findOne({
+    where: { email: 'admin@serviceflow.com' },
+  });
   if (!adminExists) {
     const admin = systemAdminRepo.create({
       name: 'ServiceFlow Admin',
@@ -24,7 +26,8 @@ export async function seedInitialData(dataSource: DataSource) {
       name: 'Plan Vendedor',
       slug: 'vendor-basic',
       price: 60000,
-      description: 'Perfecto para emprendedores y comercios que buscan digitalizar sus ventas',
+      description:
+        'Perfecto para emprendedores y comercios que buscan digitalizar sus ventas',
       baseUserSeats: 1,
       popular: false,
       featureList: [
@@ -54,7 +57,8 @@ export async function seedInitialData(dataSource: DataSource) {
       name: 'Plan Taller Técnico',
       slug: 'technician-basic',
       price: 80000,
-      description: 'Diseñado para talleres que necesitan gestionar reparaciones y servicios técnicos',
+      description:
+        'Diseñado para talleres que necesitan gestionar reparaciones y servicios técnicos',
       baseUserSeats: 3,
       popular: true,
       featureList: [
@@ -82,7 +86,8 @@ export async function seedInitialData(dataSource: DataSource) {
       name: 'Plan Empresa',
       slug: 'company-standard',
       price: 150000,
-      description: 'La solución integral para empresas que buscan optimizar todas sus operaciones',
+      description:
+        'La solución integral para empresas que buscan optimizar todas sus operaciones',
       baseUserSeats: 7,
       popular: false,
       featureList: [
@@ -135,7 +140,10 @@ export async function seedInitialData(dataSource: DataSource) {
     { code: 'view_sales', description: 'Ver ventas' },
     { code: 'manage_services', description: 'Gestionar servicios técnicos' },
     { code: 'view_services', description: 'Ver servicios técnicos' },
-    { code: 'manage_cash_register', description: 'Gestionar caja registradora' },
+    {
+      code: 'manage_cash_register',
+      description: 'Gestionar caja registradora',
+    },
     { code: 'view_cash_register', description: 'Ver caja registradora' },
     { code: 'manage_inventory', description: 'Gestionar inventario' },
     { code: 'view_inventory', description: 'Ver inventario' },
@@ -145,7 +153,9 @@ export async function seedInitialData(dataSource: DataSource) {
   ];
 
   for (const permData of permissions) {
-    const exists = await permissionRepo.findOne({ where: { code: permData.code } });
+    const exists = await permissionRepo.findOne({
+      where: { code: permData.code },
+    });
     if (!exists) {
       const permission = permissionRepo.create(permData);
       await permissionRepo.save(permission);

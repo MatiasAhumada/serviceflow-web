@@ -21,7 +21,8 @@ export function useSuppliers({ search }: UseSuppliersParams = {}) {
   });
 
   const createMutation = useMutation({
-    mutationFn: (supplierData: CreateSupplierDto) => suppliersService.create(supplierData),
+    mutationFn: (supplierData: CreateSupplierDto) =>
+      suppliersService.create(supplierData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["suppliers"] });
       ClientHandler.success("Proveedor creado correctamente");
@@ -32,7 +33,8 @@ export function useSuppliers({ search }: UseSuppliersParams = {}) {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateSupplierDto }) => suppliersService.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateSupplierDto }) =>
+      suppliersService.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["suppliers"] });
       ClientHandler.success("Proveedor actualizado correctamente");

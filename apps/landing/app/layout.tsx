@@ -3,8 +3,15 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "ServiceFlow - Gestión Integral para tu Negocio",
-  description: "Plataforma completa para gestionar ventas, inventario, órdenes de servicio y más. Optimiza tu negocio con ServiceFlow.",
-  keywords: ["gestión", "ventas", "inventario", "service flow", "punto de venta"],
+  description:
+    "Plataforma completa para gestionar ventas, inventario, órdenes de servicio y más. Optimiza tu negocio con ServiceFlow.",
+  keywords: [
+    "gestión",
+    "ventas",
+    "inventario",
+    "service flow",
+    "punto de venta",
+  ],
 };
 
 export default function RootLayout({
@@ -14,9 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className="antialiased">
-        {children}
-      </body>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }

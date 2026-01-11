@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { DevicesService } from './devices.service';
 import { Device } from '../../entities';
@@ -28,7 +36,10 @@ export class DevicesController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update device' })
-  update(@Param('id') id: string, @Body() deviceData: Partial<Device>): Promise<Device | null> {
+  update(
+    @Param('id') id: string,
+    @Body() deviceData: Partial<Device>,
+  ): Promise<Device | null> {
     return this.devicesService.update(id, deviceData);
   }
 

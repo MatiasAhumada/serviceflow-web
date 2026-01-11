@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PaymentOrder, Sale, CashMovement } from '../../entities';
@@ -19,7 +23,13 @@ export class PaymentOrdersService {
   async findAll(companyId: string): Promise<PaymentOrder[]> {
     return this.paymentOrdersRepository.find({
       where: { companyId },
-      relations: ['sale', 'sale.customer', 'sale.seller', 'cashier', 'cashRegister'],
+      relations: [
+        'sale',
+        'sale.customer',
+        'sale.seller',
+        'cashier',
+        'cashRegister',
+      ],
       order: { createdAt: 'DESC' },
     });
   }
@@ -35,7 +45,15 @@ export class PaymentOrdersService {
   async findOne(id: string, companyId: string): Promise<PaymentOrder> {
     const order = await this.paymentOrdersRepository.findOne({
       where: { id, companyId },
-      relations: ['sale', 'sale.customer', 'sale.seller', 'sale.items', 'sale.items.product', 'cashier', 'cashRegister'],
+      relations: [
+        'sale',
+        'sale.customer',
+        'sale.seller',
+        'sale.items',
+        'sale.items.product',
+        'cashier',
+        'cashRegister',
+      ],
     });
 
     if (!order) {
@@ -45,7 +63,12 @@ export class PaymentOrdersService {
     return order;
   }
 
-  async complete(id: string, companyId: string, cashierId: string, dto: CompletePaymentOrderDto): Promise<PaymentOrder> {
+  async complete(
+    id: string,
+    companyId: string,
+    cashierId: string,
+    dto: CompletePaymentOrderDto,
+  ): Promise<PaymentOrder> {
     const order = await this.findOne(id, companyId);
 
     if (order.status !== 'pending') {
@@ -97,7 +120,9 @@ export class PaymentOrdersService {
     const order = await this.findOne(id, companyId);
 
     if (order.status !== 'pending') {
-      throw new BadRequestException('Solo se pueden cancelar órdenes pendientes');
+      throw new BadRequestException(
+        'Solo se pueden cancelar órdenes pendientes',
+      );
     }
 
     order.status = 'cancelled';

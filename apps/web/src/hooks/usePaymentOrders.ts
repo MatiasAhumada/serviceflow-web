@@ -1,13 +1,13 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { paymentOrdersService } from '@/services/api/payment-orders.service';
-import { CompletePaymentOrderDto } from '@/types';
-import { ClientHandler } from '@/lib/client-handler';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { paymentOrdersService } from "@/services/api/payment-orders.service";
+import { CompletePaymentOrderDto } from "@/types";
+import { ClientHandler } from "@/lib/client-handler";
 
 export const usePaymentOrders = () => {
   const queryClient = useQueryClient();
 
   const pendingOrdersQuery = useQuery({
-    queryKey: ['payment-orders', 'pending'],
+    queryKey: ["payment-orders", "pending"],
     queryFn: paymentOrdersService.getPending,
   });
 
@@ -15,26 +15,26 @@ export const usePaymentOrders = () => {
     mutationFn: ({ id, dto }: { id: string; dto: CompletePaymentOrderDto }) =>
       paymentOrdersService.complete(id, dto),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['payment-orders'] });
-      queryClient.invalidateQueries({ queryKey: ['sales'] });
-      queryClient.invalidateQueries({ queryKey: ['cash-register-stats'] });
-      queryClient.invalidateQueries({ queryKey: ['cash-register-movements'] });
-      ClientHandler.success('Pago completado exitosamente');
+      queryClient.invalidateQueries({ queryKey: ["payment-orders"] });
+      queryClient.invalidateQueries({ queryKey: ["sales"] });
+      queryClient.invalidateQueries({ queryKey: ["cash-register-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["cash-register-movements"] });
+      ClientHandler.success("Pago completado exitosamente");
     },
     onError: () => {
-      ClientHandler.error('Error al completar el pago');
+      ClientHandler.error("Error al completar el pago");
     },
   });
 
   const cancelOrderMutation = useMutation({
     mutationFn: (id: string) => paymentOrdersService.cancel(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['payment-orders'] });
-      queryClient.invalidateQueries({ queryKey: ['sales'] });
-      ClientHandler.success('Orden cancelada');
+      queryClient.invalidateQueries({ queryKey: ["payment-orders"] });
+      queryClient.invalidateQueries({ queryKey: ["sales"] });
+      ClientHandler.success("Orden cancelada");
     },
     onError: () => {
-      ClientHandler.error('Error al cancelar orden');
+      ClientHandler.error("Error al cancelar orden");
     },
   });
 

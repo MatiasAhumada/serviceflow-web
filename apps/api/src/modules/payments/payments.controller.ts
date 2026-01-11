@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { PaymentsService } from './payments.service';
 import { Payment } from '../../entities';
@@ -28,7 +36,10 @@ export class PaymentsController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update payment' })
-  update(@Param('id') id: string, @Body() paymentData: Partial<Payment>): Promise<Payment | null> {
+  update(
+    @Param('id') id: string,
+    @Body() paymentData: Partial<Payment>,
+  ): Promise<Payment | null> {
     return this.paymentsService.update(id, paymentData);
   }
 

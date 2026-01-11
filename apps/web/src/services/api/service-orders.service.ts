@@ -1,13 +1,13 @@
-import { clientAxios } from '@/lib/axios';
+import { clientAxios } from "@/lib/axios";
 
 export const serviceOrdersService = {
   getStats: async () => {
-    const { data } = await clientAxios.get('/service-orders/stats');
+    const { data } = await clientAxios.get("/service-orders/stats");
     return data;
   },
 
   getAll: async () => {
-    const { data } = await clientAxios.get('/service-orders');
+    const { data } = await clientAxios.get("/service-orders");
     return data;
   },
 
@@ -17,17 +17,23 @@ export const serviceOrdersService = {
   },
 
   create: async (orderData: Record<string, unknown>) => {
-    const { data } = await clientAxios.post('/service-orders', orderData);
+    const { data } = await clientAxios.post("/service-orders", orderData);
     return data;
   },
 
   updateStatus: async (id: string, status: string, notes?: string) => {
-    const { data } = await clientAxios.patch(`/service-orders/${id}/status`, { status, notes });
+    const { data } = await clientAxios.patch(`/service-orders/${id}/status`, {
+      status,
+      notes,
+    });
     return data;
   },
 
   update: async (id: string, orderData: Record<string, unknown>) => {
-    const { data } = await clientAxios.patch(`/service-orders/${id}`, orderData);
+    const { data } = await clientAxios.patch(
+      `/service-orders/${id}`,
+      orderData,
+    );
     return data;
   },
 

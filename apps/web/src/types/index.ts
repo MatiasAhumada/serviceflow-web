@@ -247,3 +247,33 @@ export interface PaymentOrder {
 export interface CompletePaymentOrderDto {
   cashRegisterId?: string;
 }
+
+export interface Subscription {
+  id: string;
+  userId: string;
+  planId: string;
+  status: string;
+  isTrial: boolean;
+  trialEndDate: string | null;
+  currentPeriodStart: string;
+  currentPeriodEnd: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RegisterTrialRequest {
+  email: string;
+  password: string;
+  name: string;
+  planSlug: string;
+}
+
+export interface RegisterTrialResponse {
+  access_token: string;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    subscription: Subscription;
+  };
+}

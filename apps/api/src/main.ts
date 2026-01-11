@@ -86,7 +86,10 @@ Teléfono: +54 9 381 352-8658
     .addTag('Customers & Suppliers', 'Gestión de clientes y proveedores')
     .addTag('Products & Inventory', 'Catálogo de productos e inventario')
     .addTag('Sales & Cash Register', 'Ventas y caja registradora')
-    .addTag('Technical Services', 'Órdenes de servicio, dispositivos y garantías')
+    .addTag(
+      'Technical Services',
+      'Órdenes de servicio, dispositivos y garantías',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
