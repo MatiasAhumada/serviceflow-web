@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import type { Subscription } from "@/types";
-import { SUBSCRIPTION_STATUS } from "@/constants";
 
 interface TrialInfo {
   isInTrial: boolean;
@@ -20,8 +19,7 @@ export const useTrial = (subscription: Subscription | null): TrialInfo => {
       };
     }
 
-    const isInTrial =
-      subscription.isTrial && subscription.status === SUBSCRIPTION_STATUS.TRIAL;
+    const isInTrial = subscription.isTrial;
 
     if (!isInTrial || !subscription.trialEndDate) {
       return {

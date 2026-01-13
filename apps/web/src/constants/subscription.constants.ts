@@ -9,8 +9,8 @@ export const PLAN_OPTIONS: SelectOption[] = [
 export const TRIAL_DURATION_DAYS = 5;
 
 export const SUBSCRIPTION_STATUS = {
-  TRIAL: "TRIAL",
-  ACTIVE: "ACTIVE",
-  EXPIRED: "EXPIRED",
-  CANCELLED: "CANCELLED",
+  ACTIVE: "active",
+  INACTIVE: "inactive",
+  EXPIRED: "expired",
+  CANCELLED: "cancelled",
 } as const;

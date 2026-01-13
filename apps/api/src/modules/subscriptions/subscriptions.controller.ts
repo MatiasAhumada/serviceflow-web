@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Request,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { SubscriptionsService } from './subscriptions.service';
@@ -15,6 +16,12 @@ import { Subscription } from '../../entities';
 @Controller('subscriptions')
 export class SubscriptionsController {
   constructor(private readonly subscriptionsService: SubscriptionsService) {}
+
+  @Get('me')
+  @ApiOperation({ summary: 'Get current user subscription' })
+  findCurrent(@Request() req): Promise<Subscription | null> {
+    return this.subscriptionsService.findByUserId(req.user.sub);
+  }
 
   @Get()
   @ApiOperation({ summary: 'Get all subscriptions' })

@@ -129,8 +129,8 @@ export function Sidebar({
             <button
               onClick={onToggle}
               className={cn(
-                "flex items-center hover:opacity-80 transition-opacity",
-                isOpen ? "gap-3" : "justify-center",
+                "flex items-center hover:opacity-80 transition-opacity ",
+                isOpen ? "gap-3" : "justify-center mt-3",
               )}
             >
               <Image

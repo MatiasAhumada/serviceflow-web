@@ -90,7 +90,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   events: {
     async signOut() {
-      console.log("Session closed");
+      // Session closed
     },
   },
 });

@@ -3,18 +3,14 @@
 import { useState, useEffect } from "react";
 import { useApp } from "@/contexts";
 import { Sidebar, UserMenu } from "@/components/layout";
-import { TrialBanner, TrialExpiredScreen } from "@/components/features";
+import { TrialExpiredScreen } from "@/components/features";
 import { useSession, signOut } from "next-auth/react";
 import { ClientHandler } from "@/lib/client-handler";
 import { usePlanFeatures, useSubscription, useTrial } from "@/hooks";
 import { useRouter } from "next/navigation";
 import type { SidebarItem, UserMenuOption } from "@/components/layout";
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { theme, toggleTheme } = useApp();
   const { data: session, status } = useSession();
   const { hasFeature } = usePlanFeatures();
@@ -59,12 +55,7 @@ export default function DashboardLayout({
       id: "dashboard",
       label: "Dashboard",
       icon: (
-        <svg
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          className="w-5 h-5"
-        >
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-5 h-5">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -79,12 +70,7 @@ export default function DashboardLayout({
       id: "clients",
       label: "Clientes",
       icon: (
-        <svg
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          className="w-5 h-5"
-        >
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-5 h-5">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -101,12 +87,7 @@ export default function DashboardLayout({
             id: "products",
             label: "Productos",
             icon: (
-              <svg
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                className="w-5 h-5"
-              >
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-5 h-5">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -123,12 +104,7 @@ export default function DashboardLayout({
       id: "suppliers",
       label: "Proveedores",
       icon: (
-        <svg
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          className="w-5 h-5"
-        >
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-5 h-5">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -145,12 +121,7 @@ export default function DashboardLayout({
             id: "sales",
             label: "Ventas",
             icon: (
-              <svg
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                className="w-5 h-5"
-              >
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-5 h-5">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -169,24 +140,14 @@ export default function DashboardLayout({
             id: "service",
             label: "Servicio Técnico",
             icon: (
-              <svg
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                className="w-5 h-5"
-              >
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-5 h-5">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
                   d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
                 />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             ),
             children: [
@@ -212,12 +173,7 @@ export default function DashboardLayout({
       id: "cash-register",
       label: "Cajas",
       icon: (
-        <svg
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          className="w-5 h-5"
-        >
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-5 h-5">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -234,12 +190,7 @@ export default function DashboardLayout({
             id: "employees",
             label: "Personal",
             icon: (
-              <svg
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                className="w-5 h-5"
-              >
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-5 h-5">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -256,12 +207,7 @@ export default function DashboardLayout({
       id: "company",
       label: "Mi Empresa",
       icon: (
-        <svg
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          className="w-5 h-5"
-        >
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-5 h-5">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -279,12 +225,7 @@ export default function DashboardLayout({
       id: "profile",
       label: "Mi perfil",
       icon: (
-        <svg
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          className="w-4 h-4"
-        >
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-4 h-4">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -299,24 +240,14 @@ export default function DashboardLayout({
       id: "settings",
       label: "Configuración",
       icon: (
-        <svg
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          className="w-4 h-4"
-        >
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-4 h-4">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={2}
             d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
           />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-          />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
       ),
       onClick: () => ClientHandler.info("Configuración del sistema"),
@@ -326,12 +257,7 @@ export default function DashboardLayout({
       label: theme === "light" ? "Modo oscuro" : "Modo claro",
       icon:
         theme === "light" ? (
-          <svg
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            className="w-4 h-4"
-          >
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-4 h-4">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -340,12 +266,7 @@ export default function DashboardLayout({
             />
           </svg>
         ) : (
-          <svg
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            className="w-4 h-4"
-          >
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-4 h-4">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -360,12 +281,7 @@ export default function DashboardLayout({
       id: "logout",
       label: "Cerrar sesión",
       icon: (
-        <svg
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          className="w-4 h-4"
-        >
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-4 h-4">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -417,12 +333,7 @@ export default function DashboardLayout({
         }
       />
 
-      <main className="flex-1 transition-all duration-300">
-        <div className="p-6">
-          <TrialBanner subscription={subscription || null} />
-          {children}
-        </div>
-      </main>
+      <main className="flex-1 transition-all duration-300">{children}</main>
     </div>
   );
 }

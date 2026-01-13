@@ -255,8 +255,8 @@ export interface Subscription {
   status: string;
   isTrial: boolean;
   trialEndDate: string | null;
-  currentPeriodStart: string;
-  currentPeriodEnd: string;
+  startDate: string;
+  endDate: string;
   createdAt: string;
   updatedAt: string;
 }

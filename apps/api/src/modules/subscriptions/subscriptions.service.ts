@@ -10,6 +10,13 @@ export class SubscriptionsService {
     private subscriptionsRepository: Repository<Subscription>,
   ) {}
 
+  async findByUserId(userId: string): Promise<Subscription | null> {
+    return this.subscriptionsRepository.findOne({
+      where: { userId },
+      relations: ['plan'],
+    });
+  }
+
   async findAll(): Promise<Subscription[]> {
     return this.subscriptionsRepository.find({
       relations: ['plan', 'company', 'user', 'seats', 'payments'],

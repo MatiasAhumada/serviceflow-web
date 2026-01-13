@@ -8,12 +8,14 @@ import {
   Badge,
 } from "@/components/ui";
 import { Icon } from "@/components/common";
+import { TrialBanner } from "@/components/features";
 import { useSession } from "next-auth/react";
-import { usePlanFeatures } from "@/hooks";
+import { usePlanFeatures, useSubscription } from "@/hooks";
 
 export default function Home() {
   const { data: session } = useSession();
   const { hasFeature } = usePlanFeatures();
+  const { data: subscription } = useSubscription();
 
   return (
     <>
@@ -48,6 +50,8 @@ export default function Home() {
           </div>
         </div>
       </header>
+
+      <TrialBanner subscription={subscription || null} />
 
       {/* Content */}
       <div className="p-6">
