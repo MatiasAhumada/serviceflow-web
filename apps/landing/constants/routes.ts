@@ -1,3 +1,5 @@
+import { CONFIG } from '@/lib/config';
+
 export const API_ROUTES = {
   PLANS: {
     BASE: "/plans",
@@ -6,7 +8,6 @@ export const API_ROUTES = {
 } as const;
 
 export const APP_ROUTES = {
-  REGISTER_TRIAL: process.env.NEXT_PUBLIC_APP_URL
-    ? `${process.env.NEXT_PUBLIC_APP_URL}/register-trial`
-    : "http://localhost:3000/register-trial",
+  REGISTER_TRIAL: `${CONFIG.APP_URL}/register-trial`,
+  LOGIN: CONFIG.APP_URL,
 } as const;

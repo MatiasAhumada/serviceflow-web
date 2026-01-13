@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import axios from "axios";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3010";
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL!;
 
 export async function GET() {
   try {
@@ -9,9 +9,6 @@ export async function GET() {
     return NextResponse.json(data);
   } catch (error) {
     console.error("Error fetching plans:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch plans" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Failed to fetch plans" }, { status: 500 });
   }
 }

@@ -52,7 +52,7 @@ export function Footer() {
               <li>
                 <Link
                   href={
-                    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+                    process.env.NEXT_PUBLIC_APP_URL!
                   }
                   className="text-muted-foreground hover:text-[#10B981] transition-colors text-sm"
                 >

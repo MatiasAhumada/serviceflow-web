@@ -50,7 +50,7 @@ export function Navbar() {
               Precios
             </button>
             <Link
-              href={process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}
+              href={APP_ROUTES.LOGIN}
               className="text-foreground hover:text-[#10B981] transition-colors font-medium"
             >
               Ingresar al Sistema
@@ -58,7 +58,7 @@ export function Navbar() {
           </div>
 
           <div className="hidden md:flex items-center gap-4">
-            <a href={process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}>
+            <a href={APP_ROUTES.LOGIN}>
               <Button variant="ghost" className="font-medium">
                 Iniciar sesión
               </Button>
@@ -96,7 +96,7 @@ export function Navbar() {
               Ingresar al Sistema
             </Link>
             <div className="pt-4 space-y-3">
-              <a href={process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"} className="block">
+              <a href={APP_ROUTES.LOGIN} className="block">
                 <Button variant="ghost" className="w-full">
                   Iniciar sesión
                 </Button>
