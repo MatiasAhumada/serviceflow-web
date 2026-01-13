@@ -2,10 +2,12 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import Image from 'next/image';
-import { Button, Input, Label, Select, Card, Alert } from '@/components/ui';
+import { Button, Input, Label, Select, Card } from '@/components/ui';
 import { authApiService } from '@/services/api/auth.service';
 import { PLAN_OPTIONS, APP_ROUTES } from '@/constants';
+import { ClientHandler } from '@/lib/client-handler';
 import type { RegisterTrialRequest } from '@/types';
 import logoLogin from '../../../public/assets/logo-principal.png';
 
@@ -17,22 +19,41 @@ export default function RegisterTrialPage() {
     name: "",
     planSlug: "vendor-basic",
   });
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
 
     try {
-      const response = await authApiService.registerTrial(formData);
-      localStorage.setItem("token", response.access_token);
-      router.push(APP_ROUTES.HOME);
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
+      await authApiService.registerTrial(formData);
+      
+      const result = await signIn('credentials', {
+        email: formData.email,
+        password: formData.password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        ClientHandler.error({
+          title: 'Error al iniciar sesión',
+          description: 'Por favor, intenta iniciar sesión manualmente.',
+        });
+        setTimeout(() => {
+          router.push(APP_ROUTES.LOGIN);
+        }, 3000);
+      } else {
+        ClientHandler.success({
+          title: '¡Cuenta creada!',
+          description: 'Bienvenido a ServiceFlow',
+        });
+        router.push(APP_ROUTES.HOME);
       }
+    } catch (err) {
+      ClientHandler.error({
+        title: 'Error al crear la cuenta',
+        description: err instanceof Error ? err.message : 'Error desconocido',
+      });
     } finally {
       setLoading(false);
     }
@@ -61,12 +82,6 @@ export default function RegisterTrialPage() {
         </div>
 
         <div className="px-8 pt-6 pb-8">
-          {error && (
-            <Alert variant="destructive" className="mb-4">
-              {error}
-            </Alert>
-          )}
-
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="name" className="text-[#111827] dark:text-[#111827] font-medium">

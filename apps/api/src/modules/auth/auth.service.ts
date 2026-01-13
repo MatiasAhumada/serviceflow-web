@@ -112,6 +112,11 @@ export class AuthService {
   async registerTrial(registerTrialDto: RegisterTrialDto) {
     const { email, password, name, planSlug } = registerTrialDto;
 
+    const existingUser = await this.userRepository.findOne({ where: { email } });
+    if (existingUser) {
+      throw new UnauthorizedException('El email ya está registrado');
+    }
+
     const plan = await this.planRepository.findOne({
       where: { slug: planSlug },
     });
