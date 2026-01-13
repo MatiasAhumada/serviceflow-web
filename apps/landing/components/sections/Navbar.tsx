@@ -33,13 +33,15 @@ export function Navbar() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-background/95 backdrop-blur-xl border-b border-border shadow-lg" : "bg-transparent"
+        scrolled
+          ? "bg-background/95 backdrop-blur-xl border-b border-border shadow-lg"
+          : "bg-transparent"
       }`}
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           <button onClick={scrollToTop} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <Image src="/logo-principal.png" alt="ServiceFlow" width={180} height={42} className="h-auto" />
+            <Image src="/logo-principal.png" alt="ServiceFlow" width={180} height={42} className="h-auto" priority />
           </button>
 
           <div className="hidden md:flex items-center gap-8">
@@ -76,36 +78,38 @@ export function Navbar() {
         </div>
 
         {isOpen && (
-          <div className="md:hidden py-6 space-y-4 border-t border-border animate-slide-down">
-            <button
-              onClick={() => scrollToSection("features")}
-              className="block w-full text-left py-3 px-4 text-foreground hover:text-[#10B981] hover:bg-accent rounded-lg transition-all font-medium"
-            >
-              Características
-            </button>
-            <button
-              onClick={() => scrollToSection("pricing")}
-              className="block w-full text-left py-3 px-4 text-foreground hover:text-[#10B981] hover:bg-accent rounded-lg transition-all font-medium"
-            >
-              Precios
-            </button>
-            <Link
-              href="/app"
-              className="block w-full text-left py-3 px-4 text-foreground hover:text-[#10B981] hover:bg-accent rounded-lg transition-all font-medium"
-            >
-              Ingresar al Sistema
-            </Link>
-            <div className="pt-4 space-y-3">
-              <a href={APP_ROUTES.LOGIN} className="block">
-                <Button variant="ghost" className="w-full">
-                  Iniciar sesión
-                </Button>
-              </a>
-              <a href={APP_ROUTES.REGISTER_TRIAL} className="block">
-                <Button variant="gradient" className="w-full">
-                  Comenzar gratis
-                </Button>
-              </a>
+          <div className="md:hidden absolute left-0 right-0 top-20 py-6 space-y-4 bg-white dark:bg-background border-b border-border shadow-lg animate-slide-down">
+            <div className="container mx-auto px-4 space-y-4">
+              <button
+                onClick={() => scrollToSection("features")}
+                className="block w-full text-left py-3 px-4 text-[#10B981] hover:bg-accent rounded-lg transition-all font-medium"
+              >
+                Características
+              </button>
+              <button
+                onClick={() => scrollToSection("pricing")}
+                className="block w-full text-left py-3 px-4 text-[#2563EB] hover:bg-accent rounded-lg transition-all font-medium"
+              >
+                Precios
+              </button>
+              <Link
+                href="/app"
+                className="block w-full text-left py-3 px-4 text-[#10B981] hover:bg-accent rounded-lg transition-all font-medium"
+              >
+                Ingresar al Sistema
+              </Link>
+              <div className="pt-4 space-y-3">
+                <a href={APP_ROUTES.LOGIN} className="block">
+                  <Button variant="ghost" className="w-full">
+                    Iniciar sesión
+                  </Button>
+                </a>
+                <a href={APP_ROUTES.REGISTER_TRIAL} className="block">
+                  <Button variant="gradient" className="w-full">
+                    Comenzar gratis
+                  </Button>
+                </a>
+              </div>
             </div>
           </div>
         )}

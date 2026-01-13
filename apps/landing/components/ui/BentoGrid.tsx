@@ -48,12 +48,16 @@ export function BentoGridItem({
     >
       {header}
       <div className="group-hover/bento:translate-x-2 transition duration-200">
-        {icon}
-        <div className="font-sans font-bold text-neutral-600 dark:text-neutral-200 mb-1 mt-2 text-lg">
-          {title}
-        </div>
-        <div className="font-sans font-normal text-neutral-600 text-sm dark:text-neutral-300 leading-snug">
-          {description}
+        <div className="flex items-start gap-3">
+          {icon}
+          <div className="flex-1">
+            <div className="font-sans font-bold text-neutral-600 dark:text-neutral-200 mb-1 text-base md:text-lg">
+              {title}
+            </div>
+            <div className="font-sans font-normal text-neutral-600 text-xs md:text-sm dark:text-neutral-300 leading-snug">
+              {description}
+            </div>
+          </div>
         </div>
       </div>
     </motion.div>

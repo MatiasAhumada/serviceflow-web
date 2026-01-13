@@ -134,12 +134,12 @@ export function Pricing() {
           ))}
         </div>
 
-        <div className="text-center mt-16">
-          <p className="text-muted-foreground mb-4">
-            Todos los planes incluyen 5 días de prueba gratis
+        <div className="text-center mt-16 space-y-3">
+          <p className="text-base font-medium text-foreground">
+            Comienza gratis y prueba el plan que se adapte a vos durante 5 días
           </p>
           <p className="text-sm text-muted-foreground">
-            Sin tarjeta de crédito requerida • Cancela cuando quieras
+            Sin tarjeta de crédito requerida • Cancela en cualquier momento
           </p>
         </div>
 

@@ -61,7 +61,7 @@ export function Hero() {
                 size="lg"
                 className="group shadow-2xl shadow-[#10B981]/20"
               >
-                Comenzar gratis
+                Comenzar gratis*
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </a>
@@ -71,19 +71,24 @@ export function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="pt-12 flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground"
+            className="pt-8 space-y-4"
           >
-            <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-[#10B981]" />
-              <span>5 días de prueba gratis</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-[#10B981]" />
-              <span>Múltiples métodos de pago</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-[#10B981]" />
-              <span>Soporte 24/7</span>
+            <p className="text-xs text-muted-foreground max-w-2xl mx-auto">
+              * Prueba gratuita de 5 días en el plan que elijas. Sin tarjeta de crédito requerida.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Zap className="w-4 h-4 text-[#10B981] flex-shrink-0" />
+                <span>Acceso completo durante el trial</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Zap className="w-4 h-4 text-[#10B981] flex-shrink-0" />
+                <span>Múltiples métodos de pago</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Zap className="w-4 h-4 text-[#10B981] flex-shrink-0" />
+                <span>Soporte técnico incluido</span>
+              </div>
             </div>
           </motion.div>
         </div>
