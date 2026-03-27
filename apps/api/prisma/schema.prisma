@@ -1,0 +1,497 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS DE NEGOCIO
+// ============================================
+
+enum ArticuloTipo {
+  REPUESTO
+  VENTA_DIRECTA
+  AMBOS
+}
+
+enum MovimientoTipo {
+  INGRESO
+  EGRESO
+}
+
+enum ServicioEstado {
+  INGRESADO
+  PRESUPUESTADO
+  EN_REPARACION
+  LISTO_PARA_ENTREGAR
+  ENTREGADO
+  RECHAZADO
+}
+
+enum ContactoTipo {
+  CELULAR
+  TELEFONO
+  EMAIL
+  WHATSAPP
+  OTRO
+}
+
+// ============================================
+// MODELOS DE USUARIOS Y AUTENTICACIÓN
+// ============================================
+
+model User {
+  id              String             @id @default(uuid())
+  nombre          String
+  email           String             @unique
+  password        String
+  isActive        Boolean            @default(true)
+  esAdministrador Boolean            @default(false)
+  
+  // Relaciones con el dominio
+  cajas           Caja[]
+  servicios       ServicioTecnico[]
+  ventas          Venta[]
+  compras         Compra[]
+  gastos          GastoGeneral[]
+  movimientos     Movimiento[]
+  
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@map("users")
+  @@index([email])
+  @@index([isActive])
+}
+
+// ============================================
+// GESTIÓN DE CLIENTES
+// ============================================
+
+model Cliente {
+  id          String      @id @default(cuid())
+  nombre      String
+  dniCuit     String?     @unique
+  observaciones String?
+  
+  // Relaciones
+  equipos     Equipo[]
+  servicios   ServicioTecnico[]
+  ventas      Venta[]
+  contactos   Contacto[]
+  direcciones Direccion[]
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("clientes")
+  @@index([nombre])
+  @@index([dniCuit])
+}
+
+model Contacto {
+  id        String         @id @default(cuid())
+  valor     String
+  tipo      ContactoTipo
+  principal Boolean        @default(false)
+  clienteId String
+  cliente   Cliente        @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@map("contactos")
+  @@index([clienteId])
+  @@unique([clienteId, valor])
+}
+
+model Direccion {
+  id        String   @id @default(cuid())
+  calle     String
+  numero    String?
+  piso      String?
+  departamento String?
+  ciudad    String?
+  provincia String?
+  codigoPostal String?
+  principal Boolean  @default(false)
+  clienteId String
+  cliente   Cliente  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("direcciones")
+  @@index([clienteId])
+}
+
+// ============================================
+// GESTIÓN DE EQUIPOS E HISTORIAL
+// ============================================
+
+model Equipo {
+  id          String            @id @default(cuid())
+  marca       String
+  modelo      String
+  numeroSerie String?
+  color       String?
+  observaciones String?
+  clienteId   String
+  cliente     Cliente           @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  
+  servicios   ServicioTecnico[]
+  
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@map("equipos")
+  @@index([clienteId])
+  @@index([marca, modelo])
+  @@unique([clienteId, numeroSerie])
+}
+
+// ============================================
+// SERVICIO TÉCNICO (CORE DEL NEGOCIO)
+// ============================================
+
+model ServicioTecnico {
+  id              String          @id @default(cuid())
+  codigo          String          @unique
+  estado          ServicioEstado  @default(INGRESADO)
+  
+  // Datos del equipo y cliente
+  equipoId        String
+  equipo          Equipo          @relation(fields: [equipoId], references: [id])
+  clienteId       String
+  cliente         Cliente         @relation(fields: [clienteId], references: [id])
+  
+  // Diagnóstico y fallas
+  fallaReportada  String
+  diagnostico     String?
+  observaciones   String?
+  
+  // Precios (el presupuesto se calcula desde los items)
+  manoDeObra      Decimal         @default(0) @db.Decimal(10, 2)
+  
+  // Relaciones con items y pagos
+  items           ServicioRepuesto[]
+  movimientos     Movimiento[]
+  recibo          Recibo?
+  
+  // Usuario que registró el servicio
+  usuarioId       String
+  usuario         User            @relation(fields: [usuarioId], references: [id])
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@map("servicios_tecnicos")
+  @@index([codigo])
+  @@index([estado])
+  @@index([clienteId])
+  @@index([equipoId])
+  @@index([usuarioId])
+}
+
+model ServicioRepuesto {
+  id             String          @id @default(cuid())
+  servicioId     String
+  articuloId     String
+  
+  servicio       ServicioTecnico @relation(fields: [servicioId], references: [id], onDelete: Cascade)
+  articulo       Articulo        @relation(fields: [articuloId], references: [id])
+  
+  cantidad       Int             @default(1)
+  
+  // SNAPSHOTS DE PRECIO (inmutables una vez creados)
+  precioPactado  Decimal         @db.Decimal(10, 2) // Precio al cliente
+  costoAlMomento Decimal         @db.Decimal(10, 2) // Costo para el local
+  
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@map("servicios_repuestos")
+  @@index([servicioId])
+  @@index([articuloId])
+}
+
+model Recibo {
+  id          String          @id @default(cuid())
+  numero      String          @unique
+  servicioId  String          @unique
+  servicio    ServicioTecnico @relation(fields: [servicioId], references: [id])
+  
+  subtotal    Decimal         @db.Decimal(10, 2)
+  descuento   Decimal         @default(0) @db.Decimal(10, 2)
+  total       Decimal         @db.Decimal(10, 2)
+  
+  emitidoPor  String
+  usuarioId   String
+  usuario     User            @relation(fields: [usuarioId], references: [id])
+  
+  createdAt   DateTime        @default(now())
+
+  @@map("recibos")
+  @@index([numero])
+  @@index([servicioId])
+}
+
+// ============================================
+// GESTIÓN DE ARTÍCULOS E INVENTARIO
+// ============================================
+
+model Articulo {
+  id          String        @id @default(cuid())
+  nombre      String
+  descripcion String?
+  codigoInterno String?     @unique
+  
+  stockActual Int           @default(0)
+  stockMinimo Int           @default(5)
+  
+  precioVenta     Decimal   @db.Decimal(10, 2)
+  costoActual     Decimal   @db.Decimal(10, 2)
+  
+  tipo        ArticuloTipo  @default(AMBOS)
+  isActive    Boolean       @default(true)
+  
+  // Relaciones
+  servicioItems ServicioRepuesto[]
+  ventaItems    DetalleVenta[]
+  compraItems   DetalleCompra[]
+  
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("articulos")
+  @@index([nombre])
+  @@index([codigoInterno])
+  @@index([tipo])
+  @@index([isActive])
+}
+
+// ============================================
+// VENTAS DIRECTAS (MOSTRADOR)
+// ============================================
+
+model Venta {
+  id          String          @id @default(cuid())
+  codigo      String          @unique
+  clienteId   String?
+  cliente     Cliente?        @relation(fields: [clienteId], references: [id])
+  
+  subtotal    Decimal         @db.Decimal(10, 2)
+  descuento   Decimal         @default(0) @db.Decimal(10, 2)
+  total       Decimal         @db.Decimal(10, 2)
+  
+  items       DetalleVenta[]
+  movimientos Movimiento[]
+  
+  observaciones String?
+  
+  usuarioId   String
+  usuario     User            @relation(fields: [usuarioId], references: [id])
+  
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@map("ventas")
+  @@index([codigo])
+  @@index([clienteId])
+  @@index([usuarioId])
+}
+
+model DetalleVenta {
+  id            String   @id @default(cuid())
+  ventaId       String
+  articuloId    String
+  
+  venta         Venta    @relation(fields: [ventaId], references: [id], onDelete: Cascade)
+  articulo      Articulo @relation(fields: [articuloId], references: [id])
+  
+  cantidad      Int
+  precioVendido Decimal  @db.Decimal(10, 2)
+  
+  createdAt     DateTime @default(now())
+
+  @@map("ventas_detalles")
+  @@index([ventaId])
+  @@index([articuloId])
+}
+
+// ============================================
+// COMPRAS A PROVEEDORES (REPOSICIÓN)
+// ============================================
+
+model Proveedor {
+  id        String    @id @default(cuid())
+  nombre    String
+  dniCuit   String?   @unique
+  telefono  String?
+  email     String?
+  direccion String?
+  isActive  Boolean   @default(true)
+  
+  compras   Compra[]
+  
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("proveedores")
+  @@index([nombre])
+  @@index([dniCuit])
+}
+
+model Compra {
+  id          String          @id @default(cuid())
+  codigo      String          @unique
+  proveedorId String
+  proveedor   Proveedor       @relation(fields: [proveedorId], references: [id])
+  
+  subtotal    Decimal         @db.Decimal(10, 2)
+  descuento   Decimal         @default(0) @db.Decimal(10, 2)
+  total       Decimal         @db.Decimal(10, 2)
+  
+  detalles    DetalleCompra[]
+  movimientos Movimiento[]
+  
+  observaciones String?
+  
+  usuarioId   String
+  usuario     User            @relation(fields: [usuarioId], references: [id])
+  
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@map("compras")
+  @@index([codigo])
+  @@index([proveedorId])
+  @@index([usuarioId])
+}
+
+model DetalleCompra {
+  id          String   @id @default(cuid())
+  compraId    String
+  articuloId  String
+  
+  compra      Compra   @relation(fields: [compraId], references: [id], onDelete: Cascade)
+  articulo    Articulo @relation(fields: [articuloId], references: [id])
+  
+  cantidad    Int
+  costoUnidad Decimal  @db.Decimal(10, 2)
+  
+  createdAt   DateTime @default(now())
+
+  @@map("compras_detalles")
+  @@index([compraId])
+  @@index([articuloId])
+}
+
+// ============================================
+// GESTIÓN FINANCIERA (CAJAS Y MOVIMIENTOS)
+// ============================================
+
+model Caja {
+  id          String       @id @default(cuid())
+  nombre      String       @default("Caja Principal")
+  descripcion String?
+  isActive    Boolean      @default(true)
+  
+  movimientos Movimiento[]
+  usuarioId   String
+  usuario     User         @relation(fields: [usuarioId], references: [id])
+  
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("cajas")
+  @@index([nombre])
+  @@index([isActive])
+}
+
+model Movimiento {
+  id          String          @id @default(cuid())
+  codigo      String          @unique
+  
+  tipo        MovimientoTipo
+  monto       Decimal         @db.Decimal(10, 2)
+  concepto    String
+  
+  // Relación con caja
+  cajaId      String
+  caja        Caja            @relation(fields: [cajaId], references: [id])
+  
+  // Relaciones polimórficas con origen del movimiento
+  servicioId  String?
+  servicio    ServicioTecnico? @relation(fields: [servicioId], references: [id])
+  
+  ventaId     String?
+  venta       Venta?           @relation(fields: [ventaId], references: [id])
+  
+  compraId    String?
+  compra      Compra?          @relation(fields: [compraId], references: [id])
+  
+  gastoId     String?
+  gasto       GastoGeneral?    @relation(fields: [gastoId], references: [id])
+  
+  // Facturación opcional
+  factura     Factura?
+  
+  // Usuario que registró el movimiento
+  usuarioId   String
+  usuario     User            @relation(fields: [usuarioId], references: [id])
+  
+  createdAt   DateTime        @default(now())
+
+  @@map("movimientos")
+  @@index([codigo])
+  @@index([tipo])
+  @@index([cajaId])
+  @@index([usuarioId])
+  @@index([createdAt])
+}
+
+model Factura {
+  id           String     @id @default(cuid())
+  numero       String     @unique
+  tipo         String     // A, B, C
+  movimientoId String     @unique
+  movimiento   Movimiento @relation(fields: [movimientoId], references: [id])
+  
+  emitidaPor   String
+  usuarioId    String
+  usuario      User       @relation(fields: [usuarioId], references: [id])
+  
+  createdAt    DateTime   @default(now())
+
+  @@map("facturas")
+  @@index([numero])
+  @@index([tipo])
+}
+
+// ============================================
+// GASTOS GENERALES (OPERATIVOS)
+// ============================================
+
+model GastoGeneral {
+  id          String   @id @default(cuid())
+  codigo      String   @unique
+  concepto    String
+  monto       Decimal  @db.Decimal(10, 2)
+  observaciones String?
+  
+  movimientos Movimiento[]
+  
+  usuarioId   String
+  usuario     User     @relation(fields: [usuarioId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("gastos_generales")
+  @@index([codigo])
+  @@index([usuarioId])
+}

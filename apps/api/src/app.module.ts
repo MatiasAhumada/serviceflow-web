@@ -1,79 +1,20 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { LoggerMiddleware } from './Middleware/Logger.middleware';
-import typeOrmConfig from './config/configOrm';
-import { AuthModule } from './modules/auth/auth.module';
-import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
-import { UsersModule } from './modules/users/users.module';
-import { PlansModule } from './modules/plans/plans.module';
-import { CompaniesModule } from './modules/companies/companies.module';
-import { RolesModule } from './modules/roles/roles.module';
-import { PermissionsModule } from './modules/permissions/permissions.module';
-import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
-import { PaymentsModule } from './modules/payments/payments.module';
-import { CustomersModule } from './modules/customers/customers.module';
-import { SuppliersModule } from './modules/suppliers/suppliers.module';
-import { ProductsModule } from './modules/products/products.module';
-import { CashRegistersModule } from './modules/cash-registers/cash-registers.module';
-import { SalesModule } from './modules/sales/sales.module';
-import { ServiceOrdersModule } from './modules/service-orders/service-orders.module';
-import { DevicesModule } from './modules/devices/devices.module';
-import { WarrantiesModule } from './modules/warranties/warranties.module';
-import { ReceiptsModule } from './modules/receipts/receipts.module';
-import { PaymentOrdersModule } from './modules/payment-orders/payment-orders.module';
+import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
+import { ConfigurationModule } from './config/configuration.module'
+import { HealthModule } from './common/health.module'
+import { UsersModule } from './modules/users/users.module'
+import { AuthModule } from './modules/auth/auth.module'
+import { EmailModule } from './modules/email/email.module'
+import { CloudflareModule } from './modules/cloudflare/cloudflare.module'
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [typeOrmConfig],
-    }),
-    TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => {
-        const typeormConfig = (await configService.get('typeorm')) as Record<
-          string,
-          any
-        >;
-        return {
-          ...typeormConfig,
-        };
-      },
-    }),
-    AuthModule,
+    ConfigurationModule,
+    HealthModule,
     UsersModule,
-    PlansModule,
-    CompaniesModule,
-    RolesModule,
-    PermissionsModule,
-    SubscriptionsModule,
-    PaymentsModule,
-    CustomersModule,
-    SuppliersModule,
-    ProductsModule,
-    CashRegistersModule,
-    SalesModule,
-    ServiceOrdersModule,
-    DevicesModule,
-    WarrantiesModule,
-    ReceiptsModule,
-    PaymentOrdersModule,
-  ],
-  controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
+    AuthModule,
+    EmailModule,
+    CloudflareModule,
   ],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('*');
-  }
-}
+export class AppModule {}

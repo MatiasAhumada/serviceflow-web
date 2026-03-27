@@ -1,58 +1,259 @@
-# ServiceFlow API
+# Generic Nest Prisma
 
-Backend API for ServiceFlow - Sistema integral de gestión para negocios de servicio técnico y ventas.
+Production-ready NestJS + Prisma template with Repository Pattern, following SOLID principles and strict TypeScript conventions.
 
-## Arquitectura de Base de Datos
+## Features
 
-### Tipos de Usuario
-- **VENDOR**: Vendedores individuales
-- **TECHNICIAN**: Técnicos individuales  
-- **COMPANY**: Empresas (pueden tener múltiples usuarios)
+- **NestJS** - Progressive Node.js framework
+- **Prisma** - Next-generation ORM
+- **Repository Pattern** - Clean architecture with base repository
+- **JWT Authentication** - Access and refresh tokens
+- **Global Error Handling** - Structured error responses
+- **DTO Validation** - class-validator based validation
+- **Swagger Documentation** - Auto-generated API docs
+- **Docker Support** - Ready for containerization
+- **Environment Validation** - Zod-based env validation
 
-### Entidades Principales
+## Project Structure
 
-#### Core System
-- `SystemAdmin`: Administradores del sistema
-- `Plan`: Planes de suscripción
-- `Company`: Empresas
-- `User`: Usuarios del sistema
-- `Role`: Roles por empresa
-- `Permission`: Permisos del sistema
-- `Subscription`: Suscripciones
-- `SubscriptionSeat`: Asientos adicionales
-- `Payment`: Pagos
+```
+api/
+├── config/                 # Configuration files
+│   ├── env.config.ts       # Environment validation schema
+│   ├── database.config.ts  # Database configuration
+│   ├── jwt.config.ts       # JWT configuration
+│   ├── email.config.ts     # Email configuration
+│   └── cloudflare.config.ts # Cloudflare R2 configuration
+├── constants/              # Global constants
+│   ├── app.constant.ts
+│   ├── error.constant.ts
+│   └── http-status.constant.ts
+├── prisma/
+│   ├── schema.prisma       # Prisma schema
+│   └── seed.ts             # Database seeding
+├── src/
+│   ├── common/             # Shared modules
+│   │   ├── controllers/    # Base and health controllers
+│   │   ├── decorators/     # Custom decorators (@Public)
+│   │   ├── repositories/   # Base repository
+│   │   └── services/       # Health service
+│   ├── config/             # NestJS configuration module
+│   ├── constants/          # Re-exported constants
+│   ├── exceptions/         # Exception classes and handlers
+│   ├── filters/            # Exception filters and validation pipe
+│   ├── guards/             # JWT authentication guard
+│   ├── interceptors/       # Logging and transform interceptors
+│   ├── interfaces/         # TypeScript interfaces
+│   ├── modules/            # Feature modules
+│   │   ├── auth/           # Authentication module
+│   │   ├── users/          # Users module
+│   │   ├── email/          # Email service (Resend)
+│   │   └── cloudflare/     # Cloudflare R2 storage
+│   ├── utils/              # Utility functions
+│   ├── app.module.ts       # Root module
+│   └── main.ts             # Application entry point
+├── docker-compose.yml      # Docker services
+├── Dockerfile              # Production image
+└── package.json
+```
 
-#### Business Logic
-- `Customer`: Clientes
-- `Supplier`: Proveedores
-- `Product`: Productos
-- `CashRegister`: Cajas registradoras
-- `Sale`: Ventas
-- `SaleItem`: Items de venta
-- `ServiceOrder`: Órdenes de servicio
-- `ServiceItem`: Items de servicio
-- `Device`: Dispositivos de clientes
-- `Warranty`: Garantías
+## Getting Started
 
-## Setup
+### Prerequisites
 
-1. Copiar `.env.example` a `.env` y configurar variables
-2. Instalar dependencias: `pnpm install`
-3. Ejecutar migraciones: `pnpm migration:run`
-4. Sembrar datos iniciales: `pnpm seed`
-5. Iniciar desarrollo: `pnpm start:dev`
+- Node.js 20+
+- PostgreSQL 15+
+- npm or pnpm
 
-## Scripts Disponibles
+### Installation
 
-- `pnpm start:dev` - Desarrollo con hot reload
-- `pnpm build` - Compilar para producción
-- `pnpm migration:generate` - Generar nueva migración
-- `pnpm migration:run` - Ejecutar migraciones
-- `pnpm seed` - Sembrar datos iniciales
-- `pnpm lint` - Linter
-- `pnpm test` - Tests
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd api
+```
 
-## API Documentation
+2. Install dependencies:
+```bash
+npm install
+```
 
-Una vez iniciado el servidor, la documentación Swagger estará disponible en:
-`http://localhost:3010/api`
+3. Copy environment file:
+```bash
+cp .env.example .env
+```
+
+4. Update `.env` with your credentials.
+
+5. Generate Prisma client:
+```bash
+npm run prisma:generate
+```
+
+6. Run database migrations:
+```bash
+npm run prisma:migrate
+```
+
+7. Seed the database (optional):
+```bash
+npm run prisma:seed
+```
+
+8. Start development server:
+```bash
+npm run start:dev
+```
+
+The API will be available at `http://localhost:3000/api`
+Swagger docs at `http://localhost:3000/api/docs`
+
+## Docker
+
+Start all services:
+```bash
+npm run docker:up
+```
+
+Stop all services:
+```bash
+npm run docker:down
+```
+
+View logs:
+```bash
+npm run docker:logs
+```
+
+## API Endpoints
+
+### Health
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | /health | Check health status |
+| GET | /health/ready | Check readiness (includes DB) |
+
+### Auth
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | /auth/login | Login and get tokens |
+| POST | /auth/register | Register new user |
+| POST | /auth/refresh | Refresh access token |
+
+### Users
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | /users | Get all users (paginated) | ✓ |
+| GET | /users/:id | Get user by ID | ✓ |
+| POST | /users | Create user | Public |
+| PUT | /users/:id | Update user | ✓ |
+| DELETE | /users/:id | Delete user | ✓ |
+
+## Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| NODE_ENV | Environment | development |
+| PORT | Server port | 3000 |
+| DATABASE_URL | PostgreSQL connection string | - |
+| JWT_SECRET | JWT signing secret | - |
+| JWT_EXPIRATION | Access token expiration | 1h |
+| JWT_REFRESH_SECRET | Refresh token secret | - |
+| JWT_REFRESH_EXPIRATION | Refresh token expiration | 7d |
+| RESEND_API_KEY | Resend API key | - |
+| CLOUDFLARE_* | Cloudflare R2 credentials | - |
+
+## Code Conventions
+
+### TypeScript
+
+- Strict mode enabled
+- No `any` type (except Zod preprocess)
+- No `typeof` comparisons
+- Explicit types for all functions
+- Descriptive variable names
+
+### Conditionals
+
+```typescript
+// ❌ Prohibited
+if (value === null)
+if (value === undefined)
+if (flag === true)
+if (flag === false)
+
+// ✅ Allowed
+if (value)
+if (!value)
+if (condition) { doSomething() }
+```
+
+### Error Handling
+
+```typescript
+// Backend
+ApiErrorHandler.notFound('User not found')
+ApiErrorHandler.unauthorized('Invalid credentials')
+
+// Frontend
+clientError.handler(error)
+```
+
+### Constants
+
+All values must be in constants files:
+- `/constants/*.constant.ts` - Business rules
+- `/config/*.ts` - Configuration
+- Prisma enums when applicable
+
+### REST Design
+
+```typescript
+// ✅ Correct
+GET    /users
+GET    /users/:id
+POST   /users
+PUT    /users/:id
+PATCH  /users/:id
+DELETE /users/:id
+
+// ❌ Incorrect
+GET    /users/getAll
+POST   /users/doSomething
+POST   /users/:id/activate
+```
+
+## Testing
+
+```bash
+# Unit tests
+npm run test
+
+# E2E tests
+npm run test:e2e
+
+# Coverage
+npm run test:cov
+```
+
+## Scripts
+
+| Script | Description |
+|--------|-------------|
+| `npm run build` | Build for production |
+| `npm run start:dev` | Start development server |
+| `npm run start:prod` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm run format` | Format with Prettier |
+| `npm run prisma:generate` | Generate Prisma client |
+| `npm run prisma:migrate` | Run migrations |
+| `npm run prisma:studio` | Open Prisma Studio |
+| `npm run docker:up` | Start Docker services |
+| `npm run docker:down` | Stop Docker services |
+
+## License
+
+MIT
